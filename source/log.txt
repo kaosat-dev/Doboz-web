@@ -1,0 +1,1 @@
+path=/home/ckaos/data/Projects/Yarp/source/Core/print_server/files/machine/printFiles/high_cube_export.gcode, line=1790

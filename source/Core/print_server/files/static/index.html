@@ -1,0 +1,475 @@
+<html>
+  <head>
+    <title>Doboz experimental web ui</title>
+    <!--TODO : remove , only for testing--> <meta http-equiv="Content-Type" content="no-cache">
+    <link type="text/css" href="/css/absolution/jquery-ui-1.8.10.custom.css" rel="Stylesheet" id="mainCss"/>  
+    <link type="text/css" href="/css/dobozui-extra.css" rel="Stylesheet" />  
+    <link type="text/css" href="/css/ui.notify.css" rel="Stylesheet" />
+    <script language="javascript" type="text/javascript" src="/js/jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" src="/js/jquery-ui-1.8.10.custom.min.js"></script>
+    <script language="javascript" type="text/javascript" src="/js/jquery.notify.js"></script>
+    <script language="javascript" type="text/javascript" src="/js/jquery.cookie.js"></script>
+    <script language="javascript" type="text/javascript" src="/js/jquery.ui.selectmenu.js"></script>
+   
+
+    <!-------------------------------------------------------------------------------------->    
+     <script id="shader-fs" type="x-shader/x-fragment">
+        #ifdef GL_ES
+        precision highp float;
+        #endif
+        uniform float time;
+
+        
+        varying vec4 verpos;
+        varying vec4 vColor;
+        void main(void) 
+        {
+          
+          float r = verpos.y-0.2;
+          float g=max(0.5-r,0.2);
+          float b=max(1.0-r,0.4);
+          gl_FragColor = vec4( r,g,b,1.0);
+        }
+    </script>
+    
+    <script id="shader-test" type="x-shader/x-fragment">
+        #ifdef GL_ES
+        precision highp float;
+        #endif
+        uniform float time;
+        uniform vec2 resolution;
+        varying vec4 vColor;
+        void main(void) 
+        {
+           float x = gl_FragCoord.x/512.0;
+           float y = gl_FragCoord.y/512.0;
+            float z = gl_FragCoord.z;
+           gl_FragColor = vec4( x,z,y,1.0);
+        }
+    </script>
+    
+    <script id="shader-fs-line" type="x-shader/x-fragment">
+        #ifdef GL_ES
+        precision highp float;
+        #endif
+        uniform float time;
+        varying vec4 vColor;
+        void main(void) 
+        {
+          float test=time;
+          float truc=sin(test);
+          
+          gl_FragColor = vec4(truc, 0.5, 1.0, 1.0);
+        }
+    </script>
+    <script id="shader-vs" type="x-shader/x-vertex">
+
+
+  
+  attribute vec3 aVertexPosition;
+  attribute vec4 aVertexColor;
+  
+  uniform mat4 uMVMatrix;
+  uniform mat4 uPMatrix;
+  
+  varying vec4 verpos;
+  varying vec4 vColor;
+  
+  void main(void) 
+  {
+    
+    gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+    verpos=vec4(aVertexPosition, 1.0);
+    vColor = aVertexColor;
+  }
+  
+
+</script>
+    <script language="javascript" type="text/javascript" src="/js/webgl-trace.js"></script>
+    <script language="javascript" type="text/javascript" src="/js/sylvester.js"></script>
+    <script language="javascript" type="text/javascript" src="/js/glu.js"></script>
+    <!-------------------------------------------------------------------------------------->
+    <script language="javascript" type="text/javascript" src="/js/dobozUi/dobozui_toolkit.js"></script>
+    <script language="javascript" type="text/javascript" src="/js/dobozUi/file_manager.js"></script>
+    <script language="javascript" type="text/javascript" src="/js/dobozUi/reprap_manager.js"></script>
+    <script language="javascript" type="text/javascript" src="/js/dobozUi/webgl_toolkit.js"></script>
+    
+    <script  type="text/javascript">
+      
+      var jobId=0;
+      var fileHandler=new FileHandler();
+      var reprapMgr=new ReprapMgr(); 
+      var dobozUi=new DobozUi();
+      var viewer=new WebglViewer();
+      
+      var styles=[];
+     
+      
+      
+       $(document).bind("Viewer.Configured", function(e, config)
+      {
+        dobozUi.onViewerConfigured(config);
+       });
+      
+       $(document).bind("Job.Added", function(e, job)
+      {
+        job.id=jobId;
+        dobozUi.onJobAdded(job);
+        reprapMgr.onJobAdded(job);
+        jobId++;
+       });
+       
+       $(document).bind("Job.Removed", function(e, jobId)
+      {
+
+          //TODO: needs to check if the job is running!! 
+          dobozUi.onJobRemoved(jobId);
+          reprapMgr.onJobRemoved(jobId);
+
+       });
+       
+        $(document).bind("Job.Started", function(e, job)
+      {
+        
+        dobozUi.onJobStarted(job);
+       });
+       
+      $(document).bind("Job.progressUpdated", function(e, progressReport)
+      {
+
+        subscribers = dobozUi;
+        subscribers.onJobProgressUpdated(progressReport);
+        viewer.onJobProgressUpdated(progressReport);
+        $("#lastCommand").text("LastCommand "+lastCommand);
+      });
+      
+      $(document).bind("Job.finished", function(e, job)
+      {
+          //backup 3d data
+          /*tmpPositions= eval(dobozUi.lastPositions);
+          viewer.lastPositions=tmpPositions;
+          viewer.lineStripLength=tmpPositions.length/3;
+          */
+          //brutish method
+          if(job.type=='scan')
+          {
+            fileHandler.getAvailableScans();
+          }
+          
+          dobozUi.onJobFinished(job);
+        
+      });
+      
+      $(document).bind("Job.DelayChanged", function(e, delay)
+      {
+         reprapMgr.jobDelay=delay
+      });
+      
+      $(document).bind("Status.updated", function(e, status)
+      {
+         dobozUi.onStatusUpdated(status);
+      });
+      
+       $(document).bind("Files.Recieved", function(e, files)
+      {
+        dobozUi.onFileListRecieved(files);
+       });
+       
+        $(document).bind("Files.Selected", function(e, file)
+      {
+        alert("here")
+        dobozUi.onFileSelected(file);
+        reprapMgr.onFileSelected(file);
+       });
+       
+       $(document).bind("Files.ScansRecieved", function(e, scans)
+      {
+        dobozUi.onScanListRecieved(scans);
+       });
+       
+      
+       $(document).bind("Scan.ResolutionChanged", function(e, res)
+      {
+         reprapMgr.scanResolution=res
+      });
+      
+       $(document).bind("Scan.WidthChanged", function(e, width)
+      {
+        reprapMgr.scanWidth=width
+       });
+       
+      $(document).bind("Scan.HeightChanged", function(e, height)
+      {
+        reprapMgr.scanHeight=height
+       });
+      
+      $(document).bind("AutoStartViewer.set", function(e, valid)
+      {
+     
+        viewer.autoStart=valid;
+        viewer.saveSettings();
+       });
+      
+      
+      function onSelectChange()
+      {
+       
+        var selected = $("#cssselect option:selected");
+        
+         document.getElementById('mainCss').href = selected.val();
+      }
+      
+      $(document).ready
+      (
+           function() 
+           {
+              dobozUi.onDocumentReady();
+              reprapMgr.init();
+             
+              fileHandler.getAvailableFiles();
+              fileHandler.getAvailableScans();
+              
+               $("#container")
+              .notify({ custom:false })
+              .notify("create", {
+                 title:"Start Notification", 
+                 text:"Welcome to the 'Doboz' experimental web gui for repraps/repraps<br>Please visit <a href='http://www.kaosat.net' target='blank'>www.kaosat.net</a> and www.github.com/ for more info" },
+                 { custom:true ,expires: false,speed: 500});
+                 
+                 viewer.loadSettings();
+                 dobozUi.loadSettings();
+              /*var w=$("#viewerBlock").width();
+              var h=$("#viewerBlock").height();
+              
+              var size=0;
+              if( w>h)
+              {
+              size=h;
+              }
+              else
+              {
+                size=w;
+              }
+              $("#glcanvas").width(size);
+              $("#glcanvas").height(size);*/
+              viewer.canvas=document.getElementById("glcanvas");
+              if (viewer.autoStart)
+              {
+                viewer.start(document.getElementById("glcanvas"));
+              }
+            }     
+      );
+    </script>
+  </head>
+  <body>
+
+   <div id"main" >
+        <div id="viewerBlock" class=" mainBlock ui-corner-left ui-state-default"> 
+          <div id="canvasWrapper">
+            <canvas id="glcanvas" width="512" height="512" >
+             Your browser doesn't appear to support the HTML5 <code>&lt;canvas&gt;</code> element.
+            </canvas>
+          </div>
+        
+       </div>
+      
+       <div id="controlsBlock" class=" mainBlock ui-corner-right ui-state-default" style="margin-left:2px;">
+         <div id="mainContent">
+         <small>
+            <div id="tabs">
+              <ul>
+                <li><a href="#tabs-1">Print</a></li>
+                <li><a href="#tabs-2">Scan</a></li>
+                <li><a href="#tabs-3">Machine Settings</a></li>
+                <li><a href="#tabs-4">Ui Settings</a></li>
+                <li><a href="#tabs-5">About</a> </li>
+              </ul>
+              <div id="tabs-1" style="padding:4px;border:0px">
+                <div id="printOptions" style="overflow:auto;height:87%;">
+                  <div>
+                    <button  id="fileUploadButton" onclick="$('#fileUploadDialog').dialog('open');"> Upload </button>
+                  </div>
+                  <div class="tab-acordeon">
+                    <h3><a href="#">Files</a></h3>
+                      <div id="lastFiles"  style="padding:2px;border:0px;">
+                        <table id="fileTable" class="infoTable" style="width:100%">
+                          <tr class=" ui-widget-header ui-state-active" ><th scope="col">Name</th><th scope="col" style='width:50px'>Date</th><th scope="col" style='width:20px'></th></tr>
+                        </table>
+                      </div>
+                    
+                      
+                    
+                     </div>
+                </div>
+              </div>
+              <div id="tabs-2"  style="padding:4px;border:0px" >
+                 <div id="scanOptions"style="overflow:auto;height:87%;" >
+                       <div >  
+                          width <input id="scanWidth" type='text' value="2" class=" ui-corner-left" onKeyUp="dobozUi.onScanWidthChanged()" style="width:45px"/> 
+                          height <input id="scanHeight" type='text' value="2" class=" ui-corner-left" onKeyUp="dobozUi.onScanHeightChanged()"style="width:45px"/> 
+                          resolution<input id="scanResolution" type='text' value="1" class=" ui-corner-left" onKeyUp="dobozUi.onScanResolutionChanged()"style="width:45px"/> 
+                          <button  id="addScanJobButton" > Add scan Job </button>
+                      </div>
+                    <div class="tab-acordeon">
+                    <h3><a href="#">Scans</a></h3>
+                      <div style="padding:2px;border:0px;">
+                        <table id="scanTable" class="infoTable" style="width:100%">
+                          <tr class=" ui-widget-header ui-state-active" ><th scope="col" style='width:40px'>Get</th><th scope="col" >Name</th><th scope="col" style='width:50px'>Date</th><th scope="col" style='width:20px'></th></tr>
+                        </table>
+                      </div>
+                  </div>
+                </div>
+              </div>
+              <div id="tabs-3" style="padding:4px;border:0px">
+                  <div id="machineOptions" style="overflow:auto;height:87%;">
+                     <div class="ui-widget ui-state-default ui-corner-all titleBar" >Job Settings</div>
+                    <div>
+                   <div id="betweenJobActionRadio">
+                      <input type="radio" id="waitradio" name="betweenJobActionRadio" checked="checked" /><label for="waitradio">Wait</label>
+                      <input type="radio" id="dialogradio" name="betweenJobActionRadio" /><label for="dialogradio">Display prompt</label>
+                    </div>
+                    <input id="jobDelayField" type='text' value="10" class=" ui-corner-left" onKeyUp="dobozUi.onJobsDelayChanged()"/> pause between prints (s)<br>
+                    </div>
+                    <div class="tab-acordeon">
+                      <h3><a href="#">Units</a></h3>
+                        <div>
+                        <div id="distanceunitsRadio">
+                          <input type="radio" id="mmradio" name="distanceunitsRadio" checked="checked" /><label for="mmradio">mm</label>
+                          <input type="radio" id="inchradio" name="distanceunitsRadio"  /><label for="inchradio">inch</label>
+                        </div>
+                        <div id="temperatureunitsRadio">
+                          <input type="radio" id="cradio" name="temperatureunitsRadio" checked="checked" /><label for="cradio">Celcius</label>
+                          <input type="radio" id="fradio" name="temperatureunitsRadio" /><label for="fradio">Fahrenheit</label>
+                        </div>
+                      </div>
+                      <h3><a href="#"> Status</a></h3>
+                      <div>
+                        <input id="statusUpdate" type='text' value="10" class="ui-corner-left"/> status update frequency (s)<br>
+                        <button  id="machineSettingsButton" onclick="reprapMgr.getMachineStatus()"> Get Status </button>
+                      </div>
+                    </div>
+                  </div>
+                  
+              </div>
+              <div id="tabs-4" style="padding:4px;border:0px">
+                <div class="ui-widget ui-state-default ui-corner-all titleBar">WebglViewer</div>
+                <div id="webglControls">
+                  <input type="checkbox" id="viewerAutoStartRadio"  /><label for="viewerAutoStartRadio">AutoStart</label><br>
+                  <button  onclick="viewer.start()">Start Webgl viewer</button>
+                  <button  onclick="viewer.stop()">Stop Webgl viewer</button>
+                </div>
+                <div class="ui-widget ui-state-default ui-corner-all titleBar" >Theme</div>
+                <div id="switcher">
+                  <select id="cssselect" onChange="onSelectChange();">
+                    <option value="/css/absolution/jquery-ui-1.8.10.custom.css" selected="selected">Absolution</option>
+                    <option value="/css/aristo/jquery-ui-1.8.10.custom.css">Aristo</option>
+                    <option value="/css/dobozui/jquery-ui-1.8.10.custom.css">DobozUi</option>
+                    <option value="/css/vader/jquery-ui-1.8.10.custom.css">Vader</option>
+                    <option value="/css/smoothness/jquery-ui-1.8.10.custom.css">Smoothness</option>
+                  </select>
+                </div>
+              </div>
+              <div id="tabs-5" style="padding:4px;border:0px">
+                <div id="infosTabContent" style="overflow:auto;height:87%;">
+                  <div class="ui-widget ui-state-default ui-corner-all titleBar">Info</div>
+                  <p>
+                  This is the <b>Doboz</b> experimental web gui for repraps/repraps : not even alpha yet, use at your own risk! :)
+                  Comments , participation and 'Flattrs' are most welcome:) Please visit  <a href='http://www.github.com' target='blank'>www.github.com </a> and 
+                 <a href='http://www.kaosat.net' target='blank'>www.kaosat.net</a> for more info.
+                  </p>
+                  <div class="ui-widget ui-state-default ui-corner-all titleBar">Licence</div>
+                  <p>
+                  This project is released under the GPL3 licence.<br>
+                  &copy 2011 by Mark "Ckaos" Moissette <br>
+                  </p>
+
+                  <div class="ui-widget ui-state-default ui-corner-all titleBar">Used software Components</div>
+                  <p>
+                  Jquery<br>
+                  Jquery Ui<br>
+                  Jquery Ui notify<br>
+                  Pyserial<br>
+                  Tornado
+                  </p>
+                </div>
+              </div>
+            </div>
+         </small>
+         </div>
+         
+         <div id="JobListThingy" style="overflow:auto">
+            <div class="ui-widget ui-state-default ui-corner-all">Selected Jobs</div>
+            <table id="jobTable" class="infoTable" style="width:100%">
+              <tr class=" ui-widget-header ui-state-active" ><th scope="col" style='width:50px'>Type</th><th scope="col">Options</th><th scope="col" style='width:20px'></th></tr>
+            </table>
+          </div>
+         <div id="toolBar">
+           <small>
+            <div  class="mainControls " >
+              <div class="jobControls">
+              <button id="select">Job: None</button>
+              <button  onclick="reprapMgr.startPauseJob()">Start/Pause</button>
+              <button  onclick="reprapMgr.stopJob()">Stop</button>
+              <button  onclick="$('#manualControlDialog').dialog('open');">Manual</button>
+            </div>
+            <div id="statusInfo" class=" ui-button-text-only ui-widget ui-state-default ui-corner-all ">
+               <div class="ui-button-text"  style="display:inline-block;">Extr T&deg; n/a Bed T&deg; n/a  </div>
+            </div>
+          </div>
+           
+          <div id="jobProgressBar" style="height: 10px; width:100%;float:left"></div>
+          </small>
+        </div>
+       </div>
+    </div>
+  
+    <!-- All hidden elements---------------------------- -->
+    <div id="fileUploadDialog"  title="Upload file" >
+                <small>
+                <div >
+                Add file:
+                <form action="/upload" method="post" enctype="multipart/form-data" target="uploadTarget" onsubmit="fileHandler.UploadFile()" name="uploadForm">
+                  <input name="datafile" type="file" onclick="fileHandler.resetUploadProgress()" />
+                  <button  onclick="submit()">Send</button>
+                  <iframe id="uploadTarget" src="" style="width:0px;height:0px;visibility:hidden"> 
+                </iframe>
+                </form>
+              </div>
+              <div id="uploadProgressBar" style="width:100%;height:10px;" > </div>
+
+  
+              </small>
+    </div>
+    <div id="manualControlDialog" title="Manual Control">
+      <small>
+      Enter GCode etc <input id="manualCommand" type='text' value="" class=" ui-corner-left"/> 
+      <button  onclick="reprapMgr.sendManualCommand($('#manualCommand').val())">Send</button>
+      </small>
+    </div>
+    <div id="deleteJobDialog" title="Delete Job">
+      <small>
+      
+      <button  onclick="reprapMgr.sendManualCommand($('#manualCommand').val())">Send</button>
+      </small>
+    </div>
+    
+
+    <div id="container" style="right:40px; top:10px; margin:0 0 10px 10px">
+ 
+  <div id="themeroller" style="" class="ui-widget-content notification"  >
+    <!-- close link -->
+    <a class="ui-notify-close" href="#">
+      <span class="ui-icon ui-icon-close" style="float:right"></span>
+    </a>
+ 
+    <!-- alert icon -->
+    <span style="float:left; margin:2px 5px 0 0;" class="ui-icon ui-icon-alert"></span>
+ 
+    <h1>#{title}</h1>
+    <p>#{text}</p>
+  </div>
+ 
+  <!-- other templates here, maybe.. -->
+</div>
+
+  </body>

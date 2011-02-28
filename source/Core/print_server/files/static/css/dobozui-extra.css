@@ -1,0 +1,183 @@
+body
+{
+  background-color:#222222;
+  font-size:87%;
+   
+}
+
+
+body p b
+{
+  font-size:125%;
+  color:#5577ff;
+  font:italic bold 12px/30px Georgia, serif;
+}
+body p a
+{
+  font-size:125%;
+  color:#5577ff;
+}
+
+body p a:visited
+{
+  font-size:125%;
+  color:#557777;
+}
+
+body p a:hover
+{
+  font-size:125%;
+  color:#557777;
+}
+
+         .category 
+        {
+           
+            background-color:black;/*#1f2b34;*/
+            border-color:#ffffff;
+            border-style: solid;
+            border-width:1px;
+           
+          }
+          .mainBlock
+          {
+            display:inline-block;
+            float:left;
+            height:530px;     
+          }
+          #controlsBlock
+          {
+            width:62%;
+            padding:2px;
+          }
+          #ViewerBlock
+          {
+            width: 35%; 
+            padding:2px;
+          }
+          
+          .passiveBox
+          {
+             background-color:black;
+             color:#ffffff;
+          }
+          #mainContent
+          {
+              height:340px;
+              padding:0px;
+              
+          }
+          
+            #JobListThingy
+            {
+             height:130px;
+            }
+          #toolbar
+          {
+              height:40px;
+          }
+
+          
+         
+          input
+          {
+             background-color:black;
+             color:#ffffff;
+             
+          }
+          canvas
+          { 
+           width:100%;
+           height:100%;
+          }
+          
+.compactTab
+{
+  padding:0px;border:0px;
+}
+
+
+.selected
+{
+  background-color:#1d6caa; 
+  color:black;
+}
+
+
+
+/*---------------------*/
+.infoTable
+{         
+    font-size:90%;
+    text-align:auto;
+    
+} 
+
+.infoTable tr[scope=row]
+{
+  
+}
+.infoTable td[scope=row], tr:hover td
+{
+ cursor:hand;
+ background-color: #444444;
+ color:white;
+}
+
+/*---------------------*/
+
+
+
+
+.JobRemoveButton
+{display:inline-block;
+            float:left;
+}
+.jobControls
+{ 
+display:inline-block;
+float:left;
+}
+
+
+#statusInfo
+{
+  
+float:right;
+ display:inline-block;  
+
+}
+#dump
+{
+color:#1d6caa;  
+  display:inline;  
+font-size:80%color:#fff; font-size:80%;background:rgba(0,0,0,0.8)
+}
+#statusInfo h3
+{
+  display:inline-block;  
+}
+/*---------------------*/
+.notification
+{
+opacity: .80;filter:Alpha(Opacity=80);
+}
+
+.titleBar
+{
+  margin:10 10 10 0;
+}
+
+.mainTab
+{
+  height:340px;
+}
+
+.testing
+{
+     background-color:white;
+     /*color:black;*/
+     padding:0px;
+     border:0px;
+}
+
