@@ -1,6 +1,6 @@
 function FileHandler()
 {
-  this.mainUrl="http://192.168.0.10:8000/";
+  this.mainUrl="http://localhost:8000/";
   this.availableFiles=[];
   this.uploadTimer=null; 
 }

@@ -2,7 +2,7 @@
 //Class for managing a reprap machine
 function ReprapMgr() 
 {
-    this.mainUrl="http://192.168.0.10:8000/";
+    this.mainUrl="http://localhost:8000/";
     this.currentMode = 'scan';
     this.isJobPaused=false;
     this.isJobStarted=false;
