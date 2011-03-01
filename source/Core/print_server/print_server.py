@@ -165,7 +165,7 @@ def scanning(command):
         blockSize=int(request.GET.get('blockSize', '').strip())
         testBottle.logger.info("lastIndex %s",str(lastIndex))  
         try:
-            truc=testBottle.reprapManager.pointCloudBuilder.pointCloud.points[lastIndex:lastIndex+blockSize]
+            truc=testBottle.reprapManager.pointCloudBuilder.pointCloud.points[lastIndex:]
             truc=",".join(str(pt) for pt in truc)
             truc='['+truc+']'
             progress=testBottle.reprapManager.progress
@@ -236,4 +236,4 @@ def server_static(path):
 
 """"""""""""""""""""""""""""""""""""
 def start_webServer():
-    run(app=testBottle, host='localhost', port=8000, server=TornadoServer)
+    run(app=testBottle, host='192.168.0.10', port=8000, server=TornadoServer)

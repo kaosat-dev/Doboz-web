@@ -8,13 +8,23 @@ function WebglViewer()
   this.shaderProgram=null;
   this.isRendering=false;
   this.drawTimer=null;
-  
+  this.drawMode=3;
   
   this.lineStripVertexPositionBuffer=[];
+  this.triangleVertexPositionBuffer=[];
   this.lastPositions=null;
   this.lineStripLength=0;
   this.autoStart=false;
+  this.autoRotate=false;
 
+  this.zoomLevel=-10.0;
+  this.xOffset=0.0;
+  this.yOffset=0.0;
+  this.mouseDown = false;
+  this.lastMouseX = null;
+  this.lastMouseY = null;
+  this.mouseRotationMatrix = mat4.create();
+  mat4.identity(this.mouseRotationMatrix);
 }
 
 
@@ -29,23 +39,25 @@ WebglViewer.prototype.init=function()
       catch(e) 
       {
         console.log("WebglError "+e);
-        
+       
       }
       if (!this.gl)
       {
         console.log("Could not initialise WebGL, sorry");
-      
+    
       } 
 }
 
 WebglViewer.prototype.saveSettings=function()
 {
   $.cookie({ 'webgl_viewer_autoStart': this.autoStart});
+  $.cookie({ 'webgl_viewer_autoRotate': this.autoRotate});
 }
 WebglViewer.prototype.loadSettings=function()
 {
   this.autoStart=eval($.cookie('webgl_viewer_autoStart'))
-  $(document).trigger('Viewer.Configured',[ {'autoStart':this.autoStart}]);
+  this.autoRotate=eval($.cookie('webgl_viewer_autoRotate'))
+  $(document).trigger('Viewer.Configured',[ {'autoStart':this.autoStart,'autoRotate':this.autoRotate}]);
 }
 
 
@@ -114,37 +126,43 @@ WebglViewer.prototype.initShaders=function ()
     this.shaderProgram.vertexPositionAttribute = this.gl.getAttribLocation(this.shaderProgram, "aVertexPosition");
     this.gl.enableVertexAttribArray(this.shaderProgram.vertexPositionAttribute);
     
-    this.shaderProgram.vertexColorAttribute = this.gl.getAttribLocation(this.shaderProgram, "aVertexColor");
-    this.gl.enableVertexAttribArray(this.shaderProgram.vertexColorAttribute);
+    //this.shaderProgram.vertexColorAttribute = this.gl.getAttribLocation(this.shaderProgram, "aVertexColor");
+    //this.gl.enableVertexAttribArray(this.shaderProgram.vertexColorAttribute);
  
     this.shaderProgram.pMatrixUniform = this.gl.getUniformLocation(this.shaderProgram, "uPMatrix");
     this.shaderProgram.mvMatrixUniform = this.gl.getUniformLocation(this.shaderProgram, "uMVMatrix");
     
-   
+   ////////////////////
+
 }
-var triangleVertexPositionBuffer;
-var vertices = [
-         0.0,  1.0,  0.0,
-        -1.0, -1.0,  0.0,
-         1.0, -1.0,  0.0
-    ];
+
+
 WebglViewer.prototype.initBuffers =function()
 {
     if (this.lastPositions==null)
     {
       this.lastPositions=[]
     }
-    /*triangleVertexPositionBuffer = this.gl.createBuffer();
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
-    this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(vertices), this.gl.STATIC_DRAW);
-    triangleVertexPositionBuffer.itemSize = 3;
-    triangleVertexPositionBuffer.numItems = 3;*/
     
-        this.lineStripVertexPositionBuffer = this.gl.createBuffer();
+    var vertices = [
+         0.0,  1.0,  0.0,
+        -1.0, -1.0,  0.0,
+         1.0, -1.0,  0.0
+    ];
+    this.triangleVertexPositionBuffer = this.gl.createBuffer();
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.triangleVertexPositionBuffer);
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(vertices), this.gl.STATIC_DRAW);
+    this.triangleVertexPositionBuffer.itemSize = 3;
+    this.triangleVertexPositionBuffer.numItems = 3;
+    
+      
+    
+       this.lineStripVertexPositionBuffer = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.lineStripVertexPositionBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(this.lastPositions), this.gl.STATIC_DRAW);
         this.lineStripVertexPositionBuffer.itemSize = 3;
         this.lineStripVertexPositionBuffer.numItems =  this.lineStripLength;
+       
 }
 
 WebglViewer.prototype.start=function(canvas)
@@ -155,11 +173,13 @@ WebglViewer.prototype.start=function(canvas)
   
   }
   
+  
+  
+  
   this.init();
   this.initShaders();
   this.initBuffers();
- 
-  
+
    // Only continue if WebGL is available and working
         if (this.gl) 
         {
@@ -168,16 +188,15 @@ WebglViewer.prototype.start=function(canvas)
           this.gl.enable(this.gl.DEPTH_TEST);           // Enable depth testing
           this.gl.depthFunc(this.gl.LEQUAL);            // Near things obscure far things
           this.gl.viewport(0, 0, this.canvas.offsetWidth, this.canvas.offsetHeight);
-         
-         
         }
         else
         {
           console.log("can't init webgl");
         }
        
-  
+  this.gl.lineWidth(3.0);
   var self = this; 
+
     
   this.drawTimer=setInterval(function()
       { 
@@ -186,7 +205,88 @@ WebglViewer.prototype.start=function(canvas)
   
   this.isRendering=true;
   lastTime=new Date().getTime();
+  
+  
+
+
 }
+
+
+
+WebglViewer.prototype.handleMouseDown=function(event) 
+{
+   this.mouseDown = true;
+   this.lastMouseX = event.clientX;
+   this.lastMouseY = event.clientY;
+
+}
+ 
+WebglViewer.prototype.handleMouseUp=function(event) 
+{
+   this.mouseDown = false;
+}
+   
+WebglViewer.prototype.handleMouseMove=function(event) 
+{
+  
+    if (this.mouseDown!=true) 
+    {
+    
+        return;
+     }
+
+    
+      
+      
+      var newX = event.clientX;
+      var newY = event.clientY;
+
+    var deltaX = newX - this.lastMouseX;
+    var newRotationMatrix = mat4.create();
+    mat4.identity(newRotationMatrix);
+    mat4.rotate(newRotationMatrix, degToRad(deltaX / 1.1), [0, 1, 0]);
+
+    var deltaY = newY - this.lastMouseY;
+    mat4.rotate(newRotationMatrix, degToRad(deltaY / 1.1), [1, 0, 0]);
+
+    mat4.multiply(newRotationMatrix, this.mouseRotationMatrix, this.mouseRotationMatrix);
+
+    this.lastMouseX = newX;
+    this.lastMouseY = newY;
+ 
+
+}
+WebglViewer.prototype.handleMouseWheel=function(event, delta, deltaX, deltaY) 
+{
+  
+    if(delta > 0)
+    {
+      this.zoomLevel+=0.5;
+     
+    }
+    else
+    {
+      this.zoomLevel-=0.5;
+     
+    }
+}
+
+   
+WebglViewer.prototype.onJobStarted=function(job)
+{
+  if(job.type=="scan")
+  {
+
+    this.xOffset=-job.width/2.0;
+    //this.yOffset=job.height/2.0;
+  }
+}
+
+WebglViewer.prototype.switchDrawMode=function(mode)
+{
+    this.drawMode=mode;
+}
+
 WebglViewer.prototype.stop=function()
 {
 
@@ -222,33 +322,55 @@ WebglViewer.prototype.updateBaseonReprap=function (positions,length)
     this.lineStripLength=length;
 }
 
+
+
+
 WebglViewer.prototype.drawScene=function ()
 {
 
    this.gl.viewport(0, 0, this.gl.viewportWidth, this.gl.viewportHeight);
    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
    
-   perspective(45, this.gl.viewportWidth / this.gl.viewportHeight, 0.1, 100.0);
-   loadIdentity();
+   mat4.perspective(45, this.gl.viewportWidth / this.gl.viewportHeight, 0.1, 100.0, pMatrix);
    
-   mvPushMatrix(); 
-   //mvTranslate([-2.5, 0.0, -7.0]);
-     mvTranslate([-1.5, 0.0, -20.0]);
-   mvRotate(rTri, [1, 1, 1]);
-    var l2 = this.gl.getUniformLocation(this.shaderProgram, "time");
+   mat4.identity(mvMatrix);
+ 
+   
+   
+   mat4.translate(mvMatrix, [this.xOffset, this.yOffset, this.zoomLevel]);
+
+   mvPushMatrix();
+   if(this.autoRotate)
+   {
+    
+     mat4.rotate(mvMatrix, degToRad(rTri), [0.0, 0.5, 0.0]);
+       mat4.rotate(mvMatrix, degToRad(22), [1.0, 0, 0.0]);
+     // mat4.translate(mvMatrix, [0, -2.0, 0]);
+   }
+   else
+   {   mat4.multiply(mvMatrix, this.mouseRotationMatrix);
+   }
+  // mvPushMatrix(); 
+   //var l2 = this.gl.getUniformLocation(this.shaderProgram, "time");
+   var ptSize = this.gl.getUniformLocation(this.shaderProgram, "pointSize");
+   
    try
    {
+   
      this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.lineStripVertexPositionBuffer);
-     this.gl.uniform1f(l2, elapsed);
+
+     this.gl.uniform1f(ptSize, 8);
+     
      this.gl.vertexAttribPointer(this.shaderProgram.vertexPositionAttribute, this.lineStripVertexPositionBuffer.itemSize, this.gl.FLOAT, false, 0, 0);
-     setMatrixUniforms(this.gl,this.shaderProgram);
-     this.gl.drawArrays(this.gl.LINE_STRIP, 0, this.lineStripVertexPositionBuffer.numItems);
+      setMatrixUniforms(this.gl,this.shaderProgram);
+     this.gl.drawArrays(this.drawMode, 0, this.lineStripVertexPositionBuffer.numItems);
      ///////////////////
-     /*this.gl.bindBuffer(this.gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
-     this.gl.uniform1f(l2, elapsed);
-     this.gl.vertexAttribPointer(this.shaderProgram.vertexPositionAttribute, triangleVertexPositionBuffer.itemSize, this.gl.FLOAT, false, 0, 0);
+   
+    /* this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.triangleVertexPositionBuffer);
+     this.gl.vertexAttribPointer(this.shaderProgram.vertexPositionAttribute, this.triangleVertexPositionBuffer.itemSize, this.gl.FLOAT, false, 0, 0);
      setMatrixUniforms(this.gl,this.shaderProgram);
-     this.gl.drawArrays(this.gl.TRIANGLES, 0, triangleVertexPositionBuffer.numItems);*/
+     this.gl.drawArrays(this.drawMode, 0, this.triangleVertexPositionBuffer.numItems);*/
+
    }
    catch(e)
    {
@@ -293,56 +415,33 @@ WebglViewer.prototype.onJobProgressUpdated=function(progressReport)
   this.updateBaseonReprap(progressReport.positions,progressReport.positionSize);
 }
 
-var mvMatrix;
-   var mvMatrixStack = [];
-   
-    function mvPushMatrix(m) {
-    if (m) {
-      mvMatrixStack.push(m.dup());
-      mvMatrix = m.dup();
-    } else {
-      mvMatrixStack.push(mvMatrix.dup());
+ var mvMatrix = mat4.create();
+    var mvMatrixStack = [];
+    var pMatrix = mat4.create();
+ 
+    function setMatrixUniforms(gl,shaderProgram) {
+        gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
+        gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
+         var normalMatrix = mat3.create();
+        mat4.toInverseMat3(mvMatrix, normalMatrix);
+        mat3.transpose(normalMatrix);
+        gl.uniformMatrix3fv(shaderProgram.nMatrixUniform, false, normalMatrix);
     }
-  }
- 
-  function mvPopMatrix() {
-    if (mvMatrixStack.length == 0) {
-      throw "Invalid popMatrix!";
+function mvPushMatrix() {
+        var copy = mat4.create();
+        mat4.set(mvMatrix, copy);
+        mvMatrixStack.push(copy);
     }
-    mvMatrix = mvMatrixStack.pop();
-    return mvMatrix;
-  }
-   
-  function loadIdentity() {
-    mvMatrix = Matrix.I(4);
-  }
  
+    function mvPopMatrix() {
+        if (mvMatrixStack.length == 0) {
+            throw "Invalid popMatrix!";
+        }
+        mvMatrix = mvMatrixStack.pop();
+    }
+
  
-  function multMatrix(m) {
-    mvMatrix = mvMatrix.x(m);
-  }
- 
- 
-  function mvTranslate(v) {
-    var m = Matrix.Translation($V([v[0], v[1], v[2]])).ensure4x4();
-    multMatrix(m);
-  }
-   function mvRotate(ang, v) {
-    var arad = ang * Math.PI / 180.0;
-    var m = Matrix.Rotation(arad, $V([v[0], v[1], v[2]])).ensure4x4();
-    multMatrix(m);
-  }
- 
-  var pMatrix;
-  function perspective(fovy, aspect, znear, zfar) {
-    pMatrix = makePerspective(fovy, aspect, znear, zfar);
-  }
- 
- 
-  function setMatrixUniforms(gl,shaderProgram) 
-  {
-    gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, new Float32Array(pMatrix.flatten()));
-    gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, new Float32Array(mvMatrix.flatten()));
-  }
- 
+    function degToRad(degrees) {
+        return degrees * Math.PI / 180;
+    }
 

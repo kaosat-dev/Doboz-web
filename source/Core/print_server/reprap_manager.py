@@ -255,6 +255,7 @@ class ReprapManager(object):
             self.pointCloudBuilder.pointCloud.save(self.pointCloudSavePath)
             self.isStarted=False
             self.isPaused=True
+
     
             
     """

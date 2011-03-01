@@ -10,7 +10,7 @@
     <script language="javascript" type="text/javascript" src="/js/jquery.notify.js"></script>
     <script language="javascript" type="text/javascript" src="/js/jquery.cookie.js"></script>
     <script language="javascript" type="text/javascript" src="/js/jquery.ui.selectmenu.js"></script>
-   
+    <script language="javascript" type="text/javascript" src="/js/jquery.mousewheel.js"></script>
 
     <!-------------------------------------------------------------------------------------->    
      <script id="shader-fs" type="x-shader/x-fragment">
@@ -63,9 +63,6 @@
         }
     </script>
     <script id="shader-vs" type="x-shader/x-vertex">
-
-
-  
   attribute vec3 aVertexPosition;
   attribute vec4 aVertexColor;
   
@@ -74,6 +71,28 @@
   
   varying vec4 verpos;
   varying vec4 vColor;
+  uniform float pointSize;
+
+  
+  void main(void) 
+  {
+    gl_PointSize = pointSize;
+    gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+    verpos=vec4(aVertexPosition, 1.0);
+    vColor = aVertexColor;
+  }
+</script>
+<script id="shader-vs-simple" type="x-shader/x-vertex">
+  attribute vec3 aVertexPosition;
+  attribute vec4 aVertexColor;
+  
+  uniform mat4 uMVMatrix;
+  uniform mat4 uPMatrix;
+  
+  varying vec4 verpos;
+  varying vec4 vColor;
+
+
   
   void main(void) 
   {
@@ -82,12 +101,10 @@
     verpos=vec4(aVertexPosition, 1.0);
     vColor = aVertexColor;
   }
-  
-
 </script>
     <script language="javascript" type="text/javascript" src="/js/webgl-trace.js"></script>
-    <script language="javascript" type="text/javascript" src="/js/sylvester.js"></script>
-    <script language="javascript" type="text/javascript" src="/js/glu.js"></script>
+    <script language="javascript" type="text/javascript" src="/js/glMatrix-0.9.5.min.js"></script>
+    <!--<script language="javascript" type="text/javascript" src="/js/glu.js"></script>-->
     <!-------------------------------------------------------------------------------------->
     <script language="javascript" type="text/javascript" src="/js/dobozUi/dobozui_toolkit.js"></script>
     <script language="javascript" type="text/javascript" src="/js/dobozUi/file_manager.js"></script>
@@ -105,6 +122,10 @@
       var styles=[];
      
       
+      
+      //$(document).bind("mousewheel", jQuery.proxy( viewer, 'handleMouseWheel'));
+
+       /////////////////
       
        $(document).bind("Viewer.Configured", function(e, config)
       {
@@ -132,6 +153,7 @@
       {
         
         dobozUi.onJobStarted(job);
+        viewer.onJobStarted(job);
        });
        
       $(document).bind("Job.progressUpdated", function(e, progressReport)
@@ -203,11 +225,25 @@
         reprapMgr.scanHeight=height
        });
       
-      $(document).bind("AutoStartViewer.set", function(e, valid)
+      $(document).bind("Viewer.autoStartSet", function(e, valid)
       {
      
         viewer.autoStart=valid;
         viewer.saveSettings();
+ 
+       });
+        $(document).bind("Viewer.autoRotateSet", function(e, valid)
+      {
+     
+        viewer.autoRotate=valid;
+        viewer.saveSettings();
+        
+       });
+       $(document).bind("Viewer.drawmodeSet", function(e, drawMode)
+      {
+        
+        viewer.switchDrawMode(drawMode);
+        //viewer.saveSettings();
        });
       
       
@@ -233,7 +269,7 @@
               .notify({ custom:false })
               .notify("create", {
                  title:"Start Notification", 
-                 text:"Welcome to the 'Doboz' experimental web gui for repraps/repraps<br>Please visit <a href='http://www.kaosat.net' target='blank'>www.kaosat.net</a> and www.github.com/ for more info" },
+                 text:"Welcome to the 'Doboz' experimental web gui for repraps/repraps<br>Please visit <a href='http://www.kaosat.net' target='blank'>www.kaosat.net</a> and <a href='http://github.com/kaosat-dev/Doboz' target='blank'> http://github.com/kaosat-dev/Doboz</a> for more info" },
                  { custom:true ,expires: false,speed: 500});
                  
                  viewer.loadSettings();
@@ -257,6 +293,12 @@
               {
                 viewer.start(document.getElementById("glcanvas"));
               }
+              
+                //setup mouse controls
+              $('#canvasWrapper').bind("mousemove", jQuery.proxy( viewer, 'handleMouseMove'));
+              $('#canvasWrapper').bind("mousedown", jQuery.proxy( viewer, 'handleMouseDown'));
+              $('#canvasWrapper').bind("mouseup", jQuery.proxy( viewer, 'handleMouseUp'));
+              $('#canvasWrapper').bind('mousewheel', jQuery.proxy( viewer,'handleMouseWheel'));
             }     
       );
     </script>
@@ -354,9 +396,17 @@
               <div id="tabs-4" style="padding:4px;border:0px">
                 <div class="ui-widget ui-state-default ui-corner-all titleBar">WebglViewer</div>
                 <div id="webglControls">
-                  <input type="checkbox" id="viewerAutoStartRadio"  /><label for="viewerAutoStartRadio">AutoStart</label><br>
+                  <input type="checkbox" id="viewerAutoStartRadio"  /><label for="viewerAutoStartRadio">AutoStart</label>
+                  <input type="checkbox" id="viewerAutoRotateRadio"  /><label for="viewerAutoRotateRadio">AutoRotate</label><br>
                   <button  onclick="viewer.start()">Start Webgl viewer</button>
                   <button  onclick="viewer.stop()">Stop Webgl viewer</button>
+                   <div id="drawModeRadio">
+                      <input type="radio" id="GL_LineStrip_radio" checked="checked" name="gl_draw_options" value="3"/><label for="GL_LineStrip_radio">LineStrip</label>
+                      <input type="radio" id="GL_Lines_radio" name="gl_draw_options" value="1"/><label for="GL_Lines_radio">Lines</label>
+                      <input type="radio" id="Gl_Points_radio"  name="gl_draw_options" value="0"/><label for="Gl_Points_radio">Points</label>
+                      <input type="radio" id="Gl_Triangles_radio"  name="gl_draw_options" value="4"/><label for="Gl_Triangles_radio">Triangles</label>
+                       <input type="radio" id="Gl_TrianglesStrip_radio"  name="gl_draw_options" value="5"/><label for="Gl_TrianglesStrip_radio">TriangleStrip</label>
+                    </div>
                 </div>
                 <div class="ui-widget ui-state-default ui-corner-all titleBar" >Theme</div>
                 <div id="switcher">

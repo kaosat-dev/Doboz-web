@@ -112,9 +112,23 @@ DobozUi.prototype.onDocumentReady=function()
       function() {
 
            
-           $(document).trigger('AutoStartViewer.set',[$( "#viewerAutoStartRadio").is(':checked')]);
+           $(document).trigger('Viewer.autoStartSet',[$( "#viewerAutoStartRadio").is(':checked')]);
          
        });
+      $( "#viewerAutoRotateRadio").change( 
+      function() {
+
+           
+           $(document).trigger('Viewer.autoRotateSet',[$( "#viewerAutoRotateRadio").is(':checked')]);
+         
+       });
+      $( "#drawModeRadio").change(    function() {
+
+           
+           $(document).trigger('Viewer.drawmodeSet',[$("input[name='gl_draw_options']:checked").val()]);
+         
+       });
+      
         
 }
 DobozUi.prototype.saveSettings=function()
@@ -134,7 +148,7 @@ DobozUi.prototype.loadSettings=function()
 DobozUi.prototype.onViewerConfigured=function(config)
 {
   $( "#viewerAutoStartRadio").attr('checked', config.autoStart);
-
+   $( "#viewerAutoRotateRadio").attr('checked', config.autoRotate);
 }
 
 
@@ -160,12 +174,7 @@ DobozUi.prototype.onScanResolutionChanged=function()
   $(document).trigger('Scan.ResolutionChanged',[scanR]);
 }
 
-DobozUi.prototype.onJobsDelayChanged=function()
-{
-   var delay=$("#jobDelayField").val();
-  //fire event
-  $(document).trigger('Job.DelayChanged',[delay]);
-}
+
 
 ////////////////////////////////////////////////////////////////
 //All PRINT/SCAN file RELATED METHODS
@@ -206,9 +215,14 @@ DobozUi.prototype.onJobAdded=function(job)
   }
   
    $("#jobTable" ).append("<tr id='job_"+job.id+"' class='infoTable ui-widget-content' ><td style='width:50px'>"+ job.type+ " </td><td >"+options+" </td><td><span class='ui-icon ui-icon-close' style='width:20px' onclick=$(document).trigger('Job.Removed',"+job.id+");></span></td></tr>");
-  
 
-     
+}
+
+DobozUi.prototype.onJobsDelayChanged=function()
+{
+   var delay=$("#jobDelayField").val();
+  //fire event
+  $(document).trigger('Job.DelayChanged',[delay]);
 }
 
 DobozUi.prototype.onJobRemoved=function(jobId)
