@@ -42,11 +42,11 @@
         <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
     </div>
 
-    <h1><a href="http://github.com/kaosat-dev/Doboz">Doboz</a>
+    <h1><a href="http://github.com/kaosat-dev/Doboz">DobozWeb</a>
       <span class="small">by <a href="http://github.com/kaosat-dev">kaosat-dev</a></span></h1>
 
     <div class="description">
-      Doboz: Web client and server for reprap/repstrap/3d scanner control
+      DobozWeb: Web client and server for reprap/repstrap/3d scanner control
     </div>
 
     <h2>Dependencies</h2>
@@ -61,10 +61,19 @@
  </p>
 <h2>Install</h2>
 <p>
-- download and unzip/untar the files<br>
--depending on your specific reprap/3d printer settings you may have to alter the configuration of the reprap-manager (in core ->print server->reprap_manager.py , since it is hard coded for now) : by default the manager expects an "ok\t\n"(ok+linefeed)  on the end of each line returned back from the reprap to work correctly<br>
-- launch the server using python: test.py <br>
-- open a browser to localhost:8000/index.html to use the interface and enjoy :)</p>
+<ul>
+	<li>For now only tested with <strong><em>python 2.6</em></strong></li>
+	<li>You will need to have <em><strong>pySerial</strong></em> installed</li>
+	<li>By default , the web server is set to "Tornado" but can be easilly switched to any other web server <a href="http://bottle.paws.de/docs/dev/tutorial.html#tutorial-deployment" target="_blank">supported by Bottle</a>: go to source<em><strong>/core/print_server/print_server.py</strong></em> and change the initial include at the top , as well as , on the last line</li>
+</ul>
+run(app=testBottle, host='localhost', port=8000, server=TornadoServer)
+
+Just replace the server=TornadoServer with the one you want to use .
+<ul>
+	<li>depending on your specific reprap/3d printer settings you may have to alter the configuration of the reprap-manager (in core/print server/reprap_manager.py , since it is hard coded for now) : by default the manager expects an "ok\t\n"(ok+linefeed) on the end of each line returned back from the reprap to work correctly</li>
+	<li>launch the server using python test.py</li>
+	<li>open a browser to localhost:8000/index.html to use the interface and enjoy :)</li>
+</ul></p>
 <h2>License</h2>
 <p>GPL</p>
 <h2>Authors</h2>
