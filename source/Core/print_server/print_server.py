@@ -105,7 +105,7 @@ def printing(command):
 
        # testBottle.logger.critical("lastIndex %g, blocksize %g",lastIndex,blockSize)  
         try:
-            points=testBottle.reprapManager.positionList[lastIndex:lastIndex+blockSize]
+            points=testBottle.reprapManager.positionList[lastIndex:]
             points=",".join(str(pt) for pt in points)
             points='['+points+']'
             progress=testBottle.reprapManager.progress
@@ -116,6 +116,13 @@ def printing(command):
             testBottle.logger.critical("error in getting print progress %s",str(inst))
         #data={"progress":testBottle.reprapManager.progress,"positions":str(testBottle.reprapManager.positionList),"lastCommand":testBottle.reprapManager.lastLine or "","file":os.path.basename(testBottle.reprapManager.sourcePath)}
         #response=callback+"("+str(data)+")"
+    elif command=="status":
+        try:
+            data={"jobType":'print',"progress":testBottle.reprapManager.progress,"lastCommand":testBottle.reprapManager.lastLine or ""}
+            response=callback+"("+str(data)+")"
+            testBottle.logger.info("response %s",str(response))  
+        except Exception as inst:
+            testBottle.logger.info("error in getting scan status  %s",str(inst))
     elif command=="manual":
         try:     
             gcode=request.GET.get('gcode', '').strip()
@@ -153,13 +160,7 @@ def scanning(command):
             testBottle.reprapManager.stop()
         except Exception as inst:
             testBottle.logger.info("error in stopping scan %s",str(inst))
-    elif command=="status":
-        try:
-            data={"progress":testBottle.reprapManager.progress,"lastCommand":testBottle.reprapManager.lastLine or ""}
-            response=callback+"("+str(data)+")"
-            testBottle.logger.info("response %s",str(response))  
-        except Exception as inst:
-            testBottle.logger.info("error in getting scan status  %s",str(inst))
+    
     elif command=="progress":
         lastIndex=int(request.GET.get('LastIndex', '').strip())
         blockSize=int(request.GET.get('blockSize', '').strip())
@@ -187,17 +188,31 @@ def download(filename):
 
 @testBottle.route('/commands/:command' , method='GET')
 def generalCommands(command):
-    testBottle.reprapManager.sendText("M105")
-    testBottle.reprapManager.sendText("M143")
     callback=request.GET.get('callback', '').strip()
-    response=callback+"()"
-    try:
-       
-        data={"headTemp":testBottle.reprapManager.headTemp,"bedTemp":testBottle.reprapManager.bedTemp,"lastCommand":testBottle.reprapManager.lastLine or ""}
-        response=callback+"("+str(data)+")"
-    except Exception as inst:
-        testBottle.logger.info("error in getting machine status %s",str(inst))
-    
+    if command == "machineStatus":
+        testBottle.reprapManager.sendText("M105")
+        testBottle.reprapManager.sendText("M143")
+        
+        response=callback+"()"
+        try:
+           
+            data={"headTemp":testBottle.reprapManager.headTemp,"bedTemp":testBottle.reprapManager.bedTemp,"lastCommand":testBottle.reprapManager.lastLine or ""}
+            response=callback+"("+str(data)+")"
+        except Exception as inst:
+            testBottle.logger.info("error in getting machine status %s",str(inst))
+    elif command=="jobStatus":
+        try:
+            data={"jobType":testBottle.reprapManager.mode,"progress":testBottle.reprapManager.progress,"lastCommand":testBottle.reprapManager.lastLine or ""}
+            if testBottle.reprapManager.mode=="scan":
+                data["width"]=testBottle.reprapManager.pointCloudBuilder.width
+                data["height"]=testBottle.reprapManager.pointCloudBuilder.length
+                data["resolution"]=testBottle.reprapManager.pointCloudBuilder.precision
+            elif testBottle.reprapManager.mode=="print":
+                data["file"]=os.path.basename(testBottle.reprapManager.sourcePath)
+            response=callback+"("+str(data)+")"
+            testBottle.logger.critical("job statusresponse %s",str(response))  
+        except Exception as inst:
+            testBottle.logger.critical("error in getting scan status  %s",str(inst))
     return response
 
 @testBottle.route('/longpolling/:command' , method='GET')
@@ -236,4 +251,4 @@ def server_static(path):
 
 """"""""""""""""""""""""""""""""""""
 def start_webServer():
-    run(app=testBottle, host='192.168.0.10', port=8000, server=TornadoServer)
+    run(app=testBottle, host='192.168.0.11', port=8000, server=TornadoServer)

@@ -62,6 +62,9 @@ class Mesh(object):
 
 class PointCloudBuilder(object):
     def __init__(self,precision,width,length):
+        self.width=width
+        self.length=length
+        self.precision=precision
         self.xOffset=precision
         self.yOffset=precision
         self.pointCloud=PointCloud(width,length)

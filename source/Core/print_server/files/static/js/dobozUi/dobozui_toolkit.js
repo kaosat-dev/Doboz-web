@@ -181,16 +181,19 @@ DobozUi.prototype.onScanResolutionChanged=function()
 //TODO : perhaps roll these two methods into one
 DobozUi.prototype.onFileListRecieved=function(files)
 {
+  $("#fileTable").find("tr:gt(0)").remove();
   var date="";
    for(var i=0;i<files.length;i++)
   {
    $("#fileTable" ).append("<tr id='file_"+i+"' scope='row' class=' ui-widget-content' onmousedown= $(document).trigger('Job.Added',[{'type':'print','file':'"+files[i]+"'}]);><td >"+ files[i]+ " </td><td >"+date+" </td><td style='width:50px'><span class='ui-icon ui-icon-close' style='width:20px' onclick=$(document).trigger('File.Removed',"+i+");></span></td></tr>");
   }
+
+  
 }
 
 DobozUi.prototype.onScanListRecieved=function(scans)
 {
-
+   $("#scanTable").find("tr:gt(0)").remove();
    var date="";
    for(var i=0;i<scans.length;i++)
   {

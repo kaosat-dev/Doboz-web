@@ -1,6 +1,6 @@
 function FileHandler()
 {
-  this.mainUrl="http://192.168.0.10:8000/";
+  this.mainUrl="http://192.168.0.11:8000/";
   this.availableFiles=[];
   this.uploadTimer=null; 
 }
@@ -94,16 +94,20 @@ FileHandler.prototype.UploadFile=function()
 FileHandler.prototype.getUploadProgress=function()
 {
   var self = this; 
-  self.fetchData(this.mainUrl+"uploadProgress",this.UploadProgressRecieved);
+  this.fetchData(this.mainUrl+"uploadProgress",function (response){self.UploadProgressRecieved(response)});
+  
+  
 }
 FileHandler.prototype.UploadProgressRecieved=function(response)
 {
+  console.log(this)
   progress=response.progress;
   $("#uploadProgressBar" ).progressbar( "option", "value", progress );
   if( progress==100)
   {
     clearInterval(this.uploadTimer);
-    setTimeout(function(){ $("#uploadProgress").hide();}
+    this.getAvailableFiles();
+    setTimeout(function(){ $("#uploadProgress").hide()}
       ,1000);
   }
 }

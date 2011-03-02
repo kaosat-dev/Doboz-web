@@ -112,7 +112,7 @@ class ReprapManager(object):
         self.recoveryMode=False
         self.isPaused=True
         self.pauseRequested=False
-        self.mode="Print" #can be scan or print
+        self.mode="print" #can be scan or print
        
         self.gcodeSuffix="\n"
         self.totalLines=1
@@ -188,7 +188,7 @@ class ReprapManager(object):
             self.logger.critical("Starting")
             if self.isStarted:#is the system already running?
                 self.startTime=time.time() 
-                if self.mode=="Print":
+                if self.mode=="print":
                     self.send_nextLine()
                 else:
                     self.do_scan_step()
@@ -205,6 +205,7 @@ class ReprapManager(object):
             self.source.close()
         except:
             pass
+        self.progress=100
         self.isPaused=True
         self.isStarted=False
         #self.totalTime+=time.time()-self.startTime
@@ -233,7 +234,7 @@ class ReprapManager(object):
         self.sendText("G21")
         self.sendText("G90")
         self.sendText("G92")
-        self.mode="Scan"
+        self.mode="scan"
         self.isPaused=False
         
         ptBld=self.pointCloudBuilder.currentPoint
@@ -330,7 +331,7 @@ class ReprapManager(object):
     """
     def data_recieved(self,args,kargs):
         self.logger.info("event recieved from reprap %s",str(kargs))
-        if self.mode=="Print":
+        if self.mode=="print":
             if self.reconnectionCommand and self.isStarted:
                 if self.reconnectionCommand in kargs:
                     print ("reconnected command found")
@@ -416,7 +417,7 @@ class ReprapManager(object):
     and layer count, sets everything up, and sends adapted events
     """    
     def set_sourcePath(self,sourcePath): 
-        self.mode="Print"
+        self.mode="print"
         self.logger.critical("setting sourcePath: %s",sourcePath)
         self.sourcePath=sourcePath  
         self.stop()
@@ -488,29 +489,32 @@ class ReprapManager(object):
     last loaded gcode file and the last send gcode line from the log file
     """
     def set_sourcePath_fromLog(self):
-        self.logFile=open("log.txt",'r')
-        number = Word(nums)
-        #parse last filePath and lineNumber
-        path=Dict(OneOrMore(Group("path"+"="+SkipTo( "," | stringEnd ))))
-        lastline=Dict(OneOrMore(Group("line"+'='+ number)))
-       
-        tmp=path+Optional(",")+Optional(lastline)
-        ln=self.logFile.readline()
-        params=tmp.parseString(ln).asDict()
-        
-        self.logFile.close()    
-        self.recoveryMode=True
         try:
-            self.currentLine=eval(params["line="]) 
-            #skip one line : it is better to lose one command than loose the print
-            self.currentLine+=1
+            self.logFile=open("log.txt",'r')
+            number = Word(nums)
+            #parse last filePath and lineNumber
+            path=Dict(OneOrMore(Group("path"+"="+SkipTo( "," | stringEnd ))))
+            lastline=Dict(OneOrMore(Group("line"+'='+ number)))
+           
+            tmp=path+Optional(",")+Optional(lastline)
+            ln=self.logFile.readline()
+            params=tmp.parseString(ln).asDict()
+            
+            self.logFile.close()    
+            self.recoveryMode=True
+            try:
+                self.currentLine=eval(params["line="]) 
+                #skip one line : it is better to lose one command than loose the print
+                self.currentLine+=1
+            except:
+                self.currentLine=0
+            self.set_sourcePath(params["path="])
+            
+            self.events.OnPathSet(self,params["path="])
+            
+            self.recoveryMode=False
         except:
-            self.currentLine=0
-        self.set_sourcePath(params["path="])
-        
-        self.events.OnPathSet(self,params["path="])
-        
-        self.recoveryMode=False
+            pass
 
     
         

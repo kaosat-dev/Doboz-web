@@ -2,8 +2,7 @@
 //Class for managing a reprap machine
 function ReprapMgr() 
 {
-    this.mainUrl="http://192.168.0.10:8000/";
-    this.currentMode = 'scan';
+    this.mainUrl="http://192.168.0.11:8000/";
     this.isJobPaused=false;
     this.isJobStarted=false;
     this.timer=null;
@@ -107,7 +106,7 @@ ReprapMgr.prototype.loadSettings=function()
           
           this.isJobPaused=false;
           self=this;
-          this.fetchData(this.mainUrl+this.currentMode+"commands/startpause",function (response){self.genericSuccessHandler(response)});  
+          this.fetchData(this.mainUrl+this.currentJob.type+"commands/startpause",function (response){self.genericSuccessHandler(response)});  
            this.timer=setInterval(function()
             { 
               self.getJobProgressData(); 
@@ -116,7 +115,7 @@ ReprapMgr.prototype.loadSettings=function()
         else
         {
           var self = this; 
-          this.fetchData(this.mainUrl+this.currentMode+"commands/startpause",function (response){self.genericSuccessHandler(response)});  
+          this.fetchData(this.mainUrl+this.currentJob.type+"commands/startpause",function (response){self.genericSuccessHandler(response)});  
           this.isJobPaused=true;
           clearInterval(this.timer);
         }
@@ -132,10 +131,9 @@ ReprapMgr.prototype.loadSettings=function()
             this.currentJob=this.jobs.shift();
             
             this.currentJob.locked=true;
-            this.currentMode=this.currentJob.type;
             this.lastPositions=[];
             this.lastPositionIndex=0;
-            if(this.currentMode=="print")
+            if(this.currentJob.type=="print")
             {
                 params="?fileName="+this.currentJob.file;
             }
@@ -148,7 +146,7 @@ ReprapMgr.prototype.loadSettings=function()
                 //fire event to signal job is getting started
                 $(document).trigger('Job.Started',[this.currentJob]);
                 var self = this; 
-                this.fetchData(this.mainUrl+this.currentMode+"commands/start"+params,function (response){self.genericSuccessHandler(response)});  
+                this.fetchData(this.mainUrl+this.currentJob.type+"commands/start"+params,function (response){self.genericSuccessHandler(response)});  
                 
                 this.timer=setInterval(function()
                 { 
@@ -167,7 +165,7 @@ ReprapMgr.prototype.loadSettings=function()
     ReprapMgr.prototype.stopJob=function () 
     { 
         var self = this; 
-        this.fetchData(this.mainUrl+this.currentMode+"commands/stop",function (response){self.genericSuccessHandler(response)});   
+        this.fetchData(this.mainUrl+this.currentJob.type+"commands/stop",function (response){self.genericSuccessHandler(response)});   
         clearInterval(this.timer);
           this.isJobStarted=false;
           this.isJobPaused=false;
@@ -190,7 +188,7 @@ ReprapMgr.prototype.loadSettings=function()
     {
           //checks if a print/scan is already in progress
            var self = this; 
-           this.fetchData(this.mainUrl+this.currentMode+"commands/status",function (response){self.onJobStatusRecieved(response)});     
+           this.fetchData(this.mainUrl+"commands/jobStatus",function (response){self.onJobStatusRecieved(response)});     
     }
     
     ReprapMgr.prototype.onJobStatusRecieved=function(response)
@@ -204,9 +202,15 @@ ReprapMgr.prototype.loadSettings=function()
           if(jobType=="print")
           {
               file=response.file;
-              this.selectedFile=file;
+              this.currentJob={'type':'print','file':file};
+                       
           }
-         
+          else if (jobType=="scan")
+          {
+            this.currentJob={"type":"scan","width":response.width,"height":response.height,"resolution":response.resolution};
+           
+          }
+           $(document).trigger('Job.Added',[this.currentJob]);  
          var self=this;
           this.timer=setInterval(function()
           { 
@@ -230,7 +234,7 @@ ReprapMgr.prototype.loadSettings=function()
     {
           //checks if a print/scan is already in progress
           var self = this; 
-          self.fetchData(this.mainUrl+this.currentMode+"commands/progress?LastIndex="+this.lastPositionIndex+"&blockSize="+this.streamBlockSize,function (response){self.onJobProgressDataRecieved(response)});     
+          self.fetchData(this.mainUrl+this.currentJob.type+"commands/progress?LastIndex="+this.lastPositionIndex+"&blockSize="+this.streamBlockSize,function (response){self.onJobProgressDataRecieved(response)});     
     }
     
     ReprapMgr.prototype.onJobProgressDataRecieved=function(response)
