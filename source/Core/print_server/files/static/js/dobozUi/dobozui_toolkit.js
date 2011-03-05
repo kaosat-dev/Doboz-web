@@ -3,6 +3,7 @@ function DobozUi()
     this.defaultScanWidth=1;
     this.defaultScanHeight=1;
     this.defaultScanRes=1;
+    this.firstStart=true;
 }
 
 DobozUi.prototype.onDocumentReady=function()

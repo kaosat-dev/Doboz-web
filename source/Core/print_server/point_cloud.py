@@ -75,7 +75,6 @@ class PointCloudBuilder(object):
         self.columnIndex=0
         self.columns=int(width/precision)
          
-        print("self.rows",self.rows,"self.columnsm ",self.columns)
         self.forward=True       
         self.currentPoint=Point(0,0,0)
         

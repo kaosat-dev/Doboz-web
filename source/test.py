@@ -1,4 +1,5 @@
 import os
+import socket
 
 
 from Core.print_server.print_server import *
@@ -17,8 +18,6 @@ reprapManager.init()
 testBottle.reprapManager=reprapManager
 testBottle.lineparseEventRecieved=False
 testBottle.lastRecievedLine=""
-
-
 
 
 

@@ -1,6 +1,6 @@
-function FileHandler()
+function FileHandler(mainUrl)
 {
-  this.mainUrl="http://192.168.0.11:8000/";
+  this.mainUrl=mainUrl;
   this.availableFiles=[];
   this.uploadTimer=null; 
 }

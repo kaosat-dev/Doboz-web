@@ -4,13 +4,13 @@ import sys
 import time
 
 
-from bottle import Bottle, route, run
-from bottle import send_file, redirect, abort, request, response
+from bottle import Bottle, route, run, send_file, redirect, abort, request, response 
 from bottle import TornadoServer
 import bottle
 
 from reprap_manager import ReprapManager
 from point_cloud import PointCloudBuilder,PointCloud,Point
+import socket
 
 
 
@@ -19,11 +19,11 @@ testBottle = Bottle()
 testBottle.path=os.path.join(os.path.abspath("."),"Core","print_server")
 testBottle.logger=logging.getLogger("Doboz.Core.WebServer")
 testBottle.reprapManager=None
-
-
-
 testBottle.uploadProgress=0
 
+
+
+        
 @testBottle.route('/upload', method='POST')
 def do_upload():
     
@@ -251,4 +251,9 @@ def server_static(path):
 
 """"""""""""""""""""""""""""""""""""
 def start_webServer():
-    run(app=testBottle, host='192.168.0.11', port=8000, server=TornadoServer)
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(('google.com', 0))
+    hostIp=s.getsockname()[0]
+    testBottle.logger.critical("Server Started, listening on  %s:8000",str(hostIp))
+    testBottle.host=hostIp+':8000'
+    run(app=testBottle, host=hostIp, port=8000, server=TornadoServer)

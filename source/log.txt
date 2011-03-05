@@ -1,1 +1,1 @@
-path=/home/ckaos/data/Projects/Doboz/source/Core/print_server/files/machine/printFiles/rack_herringbone_export_dummy.gcode, line=657
+path=/home/ckaos/data/Projects/Doboz/source/Core/print_server/files/machine/printFiles/rack_herringbone_small_export.gcode, line=12

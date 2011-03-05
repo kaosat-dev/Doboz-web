@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////
 //Class for managing a reprap machine
-function ReprapMgr() 
+function ReprapMgr(mainUrl) 
 {
-    this.mainUrl="http://192.168.0.11:8000/";
+    this.mainUrl=mainUrl;
     this.isJobPaused=false;
     this.isJobStarted=false;
     this.timer=null;
