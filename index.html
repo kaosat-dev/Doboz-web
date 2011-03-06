@@ -81,6 +81,7 @@
                   <a href=" http://www.michaelvanderheeren.be/?p=382">Absolution: Jquery Ui Theme</a><br></p>
 <h2>Install</h2>
 <p>
+UPDATED 03/05/2011 !
 <ul>
 	<li>For now only tested with <strong><em>python 2.6</em></strong></li>
 	<li>You will need to have <em><strong>pySerial</strong></em> installed</li>
@@ -92,7 +93,8 @@ Just replace the server=TornadoServer with the one you want to use .
 <ul>
 	<li>depending on your specific reprap/3d printer settings you may have to alter the configuration of the reprap-manager (in core/print server/reprap_manager.py , since it is hard coded for now) : by default the manager expects an "ok\t\n"(ok+linefeed) on the end of each line returned back from the reprap to work correctly</li>
 	<li>launch the server using python test.py</li>
-	<li>open a browser to localhost:8000/index.html to use the interface and enjoy :)</li>
+        <li>copy the ip displayed when starting the server in the line : Server Started, listening on SERVER_IP:8000</li>
+	<li>open a browser and paste the above ip : http://SERVER_IP:8000/index.html to use the interface and enjoy :)</li>
 </ul></p>
 <h2>License</h2>
 <p>GPL</p>
