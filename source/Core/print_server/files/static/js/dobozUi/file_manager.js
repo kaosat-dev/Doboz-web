@@ -1,10 +1,10 @@
-function FileHandler(mainUrl)
+function FileManager(mainUrl)
 {
   this.mainUrl=mainUrl;
   this.availableFiles=[];
   this.uploadTimer=null; 
 }
-FileHandler.prototype.fetchData=function(dataUrl,successCallback,errorCallback)
+FileManager.prototype.fetchData=function(dataUrl,successCallback,errorCallback)
     {
 
             response=$.ajax({
@@ -16,37 +16,44 @@ FileHandler.prototype.fetchData=function(dataUrl,successCallback,errorCallback)
                     cache:false
                 });
     }
-    FileHandler.prototype.genericSuccessHandler=function (response)
+    FileManager.prototype.genericSuccessHandler=function (response)
     {
         console.log("Ajax sucess "+response)     
     }
-    FileHandler.prototype.genericErrorHandler=function (response)
+    FileManager.prototype.genericErrorHandler=function (response)
     {
         console.log("Ajax error "+response)
     }  
 
 ////////////////////////////////////////////////////////////////
+//Initial retrieval of data
+FileManager.prototype.init=function ()
+{
+  this.getAvailablePrints();
+  this.getAvailableScans();
+}
 //For Printable , Gcode file retrieval
-FileHandler.prototype.getAvailableFiles=function ()
+FileManager.prototype.getAvailablePrints=function ()
 {
   var self = this; 
-  this.fetchData(this.mainUrl+"gcodeFiles",function (response){self.availableFilesRecieved(response)});   
+  this.fetchData(this.mainUrl+"filecommands/get_printFiles",function (response){self.availablePrintsRecieved(response)}); 
+  
 }
 //
-FileHandler.prototype.availableFilesRecieved=function(response)
+FileManager.prototype.availablePrintsRecieved=function(response)
 {
   this.availableFiles=response.files
   $(document).trigger('Files.Recieved',[this.availableFiles]);
 }
 ////////////////////////////////////////////////////////////////
 //For Scanned pointcloud file retrieval
-FileHandler.prototype.getAvailableScans=function ()
+FileManager.prototype.getAvailableScans=function ()
 {
   var self = this; 
-  this.fetchData(this.mainUrl+"scanFiles",function (response){self.scanFilesRecieved(response)});   
+  this.fetchData(this.mainUrl+"filecommands/get_scanFiles",function (response){self.scanFilesRecieved(response)});   
 }
 
-FileHandler.prototype.scanFilesRecieved=function(response)
+FileManager.prototype.scanFilesRecieved=function(response)
 {
   this.scanFiles=response.files
   $(document).trigger('Files.ScansRecieved',[this.scanFiles]);
@@ -56,7 +63,7 @@ FileHandler.prototype.scanFilesRecieved=function(response)
 //FILE UPLOAD METHODS
 
 //Basic file extension validation
-FileHandler.prototype.validateExtension=function(filePath)
+FileManager.prototype.validateExtension=function(filePath)
 {
   var ext = filePath.substring(filePath.lastIndexOf('.') + 1).toLowerCase();
   if(ext!="gcode")
@@ -67,13 +74,13 @@ FileHandler.prototype.validateExtension=function(filePath)
 }
 
 //TODO: Move this to UI
-FileHandler.prototype.resetUploadProgress=function ()
+FileManager.prototype.resetUploadProgress=function ()
 {
   $("#uploadProgressBar" ).progressbar( "option", "value", 0 );
 }
 ////////////////////////////////////////////////////////////////
 //File upload
-FileHandler.prototype.UploadFile=function()
+FileManager.prototype.UploadFile=function()
 {
    if(this.validateExtension($("input[name=datafile]").val()))
    {
@@ -91,14 +98,14 @@ FileHandler.prototype.UploadFile=function()
 }
 ////////////////////////////////////////////////////////////////
 //For retrieval of file upload progress
-FileHandler.prototype.getUploadProgress=function()
+FileManager.prototype.getUploadProgress=function()
 {
   var self = this; 
   this.fetchData(this.mainUrl+"uploadProgress",function (response){self.UploadProgressRecieved(response)});
   
   
 }
-FileHandler.prototype.UploadProgressRecieved=function(response)
+FileManager.prototype.UploadProgressRecieved=function(response)
 {
   console.log(this)
   progress=response.progress;

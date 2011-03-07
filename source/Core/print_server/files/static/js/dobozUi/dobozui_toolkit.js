@@ -8,6 +8,7 @@ function DobozUi()
 
 DobozUi.prototype.onDocumentReady=function()
 {
+    
     $("#jobProgressBar").progressbar({ value: 0 });
     $("#uploadProgressBar").progressbar({ value: 0 });
     //////////////////////////////////////////////////////
@@ -130,20 +131,44 @@ DobozUi.prototype.onDocumentReady=function()
          
        });
       
-        
+      if(this.firstStart)
+      {
+       $("#container")
+              .notify({ custom:false })
+              .notify("create", {
+                 title:"Start Notification", 
+                 text:"Welcome to the 'Doboz' experimental web gui for repraps/repraps<br>Please visit <a href='http://www.kaosat.net' target='blank'>www.kaosat.net</a> and <a href='http://github.com/kaosat-dev/Doboz' target='blank'> http://github.com/kaosat-dev/Doboz</a> for more info" },
+                 { custom:true ,expires: false,speed: 500});
+                 
+                 viewer.loadSettings();
+                 dobozUi.loadSettings();
+           this.firstStart=false;
+           $.cookie({ 'dobozUi_firstStart': false});  
+       }
+                 
+   ////////////
+      
+}
+
+DobozUi.prototype.init=function()
+{
+  this.loadSettings();
+  this.onDocumentReady();
 }
 DobozUi.prototype.saveSettings=function()
 {
   $.cookie({ 'reprapMgr_defaultScanWidth': this.defaultScanWidth});
   $.cookie({ 'reprapMgr_defaultScanHeight': this.defaultScanHeight});
   $.cookie({ 'reprapMgr_defaultScanRes': this.defaultScanRes});
+  
 }
 DobozUi.prototype.loadSettings=function()
 {
-  this.defaultScanWidth=eval($.cookie('reprapMgr_defaultScanWidth'))
-  this.defaultScanHeight=eval($.cookie('reprapMgr_defaultScanWidth'))
-  this.defaultScanRes=eval($.cookie('reprapMgr_defaultScanRes'))
-  $(document).trigger('DobozUi.Configured',[ {'defaultScanWidth':this.defaultScanWidth,'defaultScanHeight':this.defaultScanHeight,'defaultScanRes':this.defaultScanRes}]);
+  this.firstStart=eval($.cookie('dobozUi_firstStart'))
+  //this.defaultScanWidth=eval($.cookie('reprapMgr_defaultScanWidth'))
+  //this.defaultScanHeight=eval($.cookie('reprapMgr_defaultScanWidth'))
+  //this.defaultScanRes=eval($.cookie('reprapMgr_defaultScanRes'))
+  //$(document).trigger('DobozUi.Configured',[ {'defaultScanWidth':this.defaultScanWidth,'defaultScanHeight':this.defaultScanHeight,'defaultScanRes':this.defaultScanRes}]);
 }
 
 DobozUi.prototype.onViewerConfigured=function(config)
@@ -186,7 +211,7 @@ DobozUi.prototype.onFileListRecieved=function(files)
   var date="";
    for(var i=0;i<files.length;i++)
   {
-   $("#fileTable" ).append("<tr id='file_"+i+"' scope='row' class=' ui-widget-content' onmousedown= $(document).trigger('Job.Added',[{'type':'print','file':'"+files[i]+"'}]);><td >"+ files[i]+ " </td><td >"+date+" </td><td style='width:50px'><span class='ui-icon ui-icon-close' style='width:20px' onclick=$(document).trigger('File.Removed',"+i+");></span></td></tr>");
+   $("#fileTable" ).append("<tr id='file_"+i+"' scope='row' class=' ui-widget-content' onmousedown= $(document).trigger('Job.Added',[{'type':'print','file':'"+files[i]+"'}]);><td >"+ files[i]+ " </td><td >"+date+" </td><td style='width:50px'><span class='ui-icon ui-icon-close' style='width:20px' onclick=$(document).trigger('File.Removed',"+"'file_"+i+"');></span></td></tr>");
   }
 
   

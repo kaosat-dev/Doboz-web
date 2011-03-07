@@ -46,28 +46,31 @@ def upload_progress():
      response=callback+"("+str(data)+")"
      return response
 
-@testBottle.route('/gcodeFiles' , method='GET')
-def get_gcodeFiles():
-    testBottle.logger.info("fetching gcode files")
-    callback=request.GET.get('callback', '').strip()
-    testBottle.logger.info("callback %s",str(callback))
 
-    fileList=os.listdir(os.path.join(testBottle.path,"files","machine","printFiles"))
-    data={"files": fileList}
-    response=callback+"("+str(data)+")"
+
+@testBottle.route('/filecommands/:command' , method='GET')
+def printandscanFiles(command):
+    testBottle.logger.critical("handling file commands")
+    callback=request.GET.get('callback', '').strip()
+    response=callback+"()"
+    
+    if command=="get_printFiles":
+        fileList=os.listdir(os.path.join(testBottle.path,"files","machine","printFiles"))
+        data={"files": fileList}
+        response=callback+"("+str(data)+")"
+    elif command=="get_scanFiles":
+        fileList=os.listdir(os.path.join(testBottle.path,"files","machine","scanFiles"))
+        data={"files": fileList}
+        response=callback+"("+str(data)+")"
+    elif command=="delete_scanFile":
+        fileName=request.GET.get('fileName', '').strip()
+        filePath=os.path.join(testBottle.path,"files","machine","printFiles",fileName)
+        os.remove(filePath)
+    elif command=="delete_printFile":
+        fileName=request.GET.get('fileName', '').strip()
+        filePath=os.path.join(testBottle.path,"files","machine","scanFiles",fileName)
+        os.remove(filePath)
     #testBottle.logger.info("response %s",str(response))
-    return response
-
-@testBottle.route('/scanFiles' , method='GET')
-def get_scanFiles():
-    testBottle.logger.info("fetching scan files")
-    callback=request.GET.get('callback', '').strip()
-    testBottle.logger.info("callback %s",str(callback))
-
-    fileList=os.listdir(os.path.join(testBottle.path,"files","machine","scanFiles"))
-    data={"files": fileList}
-    response=callback+"("+str(data)+")"
-    testBottle.logger.info("response %s",str(response))
     return response
 
 

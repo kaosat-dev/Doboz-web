@@ -114,8 +114,10 @@
     <script  type="text/javascript">
      
       var jobId=0;
-      var fileHandler=new FileHandler("http://"+window.location.host+"/");     
-      var reprapMgr=new ReprapMgr("http://"+window.location.host+"/"); 
+      //typically , singleton, since the files are centralized
+      var fileMgr=new FileManager("http://"+window.location.host+"/"); 
+      //typically one per reprap : for now , only one allowed    
+      var reprapMgr=new ReprapManager("http://"+window.location.host+"/"); 
 
       var dobozUi=new DobozUi();
       var viewer=new WebglViewer();
@@ -176,7 +178,7 @@
           //brutish method
           if(job.type=='scan')
           {
-            fileHandler.getAvailableScans();
+            fileMgr.getAvailableScans();
           }
           
           dobozUi.onJobFinished(job);
@@ -208,6 +210,16 @@
        $(document).bind("Files.ScansRecieved", function(e, scans)
       {
         dobozUi.onScanListRecieved(scans);
+       });
+        $(document).bind("File.DeletionRequested", function(e, file)
+      {
+        //dobozUi.onFileRemoved(file);
+        alert(file);
+       });
+        $(document).bind("File.Removed", function(e, file)
+      {
+        //dobozUi.onFileRemoved(file);
+        alert(file);
        });
        
       
@@ -260,35 +272,15 @@
       (
            function() 
            {
-              dobozUi.onDocumentReady();
-              reprapMgr.init();
-             
-              fileHandler.getAvailableFiles();
-              fileHandler.getAvailableScans();
-              
                $("#container")
               .notify({ custom:false })
-              .notify("create", {
-                 title:"Start Notification", 
-                 text:"Welcome to the 'Doboz' experimental web gui for repraps/repraps<br>Please visit <a href='http://www.kaosat.net' target='blank'>www.kaosat.net</a> and <a href='http://github.com/kaosat-dev/Doboz' target='blank'> http://github.com/kaosat-dev/Doboz</a> for more info" },
-                 { custom:true ,expires: false,speed: 500});
-                 
-                 viewer.loadSettings();
-                 dobozUi.loadSettings();
-              /*var w=$("#viewerBlock").width();
-              var h=$("#viewerBlock").height();
               
-              var size=0;
-              if( w>h)
-              {
-              size=h;
-              }
-              else
-              {
-                size=w;
-              }
-              $("#glcanvas").width(size);
-              $("#glcanvas").height(size);*/
+              dobozUi.init();
+              fileMgr.init();
+              reprapMgr.init();
+              
+              
+              
               viewer.canvas=document.getElementById("glcanvas");
               if (viewer.autoStart)
               {
@@ -481,8 +473,8 @@
                 <small>
                 <div >
                 Add file:
-                <form action="/upload" method="post" enctype="multipart/form-data" target="uploadTarget" onsubmit="fileHandler.UploadFile()" name="uploadForm">
-                  <input name="datafile" type="file" onclick="fileHandler.resetUploadProgress()" />
+                <form action="/upload" method="post" enctype="multipart/form-data" target="uploadTarget" onsubmit="fileMgr.UploadFile()" name="uploadForm">
+                  <input name="datafile" type="file" onclick="fileMgr.resetUploadProgress()" />
                   <button  onclick="submit()">Send</button>
                   <iframe id="uploadTarget" src="" style="width:0px;height:0px;visibility:hidden"> 
                 </iframe>
