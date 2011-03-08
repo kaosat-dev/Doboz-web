@@ -12,9 +12,6 @@ from Core.Tools.Serial.queuable_serial import serial
 from point_cloud import PointCloudBuilder,Point
 
 
-class ReprapManagerEvents(Events):
-    __events__=('OnLineParsed','OnTotalLinesSet','OnTotalLayersSet','OnPathSet','OnPositionChanged','OnScanHeightRecieved' )
-    
 class GCodeParser(object):
     def convertIntegers(self,tokens):
         return int(tokens[0])
@@ -66,6 +63,11 @@ class GCodeParser(object):
 #        except:
 #            pass
         
+
+
+class ReprapManagerEvents(Events):
+    __events__=('OnLineParsed','OnTotalLinesSet','OnTotalLayersSet','OnPathSet','OnPositionChanged','OnScanHeightRecieved' )
+    
 
 class ReprapManager(object):
     def __init__(self,serl=None):

@@ -193,8 +193,16 @@ ReprapManager.prototype.loadSettings=function()
     
     ReprapManager.prototype.onJobStatusRecieved=function(response)
     {
+        jobs=response.tasks;
+
+         for(var i=0;i<jobs.length;i++)
+        {
+          truc=eval(jobs[i])
+          alert(truc)
+          alert(truc.type)
+        }
+      
         progress=response.progress;
-        lastCommand=response.lastCommand;
         jobType=response.jobType;
         if(progress>0 && progress<100)
         {

@@ -2,21 +2,31 @@ import logging
 import os
 import sys
 import time
-
+import datetime
 
 from bottle import Bottle, route, run, send_file, redirect, abort, request, response 
 from bottle import TornadoServer
 import bottle
 
-from reprap_manager import ReprapManager
+#from reprap_manager import ReprapManager
 from point_cloud import PointCloudBuilder,PointCloud,Point
 import socket
 
 
+from Core.automation.print_task import PrintTask
+from Core.automation.scan_task import ScanTask
 
 
 testBottle = Bottle()
 testBottle.path=os.path.join(os.path.abspath("."),"Core","print_server")
+printFilesPath=os.path.join(testBottle.path,"files","machine","printFiles")
+scanFilesPath=os.path.join(testBottle.path,"files","machine","scanFiles")
+if not os.path.exists(printFilesPath):
+    os.mkdir(printFilesPath)
+if not os.path.exists(scanFilesPath):
+    os.mkdir(scanFilesPath)
+
+
 testBottle.logger=logging.getLogger("Doboz.Core.WebServer")
 testBottle.reprapManager=None
 testBottle.uploadProgress=0
@@ -82,39 +92,38 @@ def printing(command):
     
     if command=="start":
         testBottle.logger.critical("User Requested print")
-        if not testBottle.reprapManager.isStarted:
-            testBottle.logger.info("starting print")
-            fileName=request.GET.get('fileName', '').strip()
-            testBottle.logger.info("filename %s",fileName)
-            fileToPrint=os.path.join(testBottle.path,"files","machine","printFiles",fileName)
-            testBottle.logger.info("filename %s",fileToPrint)
-            print("pouet")
-            try:     
-                testBottle.reprapManager.set_sourcePath(fileToPrint)
-                testBottle.reprapManager.start()
-            except Exception as inst:
-                testBottle.logger.critical("error in print start %s",str(inst))
+        testBottle.logger.info("adding print task")
+        fileName=request.GET.get('fileName', '').strip()
+        testBottle.logger.info("filename %s",fileName)
+        fileToPrint=os.path.join(testBottle.path,"files","machine","printFiles",fileName)
+        testBottle.logger.info("filename %s",fileToPrint)
+        try:     
+            testBottle.reprapManager.add_task(PrintTask(filePath=fileToPrint)) 
+        except Exception as inst:
+            testBottle.logger.critical("error in print start %s",str(inst))
+                
     elif command=="startpause":
         try:
             testBottle.reprapManager.startPause()
         except Exception as inst:
-            testBottle.logger.info("error in scan startpause %s",str(inst))    
+            testBottle.logger.info("error in print startpause %s",str(inst))    
     elif command=="stop":
-        testBottle.reprapManager.stop()
-    elif command=="progress":
-        
+        try:
+            testBottle.reprapManager.stop_task()
+        except Exception as inst:
+            testBottle.logger.info("error in print stop %s",str(inst)) 
+    elif command=="progress":       
         lastIndex=int(request.GET.get('LastIndex', '').strip())
         blockSize=int(request.GET.get('blockSize', '').strip())
-
-       # testBottle.logger.critical("lastIndex %g, blocksize %g",lastIndex,blockSize)  
         try:
-            points=testBottle.reprapManager.positionList[lastIndex:]
-            points=",".join(str(pt) for pt in points)
-            points='['+points+']'
-            progress=testBottle.reprapManager.progress
-            data={"jobType":'print',"progress":progress,"positions":str(points)}
+            truc=testBottle.reprapManager.currentTask.pointCloud.points[lastIndex:]
+            truc=",".join(str(pt) for pt in truc)
+            truc='['+truc+']'
+            progress=testBottle.reprapManager.currentTask.progress
+            data={"jobType":'print',"progress":progress,"positions":str(truc)}
             response=callback+"("+str(data)+")"
-            #testBottle.logger.critical("print progress info %s",str(testBottle.reprapManager.positionList))  
+            testBottle.logger.info("response %s",str(response))  
+
         except Exception as inst:
             testBottle.logger.critical("error in getting print progress %s",str(inst))
         #data={"progress":testBottle.reprapManager.progress,"positions":str(testBottle.reprapManager.positionList),"lastCommand":testBottle.reprapManager.lastLine or "","file":os.path.basename(testBottle.reprapManager.sourcePath)}
@@ -129,7 +138,7 @@ def printing(command):
     elif command=="manual":
         try:     
             gcode=request.GET.get('gcode', '').strip()
-            testBottle.reprapManager.sendText(gcode)
+            testBottle.reprapManager.connector.send_command(gcode)
         except Exception as inst:
             testBottle.logger.critical("Failure to send manual command")
        
@@ -149,10 +158,12 @@ def scanning(command):
         height=float(request.GET.get('height', '').strip())
         scanResolution=float(request.GET.get('resolution', '').strip())
         print("width",width,"height",height,"res",scanResolution)
+        
         try:     
-            testBottle.reprapManager.scan(width,height,scanResolution)
+            testBottle.reprapManager.add_task(ScanTask(scanWidth=width,scanLength=height,resolution=scanResolution)) 
         except Exception as inst:
-            testBottle.logger.info("error in starting scan %s",str(inst))     
+            testBottle.logger.critical("error in print start %s",str(inst))
+         
     elif command=="startpause":
         try:
             testBottle.reprapManager.startPause()
@@ -160,7 +171,7 @@ def scanning(command):
             testBottle.logger.info("error in scan startpause %s",str(inst))
     elif command=="stop":
         try:
-            testBottle.reprapManager.stop()
+            testBottle.reprapManager.stop_task()
         except Exception as inst:
             testBottle.logger.info("error in stopping scan %s",str(inst))
     
@@ -169,15 +180,15 @@ def scanning(command):
         blockSize=int(request.GET.get('blockSize', '').strip())
         testBottle.logger.info("lastIndex %s",str(lastIndex))  
         try:
-            truc=testBottle.reprapManager.pointCloudBuilder.pointCloud.points[lastIndex:]
+            truc=testBottle.reprapManager.currentTask.pointCloud.points[lastIndex:]
             truc=",".join(str(pt) for pt in truc)
             truc='['+truc+']'
-            progress=testBottle.reprapManager.progress
+            progress=testBottle.reprapManager.currentTask.progress
             data={"jobType":'scan',"progress":progress,"positions":str(truc)}
             response=callback+"("+str(data)+")"
             testBottle.logger.info("response %s",str(response))  
         except Exception as inst:
-            testBottle.logger.info("error in getting scan progress %s",str(inst))
+            testBottle.logger.critical("error in getting scan progress %s",str(inst))
 
     return response
 
@@ -192,30 +203,44 @@ def download(filename):
 @testBottle.route('/commands/:command' , method='GET')
 def generalCommands(command):
     callback=request.GET.get('callback', '').strip()
+    response=callback+"()"
     if command == "machineStatus":
         testBottle.reprapManager.sendText("M105")
         testBottle.reprapManager.sendText("M143")
-        
-        response=callback+"()"
         try:
-           
             data={"headTemp":testBottle.reprapManager.headTemp,"bedTemp":testBottle.reprapManager.bedTemp,"lastCommand":testBottle.reprapManager.lastLine or ""}
             response=callback+"("+str(data)+")"
         except Exception as inst:
             testBottle.logger.info("error in getting machine status %s",str(inst))
-    elif command=="jobStatus":
+    elif command=="jobStatus_old":
         try:
-            data={"jobType":testBottle.reprapManager.mode,"progress":testBottle.reprapManager.progress,"lastCommand":testBottle.reprapManager.lastLine or ""}
-            if testBottle.reprapManager.mode=="scan":
-                data["width"]=testBottle.reprapManager.pointCloudBuilder.width
-                data["height"]=testBottle.reprapManager.pointCloudBuilder.length
-                data["resolution"]=testBottle.reprapManager.pointCloudBuilder.precision
-            elif testBottle.reprapManager.mode=="print":
-                data["file"]=os.path.basename(testBottle.reprapManager.sourcePath)
+            data={"jobType":testBottle.reprapManager.currentTask.type,"progress":testBottle.reprapManager.currentTask.progress}
+            if testBottle.reprapManager.currentTask.type=="scan":
+                data["width"]=testBottle.reprapManager.currentTask.pointCloudBuilder.width
+                data["height"]=testBottle.reprapManager.currentTask.pointCloudBuilder.length
+                data["resolution"]=testBottle.reprapManager.currentTask.pointCloudBuilder.precision
+            elif testBottle.reprapManager.currentTask.type=="print":
+                data["file"]=os.path.basename(testBottle.reprapManager.currentTask.filePath)
             response=callback+"("+str(data)+")"
             testBottle.logger.critical("job statusresponse %s",str(response))  
         except Exception as inst:
-            testBottle.logger.critical("error in getting scan status  %s",str(inst))
+            testBottle.logger.critical("error in getting job status  %s",str(inst))
+            data={"jobType":'',"progress":0}
+            response=callback+"("+str(data)+")"
+    elif command=="jobStatus":
+        testBottle.reprapManager.add_task(ScanTask(scanWidth=1,scanLength=1,resolution=1))  
+        testBottle.reprapManager.add_task(ScanTask(scanWidth=1,scanLength=1,resolution=1))  
+        testBottle.reprapManager.add_task(ScanTask(scanWidth=1,scanLength=1,resolution=1))  
+        
+       
+        try: 
+            tasks=[str(task) for task in testBottle.reprapManager.tasks]
+            data={"tasks": tasks}
+            response=callback+"("+str(data)+")"
+        except Exception as inst:
+            testBottle.logger.critical("error in getting job status  %s",str(inst))     
+            
+        testBottle.logger.critical("response %s",str(response))  
     return response
 
 @testBottle.route('/longpolling/:command' , method='GET')
