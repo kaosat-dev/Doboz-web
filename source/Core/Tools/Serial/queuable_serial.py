@@ -294,7 +294,7 @@ class serial(Thread):
         """     
         if self.isConnected: 
             try:
-                self.logger.debug("sending following data to arduino: '%s' ",(data))
+                self.logger.debug("sending following data to arduino: '%s' ",str(data))
                 self.serial.write(data)
             except OSError:
                 self.logger.critical("arduino not connected or not found on specified port")

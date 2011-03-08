@@ -16,6 +16,9 @@ class ReprapManagerEvents(Events):
     __events__=('OnLineParsed','OnTotalLinesSet','OnTotalLayersSet','OnPathSet','OnPositionChanged','OnScanHeightRecieved' )
     
 class Task(object):
+    """
+    Base class for tasks (printing , scanning etc
+    """
     def __init__(self,type=None):
         self.logger=logging.getLogger("Doboz.Core.ReprapManager.Task")
         self.logger.setLevel(logging.ERROR)
@@ -35,8 +38,232 @@ class Task(object):
         self.progres=0
         self.status="Paused"
         
+    """
+    Switches between active and inactive mode.
+    """
+    def startPause(self):
+        self.isPaused!="Paused"
+        if self.isPaused:
+            self.logger.critical("Pausing")   
+            #update elapsed time
+            self.totalTime+=time.time()-self.startTime
+        else:
+            self.logger.critical("Starting")
+            if self.isStarted:#is the system already running?
+                self.startTime=time.time() 
+                
+  
+class PrintTaskMixin(object):
+    """
+    This function sets the current sourceFile, parses it for line numbers
+    and layer count, sets everything up, and sends adapted events
+    """    
+    def set_sourcePath(self,sourcePath): 
+        self.logger.critical("setting sourcePath: %s",sourcePath)
+        self.sourcePath=sourcePath  
+        self.stop()
+        try:
+            self.source=open(self.sourcePath,"r")
+            if not self.recoveryMode:
+                self.currentLine=0
+                
+            else:
+                self.forward_toLine(self.currentLine)
+            # define grammar
+ 
+            point = Literal('.')
+            plusorminus = Literal('+') | Literal('-')
+            number = Word(nums)
+            integer = Combine( Optional(plusorminus) + number )
+            floatnumber = Combine( integer +
+                       Optional( point + Optional(number) ) +
+                       Optional( integer )
+                     )
+            
+            xcmd=Dict(OneOrMore(Group('X'+floatnumber)))
+            ycmd=Dict(OneOrMore(Group('Y'+floatnumber)))
+            zcmd=Dict(OneOrMore(Group('Z'+floatnumber)))
+            fcmd=Dict(OneOrMore(Group('Z'+floatnumber)))
+            ecmd=Dict(OneOrMore(Group('E'+floatnumber)))
+            subcmd = Literal('G1')+Optional(xcmd)+Optional(ycmd)+Optional(zcmd)+Optional(fcmd)+Optional(ecmd)
+            
+           
+            self.totalLayers=0
+            lastZ=0
+            lineIndex=self.currentLine
+            for line in self.source.readlines():          
+               try:
+                   content=subcmd.parseString(line).asDict()
+                   if eval(content['Z'])!=lastZ:
+                       self.totalLayers+=1
+                   lastZ=eval(content['Z'])
+               except:
+                   pass
+               lineIndex+=1   
+            
+            print(lineIndex)
+            self.source.close()       
+            self.totalLines=lineIndex - self.currentLine+1
+            if self.totalLayers>2:
+                self.totalLayers-=2
+
+            self.events.OnTotalLinesSet(self,str(self.totalLines))
+            self.events.OnTotalLayersSet(self,str(self.totalLayers))
+            
+            self.progressFraction=float(100/float(self.totalLines))
+            self.logger.info("totalLines  %s",str(self.totalLines))
+            self.logger.info("ProgressFraction set %s",str(self.progressFraction))
+            self.progress=0
+            
+            self.logFile=open("log.txt",'w')
+            self.logFile.write("path="+str(self.sourcePath))  
+            self.logFile.close()
+            
+        except Exception  as inst:
+            self.logger.critical("can't load file")
+            print(inst.args)
+            
+    def do_action_step(self):
+        """
+        gets the next line in the gCode file, sends it via serial, updates the logFile
+        and then increments the currentLine counter
+        """
+        try:
+            line = self.source.readline()
+            self.line=line
+        except :
+            pass
+        if line is not None:
+            text_suffixed=line+self.gcodeSuffix
+            self.serial.send_data(text_suffixed)   
+            """
+            Update the logfile with the current Line number
+            """
+            self.logFile=open("log.txt","w")
+            self.logFile.write("path="+str(self.sourcePath)+",")  
+            self.logFile.write(" ")
+            self.logFile.write("line="+str(self.currentLine))
+            self.logFile.close()
+            
+            self.logger.critical("Sent command "+ line)
+            self.events.OnLineParsed(self,line)
+            self.currentLine+=1
+            self.lastLine=line
+            
+            if (self.currentLine+1)==self.totalLines:
+                self.progress=100
+                self.isStarted=False
+            else:
+                self.progress+=self.progressFraction
+            
+            pos=self.gcodeParser.parse(line)
+            if pos:
+                try:
+                    #self.position=[pos.xcmd.value.to_eng_string(),pos.zcmd.value.to_eng_string(),pos.ycmd.value.to_eng_string()]
+                    x=pos.xcmd.value/10
+                    y=pos.ycmd.value/10
+                    z=pos.zcmd.value/10
+                    pt=Point(float(x.to_eng_string()),float(y.to_eng_string()),float(z.to_eng_string()))
+                    self.positionList.append(pt)
+                    #self.positionList.append(z.to_eng_string())
+                    #self.positionList.append(y.to_eng_string())
+                   
+                except Exception as inst:
+                    self.logger.critical("failed to add point to movement map %s",str(inst))
+            
+            
+            self.totalTime+=time.time()-self.startTime
+            self.startTime=time.time()
+            
+    def data_recieved(self,args,kargs):
+        """
+        Function that gets called each time a new serial event is recieved.
+        If the last command was confirmed, read next line frome gcode file, and 
+        send it over serial.
+        """
+        self.logger.info("event recieved from reprap %s",str(kargs))
+       
+        if self.reconnectionCommand and self.isStarted:
+            if self.reconnectionCommand in kargs:
+                print ("reconnected command found")
+                self.reconnectionCommand=None
+                self.isPaused=False
+        if not self.isPaused:
+            if "ok" in kargs or "start" in kargs:
+                self.send_nextLine()    
+       
+        if "ok" in kargs  and "M105" in kargs:
+            try:
+                self.headTemp=int(kargs.split(' ')[1])
+            except:
+                pass
+        if "ok" in kargs  and "M143" in kargs:
+            try:
+                self.bedTemp=int(kargs.split(' ')[1])
+            except:
+                pass
+            
+class ScanTaskMixin(object):
+    
+    def __init__(self,scanWidth,scanLength,resolution):
+        """Scan method """
+        self.isStarted=True
+        self.pointCloudBuilder=PointCloudBuilder(resolution,scanWidth,scanLength)
+        self.progress=0
+        totalPoints=(int(scanWidth/resolution)+1)*(int(scanLength/resolution)+1)
+        self.logger.info("Total scan points %d",totalPoints)
+        self.progressFraction=float(100.00/float(totalPoints))
+        self.logger.info("Progress Fraction set by scan to %s",str(self.progressFraction))
+
+
+        #######################
+        self.sendText("G21")
+        self.sendText("G90")
+        self.sendText("G92")
+        self.mode="scan"
+        self.isPaused=False
+        
+        ptBld=self.pointCloudBuilder.currentPoint
+        self.sendText("G1 X"+str(ptBld.x)+" Y"+str(ptBld.y))
+        
+    def do_action_step(self):
+        #move the printhead , ask for scan, wait for answer
+        if not self.pointCloudBuilder.finished:
+            self.progress+=self.progressFraction
+            ptBld=self.pointCloudBuilder.currentPoint
+            self.sendText("G1 X"+str(ptBld.x)+" Y"+str(ptBld.y))     
+        else:
+            self.progress=100
+            self.sendText("G1 X0 Y0")
+            self.pointCloudBuilder.pointCloud.save(self.pointCloudSavePath)
+            self.isStarted=False
+            self.isPaused=True 
+            
+   
+    def data_recieved(self,args,kargs):
+        """
+        Function that gets called each time a new serial event is recieved.
+        If the last command was confirmed, move to next position and get height info
+        """
+        self.logger.info("event recieved from reprap %s",str(kargs))
+        #in scan mode
+        if "ok" in kargs:
+            if "height" in kargs:  
+                height=float(kargs.split(' ')[2])
+                height=height/200
+                self.logger.info("Scan thing %s",str(height))
+                self.events.OnScanHeightRecieved(height)
+                self.pointCloudBuilder.add_point(height) 
+                if not self.isPaused:    
+                    self.do_scan_step()
+            else:
+                if not "G92" in kargs and not "G90" in kargs and not "G21" in kargs and "G1" in kargs and not self.isPaused:
+                    self.sendText("M180")     
  
 class ReprapNode(object):
+    """
+    A reprap node : hardware node (ie "Arduino or similar with attached components such as sensors and actors")
+    """
     def __init__(self):
         self.logger=logging.getLogger("Doboz.Core.ReprapManager.Task")
         self.logger.setLevel(logging.ERROR)
@@ -46,19 +273,33 @@ class ReprapNode(object):
             ch.setLevel(logging.ERROR)
             ch.setFormatter(formatter)
             self.logger.addHandler(ch) 
-            
+          
+        self.isRunning=False  
         self.connector=None 
         self.automation=None
-        self.startTime=time.time()
-        self.pointCloudBuilder=PointCloudBuilder(0.1,10,10)
-        self.pointCloudSavePath=None
         self.tasks=[]
+        
+        self.startTime=time.time()
+        
+        self.pointCloudBuilder=PointCloudBuilder()
+        #self.pointCloudBuilder.add_point_simple
         
     def set_connector(self,connector):
         self.connector=connector
 
 
-
+    """
+    Stops the current task, and skips to next one , if any
+    """
+    def stop(self):
+        self.logger.critical("Stopped")
+        try:
+            self.source.close()
+        except:
+            pass
+        self.progress=100
+        self.isPaused=True
+        self.isStarted=False
 
 class ReprapManager(object):
     def __init__(self,serl=None):
@@ -212,43 +453,10 @@ class ReprapManager(object):
         self.logger.critical("quitting")
         
     
-    """Scan method """
-    def scan(self,scanWidth,scanLength,resolution):
-        self.isStarted=True
-        self.pointCloudBuilder=PointCloudBuilder(resolution,scanWidth,scanLength)
-        self.progress=0
-        totalPoints=(int(scanWidth/resolution)+1)*(int(scanLength/resolution)+1)
-        self.logger.info("Total scan points %d",totalPoints)
-        self.progressFraction=float(100.00/float(totalPoints))
-        self.logger.info("Progress Fraction set by scan to %s",str(self.progressFraction))
+    
+        
 
-
-        #######################
-        self.sendText("G21")
-        self.sendText("G90")
-        self.sendText("G92")
-        self.mode="scan"
-        self.isPaused=False
         
-        ptBld=self.pointCloudBuilder.currentPoint
-        self.sendText("G1 X"+str(ptBld.x)+" Y"+str(ptBld.y))
-        
-        
-  
-    def do_scan_step(self):
-        #move the printhead , ask for scan, wait for answer
-        if not self.pointCloudBuilder.finished:
-            self.progress+=self.progressFraction
-            ptBld=self.pointCloudBuilder.currentPoint
-            self.sendText("G1 X"+str(ptBld.x)+" Y"+str(ptBld.y))
-            
-            
-        else:
-            self.progress=100
-            self.sendText("G1 X0 Y0")
-            self.pointCloudBuilder.pointCloud.save(self.pointCloudSavePath)
-            self.isStarted=False
-            self.isPaused=True
 
     
             
@@ -258,57 +466,7 @@ class ReprapManager(object):
     def sendText(self,text):
         self.serial.send_data(text+self.gcodeSuffix)   
               
-    """
-    gets the next line in the gCode file, sends it via serial, updates the logFile
-    and then increments the currentLine counter
-    """
-    def send_nextLine(self):
-        try:
-            line = self.source.readline()
-            self.line=line
-        except :
-            pass
-        if line is not None:
-            text_suffixed=line+self.gcodeSuffix
-            self.serial.send_data(text_suffixed)   
-            """
-            Update the logfile with the current Line number
-            """
-            self.logFile=open("log.txt","w")
-            self.logFile.write("path="+str(self.sourcePath)+",")  
-            self.logFile.write(" ")
-            self.logFile.write("line="+str(self.currentLine))
-            self.logFile.close()
-            
-            self.logger.critical("Sent command "+ line)
-            self.events.OnLineParsed(self,line)
-            self.currentLine+=1
-            self.lastLine=line
-            
-            if (self.currentLine+1)==self.totalLines:
-                self.progress=100
-                self.isStarted=False
-            else:
-                self.progress+=self.progressFraction
-            
-            pos=self.gcodeParser.parse(line)
-            if pos:
-                try:
-                    #self.position=[pos.xcmd.value.to_eng_string(),pos.zcmd.value.to_eng_string(),pos.ycmd.value.to_eng_string()]
-                    x=pos.xcmd.value/10
-                    y=pos.ycmd.value/10
-                    z=pos.zcmd.value/10
-                    pt=Point(float(x.to_eng_string()),float(y.to_eng_string()),float(z.to_eng_string()))
-                    self.positionList.append(pt)
-                    #self.positionList.append(z.to_eng_string())
-                    #self.positionList.append(y.to_eng_string())
-                   
-                except Exception as inst:
-                    self.logger.critical("failed to add point to movement map %s",str(inst))
-            
-            
-            self.totalTime+=time.time()-self.startTime
-            self.startTime=time.time()
+   
             
             
                                 #add layer increase handling
@@ -317,47 +475,7 @@ class ReprapManager(object):
 #                    self.events.On  
    
        
-    """
-    Function that gets called each time a new serial event is recieved.
-    If the last command was confirmed, read next line frome gcode file, and 
-    send it over serial.
-    """
-    def data_recieved(self,args,kargs):
-        self.logger.info("event recieved from reprap %s",str(kargs))
-        if self.mode=="print":
-            if self.reconnectionCommand and self.isStarted:
-                if self.reconnectionCommand in kargs:
-                    print ("reconnected command found")
-                    self.reconnectionCommand=None
-                    self.isPaused=False
-            if not self.isPaused:
-                if "ok" in kargs or "start" in kargs:
-                    self.send_nextLine()    
-        else:
-            #in scan mode
-            if "ok" in kargs:
-                if "height" in kargs:  
-                    height=float(kargs.split(' ')[2])
-                    height=height/200
-                    self.logger.info("Scan thing %s",str(height))
-                    self.events.OnScanHeightRecieved(height)
-                    self.pointCloudBuilder.add_point(height) 
-                    if not self.isPaused:    
-                        self.do_scan_step()
-
-                else:
-                    if not "G92" in kargs and not "G90" in kargs and not "G21" in kargs and "G1" in kargs and not self.isPaused:
-                        self.sendText("M180")
-        if "ok" in kargs  and "M105" in kargs:
-            try:
-                self.headTemp=int(kargs.split(' ')[1])
-            except:
-                pass
-        if "ok" in kargs  and "M143" in kargs:
-            try:
-                self.bedTemp=int(kargs.split(' ')[1])
-            except:
-                pass
+   
             
     def get_status(self):
         pass

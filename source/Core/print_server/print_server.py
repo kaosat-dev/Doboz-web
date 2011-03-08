@@ -64,11 +64,11 @@ def printandscanFiles(command):
         response=callback+"("+str(data)+")"
     elif command=="delete_scanFile":
         fileName=request.GET.get('fileName', '').strip()
-        filePath=os.path.join(testBottle.path,"files","machine","printFiles",fileName)
+        filePath=os.path.join(testBottle.path,"files","machine","scanFiles",fileName)
         os.remove(filePath)
     elif command=="delete_printFile":
         fileName=request.GET.get('fileName', '').strip()
-        filePath=os.path.join(testBottle.path,"files","machine","scanFiles",fileName)
+        filePath=os.path.join(testBottle.path,"files","machine","printFiles",fileName)
         os.remove(filePath)
     #testBottle.logger.info("response %s",str(response))
     return response

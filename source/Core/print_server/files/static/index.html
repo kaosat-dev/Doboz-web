@@ -211,15 +211,22 @@
       {
         dobozUi.onScanListRecieved(scans);
        });
+       
+        $(document).bind("File.DeletionDialogRequested", function(e, file)
+      {
+        dobozUi.onFileDeletionDialogRequested(file);
+       
+       });
+       
         $(document).bind("File.DeletionRequested", function(e, file)
       {
-        //dobozUi.onFileRemoved(file);
-        alert(file);
+        //dobozUi.onFileDeletionRequested(file);
+       
        });
-        $(document).bind("File.Removed", function(e, file)
+       
+        $(document).bind("File.DeletionConfirmed", function(e)
       {
-        //dobozUi.onFileRemoved(file);
-        alert(file);
+          dobozUi.onFileDeletionConfirmed();
        });
        
       
@@ -474,9 +481,10 @@
                 <div >
                 Add file:
                 <form action="/upload" method="post" enctype="multipart/form-data" target="uploadTarget" onsubmit="fileMgr.UploadFile()" name="uploadForm">
-                  <input name="datafile" type="file" onclick="fileMgr.resetUploadProgress()" />
+                  <input id="datafileField" name="datafile" type="file" onclick="fileMgr.resetUploadProgress()" />
                   <button  onclick="submit()">Send</button>
-                  <iframe id="uploadTarget" src="" style="width:0px;height:0px;visibility:hidden"> 
+                  
+                <iframe id="uploadTarget" src="" style="width:0px;height:0px;visibility:hidden"> 
                 </iframe>
                 </form>
               </div>
@@ -493,11 +501,15 @@
     </div>
     <div id="deleteJobDialog" title="Delete Job">
       <small>
-      
       <button  onclick="reprapMgr.sendManualCommand($('#manualCommand').val())">Send</button>
       </small>
     </div>
-    
+    <div id="deleteFileDialog" title="Delete File">
+      <small>
+       <div style="display:inline-block;"><div>Do you really want to delete</div> <div id="fileToDeleteField"> </div></div>
+      <button  onclick="$('#deleteFileDialog').dialog('close');fileMgr.DeleteFile(dobozUi.selectedFile);">Delete</button>
+      </small>
+    </div>
 
     <div id="container" style="right:40px; top:10px; margin:0 0 10px 10px">
  

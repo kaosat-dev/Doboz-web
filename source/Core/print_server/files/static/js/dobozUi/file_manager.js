@@ -59,6 +59,16 @@ FileManager.prototype.scanFilesRecieved=function(response)
   $(document).trigger('Files.ScansRecieved',[this.scanFiles]);
 }
 ////////////////////////////////////////////////////////////////
+FileManager.prototype.DeleteFile=function (file)
+{ 
+  var self = this; 
+  this.fetchData(this.mainUrl+"filecommands/delete_"+file.type+"File?fileName="+file.name,function (response){self.fileDeleted(response)}); 
+}
+FileManager.prototype.fileDeleted=function(response)
+{
+  $(document).trigger('File.DeletionConfirmed');
+}
+////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
 //FILE UPLOAD METHODS
 
@@ -107,14 +117,14 @@ FileManager.prototype.getUploadProgress=function()
 }
 FileManager.prototype.UploadProgressRecieved=function(response)
 {
-  console.log(this)
   progress=response.progress;
   $("#uploadProgressBar" ).progressbar( "option", "value", progress );
   if( progress==100)
   {
     clearInterval(this.uploadTimer);
-    this.getAvailableFiles();
-    setTimeout(function(){ $("#uploadProgress").hide()}
-      ,1000);
+    this.getAvailablePrints();
+    $("#uploadProgress").hide();
+    $("#fileUploadDialog").dialog('close');
+    $("#fileUploadDialog").html($("#fileUploadDialog").html());
   }
 }

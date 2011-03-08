@@ -61,7 +61,7 @@ class Mesh(object):
             print(point)
 
 class PointCloudBuilder(object):
-    def __init__(self,precision,width,length):
+    def __init__(self,precision=1,width=1,length=1):
         self.width=width
         self.length=length
         self.precision=precision
@@ -110,7 +110,15 @@ class PointCloudBuilder(object):
                     self.currentPoint.y-=self.xOffset
         else:
             self.finished=True
-                            
+    
+    
+   
+    def add_point_simple(self,x,y,z):
+        """
+        Add a point, no calculation involved
+        """
+        self.pointCloud.add_point(Point(x,y,z))
+    
     def generate_mesh(self):
         totalPoints=len(self.pointCloud.points)
         points=self.pointCloud.points

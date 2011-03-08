@@ -4,6 +4,7 @@ function DobozUi()
     this.defaultScanHeight=1;
     this.defaultScanRes=1;
     this.firstStart=true;
+    this.selectedFile=null;
 }
 
 DobozUi.prototype.onDocumentReady=function()
@@ -76,6 +77,11 @@ DobozUi.prototype.onDocumentReady=function()
         ({
             text: true
           });  
+      
+       $( "#deleteFileDialog button:first").button
+        ({
+            text: true
+          }); 
        //////////////////////////////////////////////////////
      $( "#scanOptions button:first")
      .button
@@ -98,11 +104,12 @@ DobozUi.prototype.onDocumentReady=function()
          
     $("#fileUploadDialog").dialog({ autoOpen: false,width: 440 ,modal: false });
     $("#manualControlDialog").dialog({ autoOpen: false,width: 400 });
-    
+    $("#deleteFileDialog").dialog({ autoOpen: false,width: 400 });
     
     $("#fileUploadDialog").hide();
     $("#manualControlDialog").hide();
     $("#deleteJobDialog").hide();
+    $("#deleteFileDialog").hide();
     
     $( "#jobList" ).sortable();
 
@@ -211,10 +218,8 @@ DobozUi.prototype.onFileListRecieved=function(files)
   var date="";
    for(var i=0;i<files.length;i++)
   {
-   $("#fileTable" ).append("<tr id='file_"+i+"' scope='row' class=' ui-widget-content' onmousedown= $(document).trigger('Job.Added',[{'type':'print','file':'"+files[i]+"'}]);><td >"+ files[i]+ " </td><td >"+date+" </td><td style='width:50px'><span class='ui-icon ui-icon-close' style='width:20px' onclick=$(document).trigger('File.Removed',"+"'file_"+i+"');></span></td></tr>");
+   $("#fileTable" ).append("<tr id='file_"+i+"' scope='row' class=' ui-widget-content' ><td onmousedown= $(document).trigger('Job.Added',[{'type':'print','file':'"+files[i]+"'}]);>"+ files[i]+ " </td><td >"+date+" </td><td style='width:50px'><span class='ui-icon ui-icon-close' style='width:20px' onclick=$(document).trigger('File.DeletionDialogRequested',"+"[{'id':'file_"+i+"','name':'"+files[i]+"','type':'print'}]);></span></td></tr>");
   }
-
-  
 }
 
 DobozUi.prototype.onScanListRecieved=function(scans)
@@ -223,7 +228,7 @@ DobozUi.prototype.onScanListRecieved=function(scans)
    var date="";
    for(var i=0;i<scans.length;i++)
   {
-   $("#scanTable" ).append("<tr id='scan"+i+"' scope='row' class=' ui-widget-content '><td style='width:20px'><a href='./uploads/"+scans[i]+"' target=_BLANK><span class='ui-icon ui-icon-arrowthickstop-1-s'/></a></td><td>"+ scans[i]+ "</td><td >"+date+" </td><td style='width:50px'><span class='ui-icon ui-icon-close' style='width:20px' onclick=$(document).trigger('Scan.Removed',"+i+");></span></td></tr>");
+   $("#scanTable" ).append("<tr id='scan_"+i+"' scope='row' class=' ui-widget-content '><td style='width:20px'><a href='./uploads/"+scans[i]+"' target=_BLANK><span class='ui-icon ui-icon-arrowthickstop-1-s'/></a></td><td>"+ scans[i]+ "</td><td >"+date+" </td><td style='width:50px'><span class='ui-icon ui-icon-close' style='width:20px' onclick=$(document).trigger('File.DeletionDialogRequested',"+"[{'id':'scan_"+i+"','name':'"+scans[i]+"','type':'scan'}]);></span></td></tr>");
   }
     
 }
@@ -255,7 +260,8 @@ DobozUi.prototype.onJobsDelayChanged=function()
 }
 
 DobozUi.prototype.onJobRemoved=function(jobId)
-{$("#job_"+jobId).remove();
+{
+  $("#job_"+jobId).remove();
 }
 
 DobozUi.prototype.onJobStarted=function(job)
@@ -273,11 +279,7 @@ DobozUi.prototype.onJobFinished=function(job)
   $("#job_"+job.id).remove();
    $( ".mainControls button:first" ).button({ label: "Job: none"});
   $("#jobProgressBar" ).progressbar( "option", "value", 100 );
-  
- 
-   $("#container").notify("create", {title: 'Job: '+job.type+' Done', text: 'Job finished, machine ready.'},{ custom:true,speed: 500});
-       
- 
+   $("#container").notify("create", {title: 'Job: '+job.type+' Done', text: 'Job finished, machine ready.'},{ custom:true,speed: 500});     
 }
 
 
@@ -295,5 +297,22 @@ DobozUi.prototype.onFileUploadClicked=function()
       $('#selectedFileDisplay').text(file);
   }
 }
+
+DobozUi.prototype.onFileDeletionDialogRequested=function(file)
+{ 
+    this.selectedFile=file;
+ 
+    $("#fileToDeleteField").text(file.name+" ?");
+    $("#deleteFileDialog").dialog('open');
+}
+
+
+
+DobozUi.prototype.onFileDeletionConfirmed=function()
+{
+    $("#"+this.selectedFile.id).remove();
+}
+
+
     
       
