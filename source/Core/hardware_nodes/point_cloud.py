@@ -33,9 +33,16 @@ class PointCloud(object):
         string='['+string+']'
         return string
     
-    def save(self,path="."):
+    def save(self,path):
         string="\t\n".join(pt.alt_str() for pt in self.points)
-        fileName=str(uuid.uuid4())+".ptcld"
+        #if we have a name to save to or not 
+        
+        filePath=""
+        if os.path.basename(path)!='':
+            filePath=path
+        else:
+            fileName= str(uuid.uuid4())+".ptcld"
+        
         filePath=os.path.join(path,fileName)
         file=open(filePath,'w')
         file.write("//X Y Z\t\n")
@@ -61,13 +68,16 @@ class Mesh(object):
             print(point)
 
 class PointCloudBuilder(object):
-    def __init__(self,precision=1,width=1,length=1):
+    def __init__(self,precision=1,width=1,length=1,passes=1):
         self.width=width
         self.length=length
         self.precision=precision
         self.xOffset=precision
         self.yOffset=precision
         self.pointCloud=PointCloud(width,length)
+        
+        self.passes=passes
+        self.currentPass=0
         
         self.rowIndex=0
         self.rows=int(length/precision)
@@ -84,32 +94,41 @@ class PointCloudBuilder(object):
     def add_point(self,z):  
         self.pointCloud.add_point(Point(self.currentPoint.x,self.currentPoint.y,z))
         self.currentPoint.z=z
-        if self.columnIndex<= self.columns:
-            if self.forward:    
-                if self.rowIndex>=self.rows:
-                    """
-                    This is when the catesian bot switches direction to scan the next line
-                    """
-                    self.forward=not self.forward
-                    self.columnIndex+=1
-                    self.currentPoint.x+=self.xOffset
-                    self.totalColumnChanges+=1
-                    #print("changing column forward","total :", self.totalColumnChanges)
+        if self.currentPass<self.passes:
+            if self.columnIndex<= self.columns:
+                if self.forward:    
+                    if self.rowIndex>=self.rows:
+                        """
+                        This is when the catesian bot switches direction to scan the next line
+                        """
+                        self.forward=not self.forward
+                        self.columnIndex+=1
+                        self.currentPoint.x+=self.xOffset
+                        self.totalColumnChanges+=1
+                        #print("changing column forward","total :", self.totalColumnChanges)
+                    else:
+                        self.rowIndex+=1
+                        self.currentPoint.y+=self.yOffset
                 else:
-                    self.rowIndex+=1
-                    self.currentPoint.y+=self.yOffset
+                    if self.rowIndex<=0:
+                        self.forward=not self.forward
+                        self.columnIndex+=1
+                        self.currentPoint.x+=self.xOffset
+                        self.totalColumnChanges+=1
+                        #print("changing column back","total :", self.totalColumnChanges)
+                    else:
+                        self.rowIndex-=1
+                        self.currentPoint.y-=self.xOffset
             else:
-                if self.rowIndex<=0:
-                    self.forward=not self.forward
-                    self.columnIndex+=1
-                    self.currentPoint.x+=self.xOffset
-                    self.totalColumnChanges+=1
-                    #print("changing column back","total :", self.totalColumnChanges)
-                else:
-                    self.rowIndex-=1
-                    self.currentPoint.y-=self.xOffset
+                #finished a pass
+                self.currentPoint.x=0
+                self.currentPoint.y=0
+                self.rowIndex=0
+                self.columnIndex=0
         else:
             self.finished=True
+            #self.currentPoint.x=0
+            #self.currentPoint.y=0
     
     
    

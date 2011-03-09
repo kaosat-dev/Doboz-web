@@ -152,7 +152,7 @@
 
        });
        
-        $(document).bind("Job.Started", function(e, job)
+      $(document).bind("Job.Started", function(e, job)
       {
         
         dobozUi.onJobStarted(job);
@@ -188,6 +188,12 @@
       $(document).bind("Job.DelayChanged", function(e, delay)
       {
          reprapMgr.jobDelay=delay
+      });
+      
+      $(document).bind("Job.RetrievedAll", function(e, jobs)
+      {
+        dobozUi.onJobRetrievedAll(jobs);
+         //reprapMgr.jobDelay=delay
       });
       
       $(document).bind("Status.updated", function(e, status)
@@ -335,7 +341,7 @@
                     <h3><a href="#">Files</a></h3>
                       <div id="lastFiles"  style="padding:2px;border:0px;">
                         <table id="fileTable" class="infoTable" style="width:100%">
-                          <tr class=" ui-widget-header ui-state-active" ><th scope="col">Name</th><th scope="col" style='width:50px'>Date</th><th scope="col" style='width:20px'></th></tr>
+                          <tr class=" ui-widget-header ui-state-active" ><th scope="col">Name</th><th scope="col" style='width:150px'>Upload Date</th><th scope="col" style='width:20px'></th></tr>
                         </table>
                       </div>
                     
@@ -348,8 +354,11 @@
                  <div id="scanOptions"style="overflow:auto;height:87%;" >
                        <div >  
                           width <input id="scanWidth" type='text' value="2" class=" ui-corner-left" onKeyUp="dobozUi.onScanWidthChanged()" style="width:45px"/> 
-                          height <input id="scanHeight" type='text' value="2" class=" ui-corner-left" onKeyUp="dobozUi.onScanHeightChanged()"style="width:45px"/> 
+                          length <input id="scanHeight" type='text' value="2" class=" ui-corner-left" onKeyUp="dobozUi.onScanHeightChanged()"style="width:45px"/> 
                           resolution<input id="scanResolution" type='text' value="1" class=" ui-corner-left" onKeyUp="dobozUi.onScanResolutionChanged()"style="width:45px"/> 
+                          passes<input id="scanPasses" type='text' value="1" class=" ui-corner-left" onKeyUp="" style="width:45px"/> 
+                           fileName<input id="scanName" type='text' value="scan" class=" ui-corner-left" onKeyUp=""style="width:200px"/> 
+                           <input type="checkbox" id="autosaveRadio"  /><label for="autosaveRadio">AutoSave</label>
                           <button  id="addScanJobButton" > Add scan Job </button>
                       </div>
                     <div class="tab-acordeon">
@@ -452,7 +461,7 @@
          <div id="JobListThingy" style="overflow:auto">
             <div class="ui-widget ui-state-default ui-corner-all">Selected Jobs</div>
             <table id="jobTable" class="infoTable" style="width:100%">
-              <tr class=" ui-widget-header ui-state-active" ><th scope="col" style='width:50px'>Type</th><th scope="col">Options</th><th scope="col" style='width:20px'></th></tr>
+              <tr class=" ui-widget-header ui-state-active" ><th scope="col" style='width:50px'>Status</th><th scope="col" style='width:50px'>Type</th><th scope="col">Options</th><th scope="col">Machine</th><th scope="col" style='width:20px'></th></tr>
             </table>
           </div>
          <div id="toolBar">
@@ -502,6 +511,12 @@
     <div id="deleteJobDialog" title="Delete Job">
       <small>
       <button  onclick="reprapMgr.sendManualCommand($('#manualCommand').val())">Send</button>
+      </small>
+    </div>
+    <div id="stopJobDialog" title="Stop current job">
+      <small>
+       <div style="display:inline-block;"><div>Do you really want to stop the current job?</div> <div id="jobToDeleteField"> </div></div>
+      <button  onclick="$('#stopJobDialog').dialog('close');">Stop</button>
       </small>
     </div>
     <div id="deleteFileDialog" title="Delete File">

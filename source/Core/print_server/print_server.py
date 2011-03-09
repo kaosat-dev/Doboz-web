@@ -64,14 +64,32 @@ def printandscanFiles(command):
     callback=request.GET.get('callback', '').strip()
     response=callback+"()"
     
+    
+    def fullPrintFileInfo(file):
+        
+            return {"fileName":str(file),"modDate": str(time.ctime(os.path.getmtime(os.path.join(testBottle.path,"files","machine","printFiles",file))))}
+        
+    def fullScanFileInfo(file):
+            return {"fileName":str(file),"modDate": str(time.ctime(os.path.getmtime(os.path.join(testBottle.path,"files","machine","scanFiles",file))))}
+        
     if command=="get_printFiles":
         fileList=os.listdir(os.path.join(testBottle.path,"files","machine","printFiles"))
-        data={"files": fileList}
-        response=callback+"("+str(data)+")"
+        try:     
+            finalFileList=map(fullPrintFileInfo, fileList)
+            data={"files": finalFileList }
+            response=callback+"("+str(data)+")"
+        except Exception as inst:    
+            testBottle.logger.critical("error in file list generation  %s",str(inst))
+            
     elif command=="get_scanFiles":
         fileList=os.listdir(os.path.join(testBottle.path,"files","machine","scanFiles"))
-        data={"files": fileList}
-        response=callback+"("+str(data)+")"
+        try:     
+            finalFileList=map(fullScanFileInfo, fileList)
+            data={"files": finalFileList}
+            response=callback+"("+str(data)+")"
+        except Exception as inst:    
+            testBottle.logger.critical("error in file list generation  %s",str(inst))
+
     elif command=="delete_scanFile":
         fileName=request.GET.get('fileName', '').strip()
         filePath=os.path.join(testBottle.path,"files","machine","scanFiles",fileName)
@@ -80,7 +98,7 @@ def printandscanFiles(command):
         fileName=request.GET.get('fileName', '').strip()
         filePath=os.path.join(testBottle.path,"files","machine","printFiles",fileName)
         os.remove(filePath)
-    #testBottle.logger.info("response %s",str(response))
+    testBottle.logger.critical("response %s",str(response))
     return response
 
 
@@ -228,14 +246,21 @@ def generalCommands(command):
             data={"jobType":'',"progress":0}
             response=callback+"("+str(data)+")"
     elif command=="jobStatus":
-        testBottle.reprapManager.add_task(ScanTask(scanWidth=1,scanLength=1,resolution=1))  
-        testBottle.reprapManager.add_task(ScanTask(scanWidth=1,scanLength=1,resolution=1))  
-        testBottle.reprapManager.add_task(ScanTask(scanWidth=1,scanLength=1,resolution=1))  
+#        testBottle.reprapManager.add_task(ScanTask(scanWidth=1,scanLength=3,resolution=1))  
+#        testBottle.reprapManager.add_task(ScanTask(scanWidth=2,scanLength=1,resolution=1))  
+#        testBottle.reprapManager.add_task(ScanTask(scanWidth=1,scanLength=2,resolution=1))  
         
        
         try: 
+            """We list all the tasks + currentTask, if any+ progress of the current one """
             tasks=[str(task) for task in testBottle.reprapManager.tasks]
-            data={"tasks": tasks}
+             
+            #tasks.append(str(testBottle.reprapManager.currentTask) or '')
+            running='false'
+            if testBottle.reprapManager.currentTask: 
+                running='true'
+            currentInfo='{"running": %s,"task": %s}' %(running, testBottle.reprapManager.currentTask or '""' ) 
+            data={"tasks": tasks,"current":currentInfo} 
             response=callback+"("+str(data)+")"
         except Exception as inst:
             testBottle.logger.critical("error in getting job status  %s",str(inst))     

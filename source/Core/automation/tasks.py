@@ -28,8 +28,9 @@ class Task(object):
         self.progressFraction=0
         self.progress=0
         self.status="NP" #can be : NP: not started, paused , SP: started, paused, SR:started, running
-        self.pointCloud=PointCloud()
+        self.id=-1
         
+        self.pointCloud=PointCloud()        
         self.events=AutomationEvents()
     
     def startPause(self):

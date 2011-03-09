@@ -13,7 +13,7 @@ from Core.automation.tasks import Task, AutomationEvents
 
 class ScanTask(Task):
     """For all things related to the scanning   """    
-    def __init__(self,connector=None,scanWidth=1,scanLength=1,resolution=1,filename=None):
+    def __init__(self,connector=None,scanWidth=1,scanLength=1,resolution=1,passes=1,filePath=None,saveScan=False):
         Task.__init__(self,connector,"scan")
         self.logger=logging.getLogger("Doboz.Core.Automation.ScanTask")
         self.logger.setLevel(logging.ERROR)
@@ -21,6 +21,8 @@ class ScanTask(Task):
         self.width=scanWidth
         self.length=scanLength
         self.resolution=resolution
+        self.filePath=filePath
+        self.saveScan=saveScan
         
         self.pointCloudBuilder=PointCloudBuilder(resolution,scanWidth,scanLength)
         totalPoints=(int(scanWidth/resolution)+1)*(int(scanLength/resolution)+1)
@@ -31,12 +33,11 @@ class ScanTask(Task):
         self.logger.critical("Task Init Done")    
        
     def __str__(self):
-        string="'type': %s, 'file': %s, 'height':%f, 'resolution': %s" %(self.type,self.width,self.length,self.resolution)
+        string='{"id": "%s", "type": "%s", "width": %s, "height":%f, "resolution": %s}' %(str(self.id), self.type,self.width,self.length,self.resolution)
         return string   
     
     def connect(self,connector):
         self.connector=connector
-        print(self.connector)
         if hasattr(self.connector, 'events'):  
             self.connector.events.OnDataRecieved+=self._data_recieved
 #            self.connector.events.OnDisconnected+=self.on_connector_disconnect
@@ -72,7 +73,11 @@ class ScanTask(Task):
         else:
             self.progress=100
             self.status="F"#finished
-            #self.pointCloudBuilder.pointCloud.save(self.pointCloudSavePath)
+            if self.saveScan:
+                if self.filePath:
+                    pass#self.pointCloudBuilder.pointCloud.save(self.pointCloudSavePath)
+                else:
+                    pass
             self.connector.send_command("G1 X0 Y0")
             
 
@@ -81,7 +86,7 @@ class ScanTask(Task):
         Function that gets called each time a new serial event is recieved.
         If the last command was confirmed, move to next position and get height info
         """
-        self.logger.critical("event recieved from reprap %s",str(kargs))
+        self.logger.info("event recieved from reprap %s",str(kargs))
         if self.status!="F":  
             if "ok" in kargs:
                 if "height" in kargs:  

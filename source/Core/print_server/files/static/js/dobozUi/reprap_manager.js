@@ -174,13 +174,13 @@ ReprapManager.prototype.loadSettings=function()
     ReprapManager.prototype.timedTransitionToNextJob=function () 
     {
   
-        var self = this; 
+        /*var self = this; 
         this.timer=setTimeout(function()
         { 
           this.readyForNextJob=true;
           self.startPauseJob(); 
           
-          }, this.jobDelay*1000); 
+          }, this.jobDelay*1000); */
     }
     
     //get the status of the current print job
@@ -193,39 +193,21 @@ ReprapManager.prototype.loadSettings=function()
     
     ReprapManager.prototype.onJobStatusRecieved=function(response)
     {
-        jobs=response.tasks;
-
-         for(var i=0;i<jobs.length;i++)
+       
+       //Add active task first
+        current=jQuery.parseJSON(response.current)
+        
+        if(current.running)
         {
-          truc=eval(jobs[i])
-          alert(truc)
-          alert(truc.type)
-        }
-      
-        progress=response.progress;
-        jobType=response.jobType;
-        if(progress>0 && progress<100)
-        {
+          alert("here")
+          this.currentJob=current.task;   
           this.isJobStarted=true;
-          if(jobType=="print")
-          {
-              file=response.file;
-              this.currentJob={'type':'print','file':file};
-                       
-          }
-          else if (jobType=="scan")
-          {
-            this.currentJob={"type":"scan","width":response.width,"height":response.height,"resolution":response.resolution};
-           
-          }
-           $(document).trigger('Job.Added',[this.currentJob]);  
-         var self=this;
+          $(document).trigger('Job.Added',[this.currentJob]); 
+          var self=this;
           this.timer=setInterval(function()
           { 
           self.getJobProgressData(); 
-          }, 100); 
-          
-          
+          }, 100);  
         }
         else
         {
@@ -233,6 +215,17 @@ ReprapManager.prototype.loadSettings=function()
           this.isJobStarted=false;
           this.isJobPaused=false;
         }
+        
+        jobs=response.tasks;
+  
+        for(var i=0;i<jobs.length;i++)
+        {
+          var job = jQuery.parseJSON(jobs[i]);
+          job.id=i;//Temporary hack
+          this.jobs.push(job)
+        }
+        $(document).trigger('Job.RetrievedAll',[this.jobs]); 
+        
     }
     
     

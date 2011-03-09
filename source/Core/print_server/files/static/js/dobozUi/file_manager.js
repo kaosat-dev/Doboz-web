@@ -43,6 +43,7 @@ FileManager.prototype.getAvailablePrints=function ()
 FileManager.prototype.availablePrintsRecieved=function(response)
 {
   this.availableFiles=response.files
+ 
   $(document).trigger('Files.Recieved',[this.availableFiles]);
 }
 ////////////////////////////////////////////////////////////////
@@ -56,6 +57,7 @@ FileManager.prototype.getAvailableScans=function ()
 FileManager.prototype.scanFilesRecieved=function(response)
 {
   this.scanFiles=response.files
+ 
   $(document).trigger('Files.ScansRecieved',[this.scanFiles]);
 }
 ////////////////////////////////////////////////////////////////
