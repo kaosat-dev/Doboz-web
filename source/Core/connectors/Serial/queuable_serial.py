@@ -22,7 +22,7 @@ class QSerial(Thread,HardwareConnector):
     """
     blockedPorts=[]
     
-    def __init__(self,pseudoName="serial",port=None,isBuffering=False,seperator='\r\n',Speed=115200,bannedPorts=None,arduinoId=None,maxErrors=5,waitForAnswer=False):
+    def __init__(self,pseudoName="serial",port=None,isBuffering=False,seperator='\r\n',Speed=115200,bannedPorts=None,arduinoId=None,maxErrors=5,waitForAnswer=False,protocol=None):
         """ Inits the thread
         Arguments:
             port -- serial port to be used, if none, will scan for available ports and 

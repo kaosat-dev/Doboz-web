@@ -15,6 +15,15 @@ class Point(object):
     def alt_str(self):
         string="%f %f %f" %(self.x,self.z,self.y)
         return string
+    
+class PointBuffer(object):
+    """
+    Simple 3d point storage
+    """
+    def __init__(self,x,y,z):
+        self.x=x
+        self.y=y
+        self.z=z
         
 class PointCloud(object):
     """
@@ -125,6 +134,7 @@ class PointCloudBuilder(object):
                 self.currentPoint.y=0
                 self.rowIndex=0
                 self.columnIndex=0
+                self.currentPass+=1
         else:
             self.finished=True
             #self.currentPoint.x=0
