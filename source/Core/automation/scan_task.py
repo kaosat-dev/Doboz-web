@@ -27,8 +27,8 @@ class ScanTask(Task):
         self.filePath=filePath
         self.saveScan=saveScan
         
-        self.pointCloudBuilder=PointCloudBuilder(resolution=resolution,width=scanWidth,length=scanLength)
-        totalPoints=(int(scanWidth/resolution)+1)*(int(scanLength/resolution)+1)
+        self.pointCloudBuilder=PointCloudBuilder(resolution=resolution,width=scanWidth,length=scanLength,passes=passes)
+        totalPoints=(int(scanWidth/resolution)+1)*(int(scanLength/resolution)+1)*passes
         self.logger.info("Total scan points %d",totalPoints)
         self.progressFraction=float(100.00/float(totalPoints))
         self.logger.info("Progress Fraction set by scan to %s",str(self.progressFraction))
@@ -78,12 +78,11 @@ class ScanTask(Task):
             self.connector.send_command("G1 X"+str(ptBld.x)+" Y"+str(ptBld.y))     
         else:
             self.progress=100
-            self.pointCloud=self.pointCloudBuilder.pointCloud
-            print("pointcloud length",len(self.pointCloud.points))
+            self.pointCloud=self.pointCloudBuilder.pointCloud 
             self.status="F"#finished
             if self.saveScan:
                 if self.filePath:
-                    pass#self.pointCloudBuilder.pointCloud.save(self.pointCloudSavePath)
+                    self.pointCloud.save(self.filePath)
                 else:
                     pass
             self.connector.send_command("G1 X0 Y0")
@@ -100,13 +99,12 @@ class ScanTask(Task):
                 if "height" in kargs:  
                     try:
                         height=float(kargs.split(' ')[2])
-                        height=height/200
+                        height=height/50
                         self.logger.info("Scan thing %s",str(height))
                         #self.events.OnScanHeightRecieved(height)
-                        print("height",height)
                         self.pointCloudBuilder.add_point(height) 
                         self.logger.critical("current point %s",str(self.pointCloudBuilder.currentPoint))
-                        self.pointCloudBuilder.next_point_backandforth()
+                        self.pointCloudBuilder.next_point_continuous()
                         self.pointCloud=self.pointCloudBuilder.pointCloud
                     except:
                         pass

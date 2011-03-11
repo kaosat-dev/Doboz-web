@@ -250,6 +250,11 @@
       {
         reprapMgr.scanHeight=height
        });
+        $(document).bind("Scan.FileNameChanged", function(e, height)
+      {
+        reprapMgr.scanHeight=height
+       });
+       
       
       $(document).bind("Viewer.autoStartSet", function(e, valid)
       {
@@ -358,7 +363,7 @@
                           resolution<input id="scanResolution" type='text' value="1" class=" ui-corner-left" onKeyUp="dobozUi.onScanResolutionChanged()"style="width:45px"/> 
                           passes<input id="scanPasses" type='text' value="1" class=" ui-corner-left" onKeyUp="" style="width:45px"/> 
                            fileName<input id="scanName" type='text' value="scan" class=" ui-corner-left" onKeyUp=""style="width:200px"/> 
-                           <input type="checkbox" id="autosaveRadio"  /><label for="autosaveRadio">AutoSave</label>
+                           <input type="checkbox" id="saveScanRadio"  /><label for="saveScanRadio">AutoSave</label>
                           <button  id="addScanJobButton" > Add scan Job </button>
                       </div>
                     <div class="tab-acordeon">

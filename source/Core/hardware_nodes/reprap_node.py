@@ -68,16 +68,21 @@ class ReprapNode(object):
             self.start_next_task()
             
     def remove_task(self,id):
-        if id!=self.currentTask.id:
-            [self.tasks.remove(task) for task in self.tasks if task.id==id]
-            self.logger.critical ("Task %s Removed ",task.id)            
+        if not self.currentTask:    
+                [self.tasks.remove(task) for task in self.tasks if task.id==id]
+                self.logger.critical ("Task %s Removed ",task.id)         
+        else:
+            if id!=self.currentTask.id :
+                [self.tasks.remove(task) for task in self.tasks if task.id==id]
+                self.logger.critical ("Task %s Removed ",task.id)  
 
     
     def start_next_task(self):
         if len(self.tasks)>0:
             try:
-                self.logger.critical ("Starting next task in queue ")
-                self.currentTask=self.tasks.pop(0)
+                self.logger.critical ("Starting next task ,%g remaining task",len(self.tasks))
+                self.currentTask=self.tasks[0]
+                print("currenttask",self.currentTask)
                 self.currentTask.connect(self.connector)
                 self.currentTask.start()
             except Exception as inst:
@@ -87,7 +92,10 @@ class ReprapNode(object):
         self.logger.critical ("Task Exited ")
         self.currentTask.disconnect()
         self.currentTask.events.OnExited-=self.on_task_exited
-        self.currentTask=None
+        #curId=self.currentTask.id
+        self.currentTask=None 
+        self.tasks.pop(0)
+        #self.remove_task(curId)
         self.start_next_task()
            
         

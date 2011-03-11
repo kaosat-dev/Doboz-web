@@ -90,7 +90,7 @@ DobozUi.prototype.onDocumentReady=function()
           })
           .click(function() 
           {
-          $(document).trigger('Job.Added',[{"type":"scan","width":$("#scanWidth").val(),"height":$("#scanHeight").val(),"resolution":$("#scanResolution").val()}]);
+          $(document).trigger('Job.Added',[{"type":"scan","width":$("#scanWidth").val(),"height":$("#scanHeight").val(),"resolution":$("#scanResolution").val(),"passes":$("#scanPasses").val(),"fileName":$("#scanName").val(),"saveScan":$( "#saveScanRadio").is(':checked')}]);
           
         });     
           

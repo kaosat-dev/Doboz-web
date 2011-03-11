@@ -174,11 +174,22 @@ def scanning(command):
         testBottle.logger.info("starting scan")
         width=float(request.GET.get('width', '').strip())
         height=float(request.GET.get('height', '').strip())
-        scanResolution=float(request.GET.get('resolution', '').strip())
-        print("width",width,"height",height,"res",scanResolution)
-        
+        resolution=float(request.GET.get('resolution', '').strip())
+        saveScan=request.GET.get('saveScan', '').strip()
+        passes=int(request.GET.get('passes', '').strip())
+        fileName=request.GET.get('fileName', '').strip()
+    
+        filePath=""
+        if saveScan=="true" and fileName!="":
+            filePath=os.path.join(scanFilesPath,fileName+".ptcld")
+            sameFileNameCount=0
+            while os.path.exists(filePath):
+                filePath=os.path.join(scanFilesPath,fileName+"("+str(sameFileNameCount+1)+").ptcld")
+                sameFileNameCount+=1
+                
+        print("width",width,"height",height,"res",resolution)
         try:     
-            testBottle.reprapManager.add_task(ScanTask(scanWidth=width,scanLength=height,resolution=scanResolution)) 
+            testBottle.reprapManager.add_task(ScanTask(scanWidth=width,scanLength=height,resolution=resolution,passes=passes,filePath=filePath,saveScan=saveScan)) 
         except Exception as inst:
             testBottle.logger.critical("error in scan start %s",str(inst))
          
@@ -230,32 +241,12 @@ def generalCommands(command):
             response=callback+"("+str(data)+")"
         except Exception as inst:
             testBottle.logger.info("error in getting machine status %s",str(inst))
-    elif command=="jobStatus_old":
-        try:
-            data={"jobType":testBottle.reprapManager.currentTask.type,"progress":testBottle.reprapManager.currentTask.progress}
-            if testBottle.reprapManager.currentTask.type=="scan":
-                data["width"]=testBottle.reprapManager.currentTask.pointCloudBuilder.width
-                data["height"]=testBottle.reprapManager.currentTask.pointCloudBuilder.length
-                data["resolution"]=testBottle.reprapManager.currentTask.pointCloudBuilder.resolution
-            elif testBottle.reprapManager.currentTask.type=="print":
-                data["file"]=os.path.basename(testBottle.reprapManager.currentTask.filePath)
-            response=callback+"("+str(data)+")"
-            testBottle.logger.critical("job statusresponse %s",str(response))  
-        except Exception as inst:
-            testBottle.logger.critical("error in getting job status  %s",str(inst))
-            data={"jobType":'',"progress":0}
-            response=callback+"("+str(data)+")"
-    elif command=="jobStatus":
-#        testBottle.reprapManager.add_task(ScanTask(scanWidth=1,scanLength=3,resolution=1))  
-#        testBottle.reprapManager.add_task(ScanTask(scanWidth=2,scanLength=1,resolution=1))  
-#        testBottle.reprapManager.add_task(ScanTask(scanWidth=1,scanLength=2,resolution=1))  
-        
-       
+    
+    elif command=="jobStatus":   
         try: 
-            """We list all the tasks + currentTask, if any+ progress of the current one """
+            """We list all the tasks  + add info if any progress of the current one """
             tasks=[str(task) for task in testBottle.reprapManager.tasks]
-             
-            #tasks.append(str(testBottle.reprapManager.currentTask) or '')
+            
             running='false'
             if testBottle.reprapManager.currentTask: 
                 running='true'

@@ -141,7 +141,8 @@ ReprapManager.prototype.loadSettings=function()
             {   
                 
                 
-                params="?width="+this.currentJob.width+"&height="+this.currentJob.height+"&resolution="+this.currentJob.resolution;
+                params="?width="+this.currentJob.width+"&height="+this.currentJob.height+"&resolution="+this.currentJob.resolution+"&passes="+this.currentJob.passes+"&fileName="
+                +this.currentJob.fileName+"&saveScan="+this.currentJob.saveScan ;
             }
                 //fire event to signal job is getting started
                 $(document).trigger('Job.Started',[this.currentJob]);
@@ -199,10 +200,9 @@ ReprapManager.prototype.loadSettings=function()
         
         if(current.running)
         {
-          alert("here")
           this.currentJob=current.task;   
           this.isJobStarted=true;
-          $(document).trigger('Job.Added',[this.currentJob]); 
+        
           var self=this;
           this.timer=setInterval(function()
           { 
