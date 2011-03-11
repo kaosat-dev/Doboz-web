@@ -4,7 +4,10 @@ import datetime
 import sys
 import os
 
-from Core.hardware_nodes.point_cloud import PointCloudBuilder,Point,PointCloud
+#from Core.hardware_nodes.point_cloud import PointCloudBuilder,Point,PointCloud
+from Core.Tools.point_cloud2 import Point,PointCloud
+from Core.Tools.point_cloud_builder import PointCloudBuilder
+
 from Core.connectors.event_sys import *
 from Core.automation.tasks import Task, AutomationEvents
 
@@ -24,7 +27,7 @@ class ScanTask(Task):
         self.filePath=filePath
         self.saveScan=saveScan
         
-        self.pointCloudBuilder=PointCloudBuilder(resolution,scanWidth,scanLength)
+        self.pointCloudBuilder=PointCloudBuilder(resolution=resolution,width=scanWidth,length=scanLength)
         totalPoints=(int(scanWidth/resolution)+1)*(int(scanLength/resolution)+1)
         self.logger.info("Total scan points %d",totalPoints)
         self.progressFraction=float(100.00/float(totalPoints))
@@ -58,7 +61,9 @@ class ScanTask(Task):
         self.connector.send_command("G92")
 
         ptBld=self.pointCloudBuilder.currentPoint
-        self.connector.send_command("G1 X"+str(ptBld.x)+" Y"+str(ptBld.y))    
+       
+        self.connector.send_command("G1 X"+str(ptBld.x)+" Y"+str(ptBld.y))  
+ 
          
     def stop(self):
         self.status="NP"
@@ -69,9 +74,12 @@ class ScanTask(Task):
         if not self.pointCloudBuilder.finished:
             self.progress+=self.progressFraction
             ptBld=self.pointCloudBuilder.currentPoint
+           
             self.connector.send_command("G1 X"+str(ptBld.x)+" Y"+str(ptBld.y))     
         else:
             self.progress=100
+            self.pointCloud=self.pointCloudBuilder.pointCloud
+            print("pointcloud length",len(self.pointCloud.points))
             self.status="F"#finished
             if self.saveScan:
                 if self.filePath:
@@ -95,7 +103,10 @@ class ScanTask(Task):
                         height=height/200
                         self.logger.info("Scan thing %s",str(height))
                         #self.events.OnScanHeightRecieved(height)
+                        print("height",height)
                         self.pointCloudBuilder.add_point(height) 
+                        self.logger.critical("current point %s",str(self.pointCloudBuilder.currentPoint))
+                        self.pointCloudBuilder.next_point_backandforth()
                         self.pointCloud=self.pointCloudBuilder.pointCloud
                     except:
                         pass
@@ -104,6 +115,7 @@ class ScanTask(Task):
                 else:
                     if not "G92" in kargs and not "G90" in kargs and not "G21" in kargs and "G1" in kargs and self.status!="NP" and self.status!="SP" :
                         self.connector.send_command("M180")
+                        
         else:
             if "ok" in kargs and "G1" in kargs:
                 self.events.OnExited(self,"OnExited")

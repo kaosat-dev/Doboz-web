@@ -251,7 +251,7 @@ ReprapManager.prototype.loadSettings=function()
         lastCommand=response.lastCommand;
         jobType=response.jobType;
       
-        if(progress>=0 && progress<100)
+        if(progress>=0 )
         {
          
           try
@@ -275,7 +275,7 @@ ReprapManager.prototype.loadSettings=function()
             alert("error "+e)
           }
         }
-        else
+        if (progress>=100)
         {
           clearInterval(this.timer);
           this.isJobStarted=false;

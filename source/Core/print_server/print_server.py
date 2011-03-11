@@ -180,7 +180,7 @@ def scanning(command):
         try:     
             testBottle.reprapManager.add_task(ScanTask(scanWidth=width,scanLength=height,resolution=scanResolution)) 
         except Exception as inst:
-            testBottle.logger.critical("error in print start %s",str(inst))
+            testBottle.logger.critical("error in scan start %s",str(inst))
          
     elif command=="startpause":
         try:
@@ -236,7 +236,7 @@ def generalCommands(command):
             if testBottle.reprapManager.currentTask.type=="scan":
                 data["width"]=testBottle.reprapManager.currentTask.pointCloudBuilder.width
                 data["height"]=testBottle.reprapManager.currentTask.pointCloudBuilder.length
-                data["resolution"]=testBottle.reprapManager.currentTask.pointCloudBuilder.precision
+                data["resolution"]=testBottle.reprapManager.currentTask.pointCloudBuilder.resolution
             elif testBottle.reprapManager.currentTask.type=="print":
                 data["file"]=os.path.basename(testBottle.reprapManager.currentTask.filePath)
             response=callback+"("+str(data)+")"
