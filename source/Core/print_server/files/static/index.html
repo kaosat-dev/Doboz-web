@@ -1,7 +1,7 @@
 <html>
   <head>
     <title>Doboz experimental web ui</title>
-    <!--TODO : remove , only for testing--> <meta http-equiv="Content-Type" content="no-cache">
+    <meta />
     <link type="text/css" href="/css/absolution/jquery-ui-1.8.10.custom.css" rel="Stylesheet" id="mainCss"/>  
     <link type="text/css" href="/css/dobozui-extra.css" rel="Stylesheet" />  
     <link type="text/css" href="/css/ui.notify.css" rel="Stylesheet" />
@@ -306,23 +306,30 @@
               }
               
                 //setup mouse controls
-              $('#canvasWrapper').bind("mousemove", jQuery.proxy( viewer, 'handleMouseMove'));
-              $('#canvasWrapper').bind("mousedown", jQuery.proxy( viewer, 'handleMouseDown'));
-              $('#canvasWrapper').bind("mouseup", jQuery.proxy( viewer, 'handleMouseUp'));
-              $('#canvasWrapper').bind('mousewheel', jQuery.proxy( viewer,'handleMouseWheel'));
-            }     
-      );
+              $('#viewer').bind("mousemove", jQuery.proxy( viewer, 'handleMouseMove'));
+              $('#viewer').bind("mousedown", jQuery.proxy( viewer, 'handleMouseDown'));
+              $('#viewer').bind("mouseup", jQuery.proxy( viewer, 'handleMouseUp'));
+              $('#viewer').bind('mousewheel', jQuery.proxy( viewer,'handleMouseWheel'));
+              $(document).bind('keydown', jQuery.proxy( viewer,'handleKeyDown'));
+              
+              
+            }
+            
+    );
     </script>
   </head>
   <body>
 
    <div id"main" >
         <div id="viewerBlock" class=" mainBlock ui-corner-left ui-state-default"> 
-          <div id="canvasWrapper">
+
+            <div id="viewer">
             <canvas id="glcanvas" width="512" height="512" >
              Your browser doesn't appear to support the HTML5 <code>&lt;canvas&gt;</code> element.
             </canvas>
-          </div>
+            </div>
+            
+
         
        </div>
       
@@ -358,19 +365,26 @@
               <div id="tabs-2"  style="padding:4px;border:0px" >
                  <div id="scanOptions"style="overflow:auto;height:87%;" >
                        <div >  
+                         <div>
                           width <input id="scanWidth" type='text' value="2" class=" ui-corner-left" onKeyUp="dobozUi.onScanWidthChanged()" style="width:45px"/> 
                           length <input id="scanHeight" type='text' value="2" class=" ui-corner-left" onKeyUp="dobozUi.onScanHeightChanged()"style="width:45px"/> 
                           resolution<input id="scanResolution" type='text' value="1" class=" ui-corner-left" onKeyUp="dobozUi.onScanResolutionChanged()"style="width:45px"/> 
                           passes<input id="scanPasses" type='text' value="1" class=" ui-corner-left" onKeyUp="" style="width:45px"/> 
+                          </div>
                            fileName<input id="scanName" type='text' value="scan" class=" ui-corner-left" onKeyUp=""style="width:200px"/> 
                            <input type="checkbox" id="saveScanRadio"  /><label for="saveScanRadio">AutoSave</label>
+                           <div id="scanMovementMethodRadio">
+                             Movement:
+                          <input type="radio" id="continuousMoveRadio" name="continuousMoveRadio" checked="checked" /><label for="continuousMoveRadio">Continuous</label>
+                          <input type="radio" id="backandForthMoveRadio" name="backandForthMoveRadio"  /><label for="inchradio">Back & Forth</label>
+                        </div>
                           <button  id="addScanJobButton" > Add scan Job </button>
                       </div>
                     <div class="tab-acordeon">
                     <h3><a href="#">Scans</a></h3>
                       <div style="padding:2px;border:0px;">
                         <table id="scanTable" class="infoTable" style="width:100%">
-                          <tr class=" ui-widget-header ui-state-active" ><th scope="col" style='width:40px'>Get</th><th scope="col" >Name</th><th scope="col" style='width:50px'>Date</th><th scope="col" style='width:20px'></th></tr>
+                          <tr class=" ui-widget-header ui-state-active" ><th scope="col" style='width:40px'>Get</th><th scope="col" >Name</th><th scope="col" style='width:150px'>Date</th><th scope="col" style='width:20px'></th></tr>
                         </table>
                       </div>
                   </div>

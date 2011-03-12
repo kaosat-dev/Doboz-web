@@ -141,6 +141,14 @@ DobozUi.prototype.onDocumentReady=function()
          
        });
       
+      
+      
+      
+     
+      
+      
+      
+      
       if(this.firstStart)
       {
        $("#container")
@@ -150,12 +158,12 @@ DobozUi.prototype.onDocumentReady=function()
                  text:"Welcome to the 'Doboz' experimental web gui for repraps/repraps<br>Please visit <a href='http://www.kaosat.net' target='blank'>www.kaosat.net</a> and <a href='http://github.com/kaosat-dev/Doboz' target='blank'> http://github.com/kaosat-dev/Doboz</a> for more info" },
                  { custom:true ,expires: false,speed: 500});
                  
-                 viewer.loadSettings();
-                 dobozUi.loadSettings();
+               
            this.firstStart=false;
            $.cookie({ 'dobozUi_firstStart': false});  
        }
-                 
+         viewer.loadSettings();
+         dobozUi.loadSettings();  
    ////////////
       
 }

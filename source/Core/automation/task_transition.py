@@ -1,3 +1,0 @@
-
-class TaskTransition(object):
-    pass

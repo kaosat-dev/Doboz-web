@@ -221,7 +221,6 @@ ReprapManager.prototype.loadSettings=function()
         for(var i=0;i<jobs.length;i++)
         {
           var job = jQuery.parseJSON(jobs[i]);
-          job.id=i;//Temporary hack
           this.jobs.push(job)
         }
         $(document).trigger('Job.RetrievedAll',[this.jobs]); 

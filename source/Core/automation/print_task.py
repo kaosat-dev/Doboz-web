@@ -6,7 +6,7 @@ import os
 
 from Core.hardware_nodes.point_cloud import Point,PointCloud
 from Core.connectors.event_sys import *
-from Core.automation.tasks import Task, AutomationEvents
+from Core.automation.task import Task, AutomationEvents
 from Core.automation.gcode_parser import GCodeParser
 
 class PrintTask(Task):

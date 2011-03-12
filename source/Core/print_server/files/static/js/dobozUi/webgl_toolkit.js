@@ -25,6 +25,7 @@ function WebglViewer()
   this.lastMouseY = null;
   this.mouseRotationMatrix = mat4.create();
   mat4.identity(this.mouseRotationMatrix);
+  this.MovementModeOn=false;
 }
 
 
@@ -208,7 +209,40 @@ WebglViewer.prototype.start=function(canvas)
   
   
 
+}
 
+WebglViewer.prototype.handleKeyDown=function(event)
+{
+        switch(event.keyCode)
+        {
+          case 18:
+            this.MovementModeOn=true;
+           break;
+          case 37://left
+             this.xOffset+=0.2;
+          break;
+          case 39://right
+            this.xOffset-=0.2;
+          break;
+          case 38://up
+             this.yOffset+=0.2;
+          break;
+          case 40://down
+            this.yOffset-=0.2;
+          break;
+         // event.preventDefault();   .
+        }
+}
+WebglViewer.prototype.handleKeyUp=function(event)
+{
+  
+       switch(event.keyCode)
+        {
+          case 18:
+            this.MovementModeOn=false;
+           break;
+          
+        }
 }
 
 
@@ -228,7 +262,7 @@ WebglViewer.prototype.handleMouseUp=function(event)
    
 WebglViewer.prototype.handleMouseMove=function(event) 
 {
-  
+
     if (this.mouseDown!=true) 
     {
     
@@ -277,7 +311,7 @@ WebglViewer.prototype.onJobStarted=function(job)
   if(job.type=="scan")
   {
 
-    this.xOffset=-job.width/2.0;
+    this.xOffset=+job.width/2.0;
     //this.yOffset=job.height/2.0;
   }
 }

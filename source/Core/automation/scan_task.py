@@ -9,7 +9,7 @@ from Core.Tools.point_cloud2 import Point,PointCloud
 from Core.Tools.point_cloud_builder import PointCloudBuilder
 
 from Core.connectors.event_sys import *
-from Core.automation.tasks import Task, AutomationEvents
+from Core.automation.task import Task, AutomationEvents
 
 #class ScanTaskEvents(Events):
 #    __events__=('OnScanHeightRecieved' )  

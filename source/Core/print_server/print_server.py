@@ -15,7 +15,7 @@ import socket
 
 from Core.automation.print_task import PrintTask
 from Core.automation.scan_task import ScanTask
-
+from Core.automation.transition_task import TransitionTask
 
 testBottle = Bottle()
 testBottle.path=os.path.join(os.path.abspath("."),"Core","print_server")
