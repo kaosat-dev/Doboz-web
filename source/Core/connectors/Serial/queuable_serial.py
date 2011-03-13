@@ -90,7 +90,7 @@ class QSerial(Thread,HardwareConnector):
             try:      
                 self.port=str(self.scan()[0])
                 #TODO: weird: port init fails if following line is removed
-                print("Ports:",self.scan())
+                #print("Ports:",self.scan())
                 QSerial.blockedPorts.append(self.port)        
                 self.logger.critical("selecting port "+self.port)
                 self.serial=Serial(self.port,self.speed)

@@ -3,9 +3,16 @@ import os
 import sys
 import time
 import datetime
+import ConfigParser
+Config = ConfigParser.ConfigParser()
+
+
+path=os.path.abspath(".")
+Config.read(os.path.join(path,"config.cfg"))
+
 
 from bottle import Bottle, route, run, send_file, redirect, abort, request, response 
-from bottle import TornadoServer
+
 import bottle
 
 #from reprap_manager import ReprapManager
@@ -294,10 +301,11 @@ def server_static(path):
 
 
 """"""""""""""""""""""""""""""""""""
+port=Config.getint("WebServer", "Port")
+server=server=Config.get("WebServer", "ServerType")
+
 def start_webServer():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(('google.com', 0))
     hostIp=s.getsockname()[0]
-    testBottle.logger.critical("Server Started, listening on  %s:8000",str(hostIp))
-    testBottle.host=hostIp+':8000'
-    run(app=testBottle, host=hostIp, port=8000, server=TornadoServer)
+    run(app=testBottle,server=server, host=hostIp, port=port)
