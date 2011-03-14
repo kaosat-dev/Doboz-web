@@ -5,8 +5,8 @@ import socket
 
 
 from Core.connectors.Serial.queuable_serial import * 
-from Core.hardware_nodes.reprap_node import ReprapNode
-
+from Core.hardwareNodes.reprap.reprap_node import ReprapNode
+from Core.hardwareNodes.webcam.webcam_node import WebcamNode
 from Core.print_server.print_server import *
 
 logger=logging.getLogger("Doboz.Core")

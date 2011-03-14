@@ -345,5 +345,19 @@ DobozUi.prototype.onFileDeletionConfirmed=function()
 }
 
 
+function reloadPic(thumb,video,aspect,id){
+  var string = 'thumb='+thumb+'&video='+video+'&aspect='+aspect;
+  var imageID = '#' + id;
+  $.ajax({
+    type: "GET",
+    url: "newThumb.php",
+    data: string,
+    success: function(msg){
+      var img_src = $(imageID).attr('src');
+        var timestamp = new Date().getTime();
+        $(imageID).attr('src',img_src+'?'+timestamp);
+      }
+  });
+}
     
       
