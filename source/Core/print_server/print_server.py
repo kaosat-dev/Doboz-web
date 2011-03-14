@@ -304,6 +304,7 @@ def server_static(path):
 port=Config.getint("WebServer", "Port")
 server=server=Config.get("WebServer", "ServerType")
 
+
 def start_webServer():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(('google.com', 0))
