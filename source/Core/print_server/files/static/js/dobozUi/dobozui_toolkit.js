@@ -5,6 +5,9 @@ function DobozUi()
     this.defaultScanRes=1;
     this.firstStart=true;
     this.selectedFile=null;
+    
+    this.camFliFlopid=0;
+
 }
 
 DobozUi.prototype.onDocumentReady=function()
@@ -17,6 +20,10 @@ DobozUi.prototype.onDocumentReady=function()
     //////////////////////////////////////////////////////
     $( "#tabs" ).tabs();
     $( "#tabs" ).bind( "tabsselect", function(event, ui) {});
+    
+    $( "#viewTabs" ).tabs();
+    $( "#viewTabs" ).bind( "tabsselect", function(event, ui) {});
+    
     //////////////////////////////////////////////////////
     $( ".jobControls button:first" ).button
         ( {
@@ -168,10 +175,40 @@ DobozUi.prototype.onDocumentReady=function()
       
 }
 
+
+DobozUi.prototype.fetchData=function(dataUrl,successCallback,errorCallback)
+    {
+
+            response=$.ajax({
+                    url: dataUrl,
+                    method: 'GET',
+                    dataType: 'jsonp',
+                    success: successCallback,
+                    error:errorCallback,
+                    cache:false
+                });
+    }
+    DobozUi.prototype.genericSuccessHandler=function (response)
+    {
+      console.log("Ajax sucess "+response) 
+    }
+    DobozUi.prototype.genericErrorHandler=function (response)
+    {
+      console.log("Ajax error "+response)
+    }   
+
 DobozUi.prototype.init=function()
 {
-  this.loadSettings();
+  
   this.onDocumentReady();
+  
+  
+   self=this;
+   this.timer=setInterval(function()
+                { 
+                  self.OnImageUpdateTimeout(); 
+                }, 500); 
+   this.loadSettings();
 }
 DobozUi.prototype.saveSettings=function()
 {
@@ -303,6 +340,7 @@ DobozUi.prototype.onJobStarted=function(job)
 DobozUi.prototype.onJobProgressUpdated=function(progressReport)
 {
    $("#jobProgressBar" ).progressbar( "option", "value", progressReport.progress );
+  
 }
 
 DobozUi.prototype.onJobFinished=function(job)
@@ -344,20 +382,24 @@ DobozUi.prototype.onFileDeletionConfirmed=function()
     $("#"+this.selectedFile.id).remove();
 }
 
+DobozUi.prototype.OnImageUpdateTimeout=function()
+{
+   //flip flop trick to force image update, without having to use the datetime trick
+   var img_src ="/img/test.png";
+   //var timestamp = new Date().getTime();   //+'?'+timestamp
+   $("#camPic").attr('src',img_src+'?'+self.camFliFlopid);
+   self.camFliFlopid++;
+   if(self.camFliFlopid>1)
+   {
+     self.camFliFlopid=0;
+   }
 
-function reloadPic(thumb,video,aspect,id){
-  var string = 'thumb='+thumb+'&video='+video+'&aspect='+aspect;
-  var imageID = '#' + id;
-  $.ajax({
-    type: "GET",
-    url: "newThumb.php",
-    data: string,
-    success: function(msg){
-      var img_src = $(imageID).attr('src');
-        var timestamp = new Date().getTime();
-        $(imageID).attr('src',img_src+'?'+timestamp);
-      }
-  });
 }
+
+
+
+  
+
+
     
       

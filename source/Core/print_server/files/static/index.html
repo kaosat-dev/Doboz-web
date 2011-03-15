@@ -110,7 +110,7 @@
     <script language="javascript" type="text/javascript" src="/js/dobozUi/file_manager.js"></script>
     <script language="javascript" type="text/javascript" src="/js/dobozUi/reprap_manager.js"></script>
     <script language="javascript" type="text/javascript" src="/js/dobozUi/webgl_toolkit.js"></script>
-    
+    <script language="javascript" type="text/javascript" src="/js/dobozUi/jsPubSubConfig.js"></script>
     <script  type="text/javascript">
      
       var jobId=0;
@@ -125,166 +125,9 @@
       var styles=[];
      
       
-      
-      //$(document).bind("mousewheel", jQuery.proxy( viewer, 'handleMouseWheel'));
+  
 
-       /////////////////
       
-       $(document).bind("Viewer.Configured", function(e, config)
-      {
-        dobozUi.onViewerConfigured(config);
-       });
-      
-       $(document).bind("Job.Added", function(e, job)
-      {
-        job.id=jobId;
-        dobozUi.onJobAdded(job);
-        reprapMgr.onJobAdded(job);
-        jobId++;
-       });
-       
-       $(document).bind("Job.Removed", function(e, jobId)
-      {
-
-          //TODO: needs to check if the job is running!! 
-          dobozUi.onJobRemoved(jobId);
-          reprapMgr.onJobRemoved(jobId);
-
-       });
-       
-      $(document).bind("Job.Started", function(e, job)
-      {
-        
-        dobozUi.onJobStarted(job);
-        viewer.onJobStarted(job);
-       });
-       
-      $(document).bind("Job.progressUpdated", function(e, progressReport)
-      {
-
-        subscribers = dobozUi;
-        subscribers.onJobProgressUpdated(progressReport);
-        viewer.onJobProgressUpdated(progressReport);
-        $("#lastCommand").text("LastCommand "+lastCommand);
-      });
-      
-      $(document).bind("Job.finished", function(e, job)
-      {
-          //backup 3d data
-          /*tmpPositions= eval(dobozUi.lastPositions);
-          viewer.lastPositions=tmpPositions;
-          viewer.lineStripLength=tmpPositions.length/3;
-          */
-          //brutish method
-          if(job.type=='scan')
-          {
-            fileMgr.getAvailableScans();
-          }
-          
-          dobozUi.onJobFinished(job);
-        
-      });
-      
-      $(document).bind("Job.DelayChanged", function(e, delay)
-      {
-         reprapMgr.jobDelay=delay
-      });
-      
-      $(document).bind("Job.RetrievedAll", function(e, jobs)
-      {
-        dobozUi.onJobRetrievedAll(jobs);
-         //reprapMgr.jobDelay=delay
-      });
-      
-      $(document).bind("Status.updated", function(e, status)
-      {
-         dobozUi.onStatusUpdated(status);
-      });
-      
-       $(document).bind("Files.Recieved", function(e, files)
-      {
-        dobozUi.onFileListRecieved(files);
-       });
-       
-        $(document).bind("Files.Selected", function(e, file)
-      {
-        alert("here")
-        dobozUi.onFileSelected(file);
-        reprapMgr.onFileSelected(file);
-       });
-       
-       $(document).bind("Files.ScansRecieved", function(e, scans)
-      {
-        dobozUi.onScanListRecieved(scans);
-       });
-       
-        $(document).bind("File.DeletionDialogRequested", function(e, file)
-      {
-        dobozUi.onFileDeletionDialogRequested(file);
-       
-       });
-       
-        $(document).bind("File.DeletionRequested", function(e, file)
-      {
-        //dobozUi.onFileDeletionRequested(file);
-       
-       });
-       
-        $(document).bind("File.DeletionConfirmed", function(e)
-      {
-          dobozUi.onFileDeletionConfirmed();
-       });
-       
-      
-       $(document).bind("Scan.ResolutionChanged", function(e, res)
-      {
-         reprapMgr.scanResolution=res
-      });
-      
-       $(document).bind("Scan.WidthChanged", function(e, width)
-      {
-        reprapMgr.scanWidth=width
-       });
-       
-      $(document).bind("Scan.HeightChanged", function(e, height)
-      {
-        reprapMgr.scanHeight=height
-       });
-        $(document).bind("Scan.FileNameChanged", function(e, height)
-      {
-        reprapMgr.scanHeight=height
-       });
-       
-      
-      $(document).bind("Viewer.autoStartSet", function(e, valid)
-      {
-     
-        viewer.autoStart=valid;
-        viewer.saveSettings();
- 
-       });
-        $(document).bind("Viewer.autoRotateSet", function(e, valid)
-      {
-     
-        viewer.autoRotate=valid;
-        viewer.saveSettings();
-        
-       });
-       $(document).bind("Viewer.drawmodeSet", function(e, drawMode)
-      {
-        
-        viewer.switchDrawMode(drawMode);
-        //viewer.saveSettings();
-       });
-      
-      
-      function onSelectChange()
-      {
-       
-        var selected = $("#cssselect option:selected");
-        
-         document.getElementById('mainCss').href = selected.val();
-      }
       
       $(document).ready
       (
@@ -322,15 +165,24 @@
 
    <div id"main" >
         <div id="viewerBlock" class=" mainBlock ui-corner-left ui-state-default"> 
-
-            <div id="viewer">
-            <canvas id="glcanvas" width="512" height="512" >
-             Your browser doesn't appear to support the HTML5 <code>&lt;canvas&gt;</code> element.
-            </canvas>
+          <div id="viewContent">
+             <div id="viewTabs">
+                <ul>
+                <li><a href="#viewer">Webgl</a></li>
+                <li><a href="#cam">Cam</a></li>
+                </ul>
+                <div id="viewer">
+                  <canvas id="glcanvas" width="512" height="512">
+                   Your browser doesn't appear to support the HTML5 <code>&lt;canvas&gt;</code> element.
+                 </canvas>
+                </div>
+              <div id="cam" style="padding:4px;border:0px">
+                <div id="camView" style="overflow:auto;height:87%;">
+                <img id="camPic" src="/img/test.png" alt="webcam view" />
+                </div>
+              </div>            
             </div>
-            
-
-        
+        </div>
        </div>
       
        <div id="controlsBlock" class=" mainBlock ui-corner-right ui-state-default" style="margin-left:2px;">
@@ -356,9 +208,6 @@
                           <tr class=" ui-widget-header ui-state-active" ><th scope="col">Name</th><th scope="col" style='width:150px'>Upload Date</th><th scope="col" style='width:20px'></th></tr>
                         </table>
                       </div>
-                    
-                      
-                    
                      </div>
                 </div>
               </div>

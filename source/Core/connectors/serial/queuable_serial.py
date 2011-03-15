@@ -33,23 +33,18 @@ class QSerial(Thread,HardwareConnector):
             up until it is dispatched via an event
             speed -- serial port speed
         """
-        Thread.__init__(self)
         self.logger = logging.getLogger("Doboz.Core.Tools.Serial")
         self.logger.setLevel(logging.INFO)
-        if not logging.getLogger("Doboz.Core").handlers:    
-            formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-            ch = logging.StreamHandler()
-            ch.setLevel(logging.INFO)
-            ch.setFormatter(formatter)
-            self.logger.addHandler(ch)
-            
+        
+        Thread.__init__(self)
+        HardwareConnector.__init__(self)
+        
 
         self.waitForAnswer=waitForAnswer
         self.pseudoName=pseudoName
         self.arduinoId=arduinoId
         self.port=port
         self.speed=Speed
-        self.isConnected=False
         
         self.seperator=seperator
         self.isBuffering=isBuffering
@@ -58,7 +53,7 @@ class QSerial(Thread,HardwareConnector):
         self.commandQueue=deque()
         
         self.startedCommands=False
-        self.events=HardwareConnectorEvents()
+        
         self.finished=Event()
         
         if bannedPorts:
@@ -70,8 +65,7 @@ class QSerial(Thread,HardwareConnector):
         
 
         self.regex = re.compile(self.seperator)
-        self.currentErrors=0
-        self.maxErrors=maxErrors
+       
         
             
     def connect(self):

@@ -4,7 +4,8 @@ import datetime
 import sys
 import os
 
-from Core.hardware_nodes.point_cloud import Point,PointCloud
+from Core.Tools.point_cloud2 import Point,PointCloud
+from Core.Tools.point_cloud_builder import PointCloudBuilder
 from Core.connectors.event_sys import *
 from Core.automation.task import Task, AutomationEvents
 from Core.automation.gcode_parser import GCodeParser
@@ -63,7 +64,7 @@ class PrintTask(Task):
     def disconnect(self):   
         self.connector.events.OnDataRecieved-=self._data_recieved
         self.connector=None
-        self.stop()
+       # self.stop()
         
     def start(self):
         """ Starts the current print task"""

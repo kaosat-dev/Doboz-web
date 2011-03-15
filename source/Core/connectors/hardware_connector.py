@@ -4,11 +4,17 @@ class HardwareConnectorEvents(Events):
     """
     Class defining events associated to HardwareConnector Class
     """
-    __events__=('OnDataRecieved','OnConnected', 'OnDisconnected', 'OnReconnected')
-    
+    __events__=('OnDataRecieved','connected', 'disconnected', 'reconnected')
+
+
+  
 class HardwareConnector(object):
     def __init__(self,driver=None):
         self.driver=driver
+        self.isConnected=False
+        self.currentErrors=0
+        self.maxErrors=5
+        self.events=HardwareConnectorEvents()
         
     def connect(self,*args,**kwargs):
         """

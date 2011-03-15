@@ -297,7 +297,19 @@ def server_static(path):
     
 @testBottle.route('/css/:path#.+#')
 def server_static(path):
-    send_file(path, root=os.path.join(testBottle.path,"files","static","css"))    
+    send_file(path, root=os.path.join(testBottle.path,"files","static","css"))   
+
+
+"""
+Special case for webcam images: must not be cached (hence header forced change)
+in order to enable "pseudo" reatime view with just one picture, and without using the "img src"+datetime javascript trick
+"""
+@testBottle.route('/img/:path#.+#')
+def server_static(path):
+    response.headers['Cache-Control'] = "no-store, no-cache, must-revalidate"
+    response.headers['Pragma'] = "no-cache"
+    send_file(path, root=os.path.join(testBottle.path,"files","static","img"))    
+ 
 
 
 """"""""""""""""""""""""""""""""""""

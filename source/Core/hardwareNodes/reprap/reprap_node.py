@@ -6,28 +6,23 @@ import os
 import uuid
 
 from sys import getrefcount
-#from Core.Tools.Serial.EventSys import*
 
 
 from Core.connectors.event_sys import *
+from ..hardware_node import HardwareNode
+
 """TODO: Make tasks in tasks be weak refs""" 
 class ReprapManagerEvents(Events):
     __events__=('OnLineParsed','OnTotalLinesSet','OnTotalLayersSet','OnPathSet','OnPositionChanged')
 
-class ReprapNode(object):
+class ReprapNode(HardwareNode):
     """
     A reprap node : hardware node (ie "Arduino or similar with attached components such as sensors and actors: ie in the case of a reprap: endstops, temperature sensors, steppers, heaters")
     """
     def __init__(self):
         self.logger=logging.getLogger("Doboz.Core.ReprapNode")
         self.logger.setLevel(logging.ERROR)
-    
-        self.isRunning=False  
-        self.connector=None 
-        self.driver=None
-        self.automation=None
-        self.components=[]
-        
+        HardwareNode.__init__(self)
         self.tasks=[]
         self.currentTask=None
         self.taskDelay=10;
@@ -38,8 +33,7 @@ class ReprapNode(object):
         self.rootPath=None
         self.events=ReprapManagerEvents() 
         self.gcodeSuffix="\n"
-        
-        
+            
         self.logger.critical("Reprap Node Init Done")
         
     def set_connector(self,connector):
@@ -47,13 +41,11 @@ class ReprapNode(object):
         self.connector=connector
         if hasattr(self.connector, 'events'):    
              #self.connector.events.OnDataRecieved+=self.data_recieved
-             self.connector.events.OnDisconnected+=self.on_connector_disconnect
-             self.connector.events.OnReconnected+=self.on_connector_reconnect  
+             self.connector.events.disconnected+=self.on_connector_disconnected
+             self.connector.events.reconnected+=self.on_connector_reconnected  
         self.connector.start()    
         
-    def set_driver(self,driver):
-        """Sets what driver to use """
-        self.driver=driver
+  
         
     def add_task(self,task):
         """
@@ -62,7 +54,7 @@ class ReprapNode(object):
         self.tasks.append(task)
         task.id=str(uuid.uuid4())
         task.events.OnExited+=self.on_task_exited
-        self.logger.critical ("Task %s added ",task.id)
+        self.logger.critical ("Task %s added , %d remaining tasks before starting",task.id,len(self.tasks)-1)
         
         if not self.currentTask:
             self.start_next_task()
@@ -90,19 +82,21 @@ class ReprapNode(object):
             
     def on_task_exited(self,args,kargs):
         self.logger.critical ("Task Exited ")
+        self.task_shutdown()
+        self.start_next_task()
+        
+    def task_shutdown(self):
         self.currentTask.disconnect()
         self.currentTask.events.OnExited-=self.on_task_exited
-        #curId=self.currentTask.id
         self.currentTask=None 
-        self.tasks.pop(0)
-        #self.remove_task(curId)
-        self.start_next_task()
-           
+        del self.tasks[0]
+
+
         
     def stop_task(self):
         if self.currentTask:
             self.currentTask.stop()
-            self.currentTask=None
+            self.task_shutdown()
             
     def set_paths(self,rootPath):
         """
@@ -122,6 +116,7 @@ class ReprapNode(object):
         """
         Start the whole system
         """          
+        self.isRunning=True
         self.isStarted=True
         self.totalTime=0
         self.startTime=time.time()  
@@ -145,7 +140,7 @@ class ReprapNode(object):
         return
         self.logger.critical("event recieved from reprap %s",str(kargs))
         
-    def on_connector_disconnect(self,args,kargs):
+    def on_connector_disconnected(self,args,kargs):
         """
         Function that handles possible serial port disconnection
         """
@@ -153,7 +148,7 @@ class ReprapNode(object):
         self.isPaused=True
     
        
-    def on_connector_reconnect(self,args,kargs):
+    def on_connector_reconnected(self,args,kargs):
         """
         Function that handles possible serial port reconnection
         """ 

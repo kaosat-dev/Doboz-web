@@ -5,7 +5,7 @@ import sys
 import os
 
 
-from Core.hardware_nodes.point_cloud import PointCloud
+from Core.Tools.point_cloud2 import PointCloud
 from Core.connectors.event_sys import *
 
 

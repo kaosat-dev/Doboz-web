@@ -88,7 +88,7 @@ body p a:hover
           canvas
           { 
            width:100%;
-           height:100%;
+           height:80%;
           }
           
 .compactTab
@@ -182,7 +182,7 @@ opacity: .80;filter:Alpha(Opacity=80);
 }
 
 
-#viewer
+#viewertest
 {
 width: 100%;
     height: 100%;
@@ -196,6 +196,11 @@ width: 100%;
     position: relative;
     bottom:40; 
     left:10; 
-    
 }
 
+#cam img
+{
+  width: 100%;
+    height: 100%;
+
+}
