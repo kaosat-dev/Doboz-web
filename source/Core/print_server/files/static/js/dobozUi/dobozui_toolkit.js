@@ -199,7 +199,7 @@ DobozUi.prototype.fetchData=function(dataUrl,successCallback,errorCallback)
 
 DobozUi.prototype.init=function()
 {
-  
+  this.loadSettings();
   this.onDocumentReady();
   
   
@@ -208,7 +208,7 @@ DobozUi.prototype.init=function()
                 { 
                   self.OnImageUpdateTimeout(); 
                 }, 500); 
-   this.loadSettings();
+   
 }
 DobozUi.prototype.saveSettings=function()
 {
@@ -219,7 +219,14 @@ DobozUi.prototype.saveSettings=function()
 }
 DobozUi.prototype.loadSettings=function()
 {
+  try
+  {
   this.firstStart=eval($.cookie('dobozUi_firstStart'))
+  }
+   catch(e) 
+   {
+      console.log("General init error  "+e);
+   }
   //this.defaultScanWidth=eval($.cookie('reprapMgr_defaultScanWidth'))
   //this.defaultScanHeight=eval($.cookie('reprapMgr_defaultScanWidth'))
   //this.defaultScanRes=eval($.cookie('reprapMgr_defaultScanRes'))

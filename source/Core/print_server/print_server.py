@@ -3,12 +3,7 @@ import os
 import sys
 import time
 import datetime
-import ConfigParser
-Config = ConfigParser.ConfigParser()
 
-
-path=os.path.abspath(".")
-Config.read(os.path.join(path,"config.cfg"))
 
 
 from bottle import Bottle, route, run, send_file, redirect, abort, request, response 
@@ -313,12 +308,11 @@ def server_static(path):
 
 
 """"""""""""""""""""""""""""""""""""
-port=Config.getint("WebServer", "Port")
-server=server=Config.get("WebServer", "ServerType")
+
 
 
 def start_webServer():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(('google.com', 0))
     hostIp=s.getsockname()[0]
-    run(app=testBottle,server=server, host=hostIp, port=port)
+    run(app=testBottle,server=testBottle.chosenServer, host=hostIp, port=testBottle.chosenPort)

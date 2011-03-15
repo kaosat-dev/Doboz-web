@@ -13,7 +13,10 @@ import shutil
 from Core.connectors.hardware_connector import HardwareConnector,HardwareConnectorEvents
 
 class GStreamerCam(Thread,HardwareConnector):
-    def __init__(self):
+    """
+    Gstreamer based webcam connector
+    """
+    def __init__(self,driver=None):
         self.logger=logging.getLogger("Doboz.Core.GStreamerTest")
         self.logger.setLevel(logging.CRITICAL)
         Thread.__init__(self)
@@ -30,12 +33,15 @@ class GStreamerCam(Thread,HardwareConnector):
         self.filePath=None
         self.realPath=None
         self.newRecording=False
-        self.driver="v4l2src"
+        self.driver=driver#"v4l2src"
         
         self.setup()
       
      
     def on_message(self, bus, message):
+        """
+        Gstreamer message handling
+        """
         try:
             t = message.type
           
@@ -92,9 +98,9 @@ class GStreamerCam(Thread,HardwareConnector):
        
     
     def run(self):
+        """Main loop"""
         while not self.finished.isSet():
-            if self.newRecording:
-                
+            if self.newRecording:  
                 #copy the temporary file to the final file name, to prevent display problems when the webserver tries to server a file currently beeing 
                 #written by gstreamer 
                 if os.path.exists(self.filePath+"tmp.png"):
@@ -106,9 +112,7 @@ class GStreamerCam(Thread,HardwareConnector):
                 self.newRecording=False
                 self.logger.info("Doing next snapshot")
                 
-                self.player.set_state(gst.STATE_PLAYING)
-                
-                
+                self.player.set_state(gst.STATE_PLAYING)        
             else:
                 time.sleep(0.1)
          

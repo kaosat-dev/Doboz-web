@@ -50,7 +50,7 @@ class PrintTask(Task):
    
    
     def __str__(self):
-        string="'type': %s, 'file': %s" %(self.type,os.path.basename(self.filePath))
+        string='{"id": "%s", "type": "%s", "file": "%s"}' %(str(self.id), self.type, os.path.basename(self.filePath))
         return string   
     
     def connect(self,connector):
