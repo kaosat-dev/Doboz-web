@@ -29,12 +29,14 @@ class EventSlot():
         self.__name__=name
 
     def __iadd__(self,handler):
+        print("in i add")
         self.handlers.append(handler)
         return self
 
     def __isub__(self,handler):
+        print("in i sub")
         for handl in self.handlers:
-            self.handlers.remove(handl)
+            self.handlers.remove(handler)
         return self
 
     def __call__(self,*a,**kw):

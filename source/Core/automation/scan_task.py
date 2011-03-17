@@ -63,8 +63,9 @@ class ScanTask(Task):
         ptBld=self.pointCloudBuilder.currentPoint
        
         self.connector.send_command("G1 X"+str(ptBld.x)+" Y"+str(ptBld.y))  
- 
-         
+
+
+            
     def stop(self):
         self.status="NP"
         self.events.OnExited(self,"OnExited")

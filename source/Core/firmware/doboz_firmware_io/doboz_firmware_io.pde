@@ -310,6 +310,7 @@ void setup()
    Wire.onReceive(receiveEvent);
   
    Serial.begin(19200);  
+   
  
   init_lcd();
   print_lcd_str("Initialising ");
@@ -380,23 +381,6 @@ void loop()
   scanner.update();
   
  
-  if(Serial.available()>0)
-  {
-     char cmd=Serial.read();
-     Serial.println(cmd);
-     if(cmd==START_SCAN)
-    {
-       scanner.scan();
-       Serial.println("starting scan");
-    } 
-    else if(cmd==STOP_SCAN)
-    {
-      scanner.stop(); 
-      Serial.println("stopping scan");
-    }
-    
-  }
-  
 
 
 }

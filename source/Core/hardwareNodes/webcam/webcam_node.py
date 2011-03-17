@@ -29,7 +29,7 @@ class WebcamNode(HardwareNode):
         self.connector.start()   
     
     def start(self):
-        self.connector.set_capture(self.filePath,0.2)
+        self.connector.set_capture(self.filePath,2)
         
     def on_connector_disconnected(self,args,kargs):
         """

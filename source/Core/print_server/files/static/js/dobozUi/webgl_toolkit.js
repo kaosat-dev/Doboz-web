@@ -36,6 +36,7 @@ WebglViewer.prototype.init=function()
         this.gl = this.canvas.getContext("experimental-webgl");
         this.gl.viewportWidth =this.canvas.offsetWidth;//this.canvas.width;
         this.gl.viewportHeight = this.canvas.offsetHeight;//this.canvas.height;
+
       } 
       catch(e) 
       {
@@ -56,9 +57,17 @@ WebglViewer.prototype.saveSettings=function()
 }
 WebglViewer.prototype.loadSettings=function()
 {
+  try
+  {
   this.autoStart=eval($.cookie('webgl_viewer_autoStart'))
   this.autoRotate=eval($.cookie('webgl_viewer_autoRotate'))
   $(document).trigger('Viewer.Configured',[ {'autoStart':this.autoStart,'autoRotate':this.autoRotate}]);
+  }
+  catch(e)
+  {
+    console.log("Webgl viewer failed to retrieve settings: error "+e);
+  }
+  
 }
 
 

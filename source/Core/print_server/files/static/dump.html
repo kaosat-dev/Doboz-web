@@ -1,5 +1,20 @@
-<div id="JobListContent ">
-              <ul id="jobList" class="fileList">
-                <li/>
-              </ul>
-            </div>
+ 
+                 
+
+                
+<div id="viewTabs">
+                <ul>
+                <li><a href="#viewer">Webgl</a></li>
+                <li><a href="#cam">Cam</a></li>
+                </ul>
+                <div id="viewer" style="padding:4px;border:0px">
+                 <canvas id="glcanvas" width="512" height="512">
+                   Your browser doesn't appear to support the HTML5 <code>&lt;canvas&gt;</code> element.
+                 </canvas>
+                </div>
+              <div id="cam" style="padding:4px;border:0px;">
+                <div id="camView" style="overflow:auto;height:87%;">
+                  <img id="camPic" src="/img/test.png" alt="webcam view" />
+                </div>
+              </div>
+              </div>       

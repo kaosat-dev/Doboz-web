@@ -45,9 +45,9 @@ class Task(object):
         elif self.status=="SP":
             self.status="SR"
             self.logger.critical("Un Pausing")
-            self.startTime=time.time() 
+            self.startTime=time.time()   
+            self._do_action_step()
             
-                
     def enter(self):
         """"""
         self.events.OnEntered(self,"Entered")
@@ -55,5 +55,6 @@ class Task(object):
     def exit(self):
         """"""
         self.events.OnExited(self,"Exited")
-        
 
+    def _do_action_step(self):
+        raise NotImplementedException("This needs to be implemented in a subclass")

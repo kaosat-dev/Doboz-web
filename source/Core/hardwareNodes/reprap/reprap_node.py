@@ -40,9 +40,9 @@ class ReprapNode(HardwareNode):
         """Sets what connector to use """
         self.connector=connector
         if hasattr(self.connector, 'events'):    
-             #self.connector.events.OnDataRecieved+=self.data_recieved
              self.connector.events.disconnected+=self.on_connector_disconnected
              self.connector.events.reconnected+=self.on_connector_reconnected  
+             self.connector.events.OnDataRecieved+=self.data_recieved
         self.connector.start()    
         
   
@@ -134,10 +134,10 @@ class ReprapNode(HardwareNode):
         """
         Simple function to send text over serial
         """
+       
         self.serial.send_data(text+self.gcodeSuffix)   
       
     def data_recieved(self,args,kargs):
-        return
         self.logger.critical("event recieved from reprap %s",str(kargs))
         
     def on_connector_disconnected(self,args,kargs):

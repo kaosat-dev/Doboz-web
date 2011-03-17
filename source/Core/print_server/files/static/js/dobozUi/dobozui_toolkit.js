@@ -172,6 +172,12 @@ DobozUi.prototype.onDocumentReady=function()
          viewer.loadSettings();
          dobozUi.loadSettings();  
    ////////////
+     
+   self=this;
+   this.timer=setInterval(function()
+                { 
+                  self.OnImageUpdateTimeout(); 
+                }, 2000); 
       
 }
 
@@ -202,12 +208,7 @@ DobozUi.prototype.init=function()
   this.loadSettings();
   this.onDocumentReady();
   
-  
-   self=this;
-   this.timer=setInterval(function()
-                { 
-                  self.OnImageUpdateTimeout(); 
-                }, 500); 
+
    
 }
 DobozUi.prototype.saveSettings=function()

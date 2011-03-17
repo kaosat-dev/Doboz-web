@@ -1,7 +1,7 @@
 body
 {
   background-color:#222222;
-  font-size:87%;
+  font-size:75%;
    
 }
 
@@ -45,6 +45,7 @@ body p a:hover
             float:left;
             height:530px;     
           }
+          
           #controlsBlock
           {
             width:62%;
@@ -65,8 +66,20 @@ body p a:hover
           {
               height:340px;
               padding:0px;
-              
           }
+          #viewContent
+          {
+              height:100%;
+              width:100%;
+              padding:0px;
+          }
+           #viewTabs
+          {
+              height:100%;
+              width:100%;
+              padding:0px;
+          }
+       
           
             #JobListThingy
             {
@@ -85,11 +98,7 @@ body p a:hover
              color:#ffffff;
              
           }
-          canvas
-          { 
-           width:100%;
-           height:80%;
-          }
+         
           
 .compactTab
 {
@@ -182,13 +191,7 @@ opacity: .80;filter:Alpha(Opacity=80);
 }
 
 
-#viewertest
-{
-width: 100%;
-    height: 100%;
 
-    
-}
 #viewerInfo
 {
 width: 100%;
@@ -198,9 +201,21 @@ width: 100%;
     left:10; 
 }
 
+#3dView 
+{
+ height: 100%;
+ width:100%;
+}
+canvas
+{
+  width: 100%;
+  height: 100%;
+
+}
+
 #cam img
 {
   width: 100%;
-    height: 100%;
+  height: 100%;
 
 }

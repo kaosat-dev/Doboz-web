@@ -100,7 +100,7 @@ class QSerial(Thread,HardwareConnector):
         else:
             self.logger.info("(re)starting serial listener")
             if self.isConnected:
-                self.events.OnReconnected(self,None)
+                self.events.reconnected(self,None)
             else:
                 self.isConnected=True
                 #self.start()
@@ -273,7 +273,7 @@ class QSerial(Thread,HardwareConnector):
                 self.currentErrors+=1
                 #after ten failed attempts , shutdown
                 if self.currentErrors>self.maxErrors:
-                    self.events.OnDisconnected(self,None)
+                    self.events.disconnected(self,None)
                     self.connect()
                     
         return data

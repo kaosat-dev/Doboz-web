@@ -21,10 +21,10 @@ def configure_all():
     """"""""""""""""""""""""""""""""""""
     
     logger=logging.getLogger("Doboz.Core")
-    logger.setLevel(logging.ERROR)
+    logger.setLevel(logging.INFO)
     formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
     ch = logging.StreamHandler(sys.stdout)
-    ch.setLevel(logging.ERROR)
+    ch.setLevel(logging.INFO)
     ch.setFormatter(formatter)
     logger.addHandler(ch)
 
@@ -52,6 +52,7 @@ def configure_all():
     testBottle.chosenServer=server
     testBottle.chosenPort=port
     testBottle.reprapManager=reprapNode
+    
 
 
 configure_all()

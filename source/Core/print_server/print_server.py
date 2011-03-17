@@ -3,21 +3,17 @@ import os
 import sys
 import time
 import datetime
-
-
-
-from bottle import Bottle, route, run, send_file, redirect, abort, request, response 
-
-import bottle
-
-#from reprap_manager import ReprapManager
-from point_cloud import PointCloudBuilder,PointCloud,Point
 import socket
 
+from bottle import Bottle, route, run, send_file, redirect, abort, request, response 
+import bottle
+from guppy import hpy
+   
 
 from Core.automation.print_task import PrintTask
 from Core.automation.scan_task import ScanTask
 from Core.automation.transition_task import TransitionTask
+from point_cloud import PointCloudBuilder,PointCloud,Point
 
 testBottle = Bottle()
 testBottle.path=os.path.join(os.path.abspath("."),"Core","print_server")
@@ -33,8 +29,8 @@ testBottle.logger=logging.getLogger("Doboz.Core.WebServer")
 testBottle.reprapManager=None
 testBottle.uploadProgress=0
 
-
-
+#for profiling:
+testBottle.heapWatch=hpy()
         
 @testBottle.route('/upload', method='POST')
 def do_upload():
@@ -257,8 +253,11 @@ def generalCommands(command):
             response=callback+"("+str(data)+")"
         except Exception as inst:
             testBottle.logger.critical("error in getting job status  %s",str(inst))     
-            
-        testBottle.logger.critical("response %s",str(response))  
+       
+    elif command=="serverStatus":
+        print(testBottle.heapWatch.heap())
+    
+    testBottle.logger.critical("response %s",str(response))  
     return response
 
 @testBottle.route('/longpolling/:command' , method='GET')
@@ -303,6 +302,7 @@ in order to enable "pseudo" reatime view with just one picture, and without usin
 def server_static(path):
     response.headers['Cache-Control'] = "no-store, no-cache, must-revalidate"
     response.headers['Pragma'] = "no-cache"
+    response.headers['expires']=0
     send_file(path, root=os.path.join(testBottle.path,"files","static","img"))    
  
 
@@ -315,4 +315,5 @@ def start_webServer():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(('google.com', 0))
     hostIp=s.getsockname()[0]
+
     run(app=testBottle,server=testBottle.chosenServer, host=hostIp, port=testBottle.chosenPort)
