@@ -72,7 +72,7 @@ class ReprapNode(HardwareNode):
     def start_next_task(self):
         if len(self.tasks)>0:
             try:
-                self.logger.critical ("Starting next task ,%g remaining task",len(self.tasks))
+                self.logger.critical ("Starting next task ,%g remaining tasks",len(self.tasks)-1)
                 self.currentTask=self.tasks[0]
                 print("currenttask",self.currentTask)
                 self.currentTask.connect(self.connector)
@@ -81,8 +81,9 @@ class ReprapNode(HardwareNode):
                 self.logger.critical ("Error while starting next task in queue %s",str(inst))
             
     def on_task_exited(self,args,kargs):
-        self.logger.critical ("Task Exited ")
+        
         self.task_shutdown()
+        self.logger.critical ("Task Finished ,%g remaining tasks",len(self.tasks)-1)
         self.start_next_task()
         
     def task_shutdown(self):
@@ -138,7 +139,7 @@ class ReprapNode(HardwareNode):
         self.serial.send_data(text+self.gcodeSuffix)   
       
     def data_recieved(self,args,kargs):
-        self.logger.critical("event recieved from reprap %s",str(kargs))
+        #self.logger.critical("event recieved from reprap %s",str(kargs))
         if  "M105" in kargs:
             try:
                 self.headTemp=int(kargs.split(' ')[1])
@@ -150,7 +151,9 @@ class ReprapNode(HardwareNode):
             except:
                 pass
         try:
-            self.logger.critical("Bed Temperature: %d Extruder Temperature %d",self.bedTemp,self.headTemp)
+            pass
+        
+         #   self.logger.critical("Bed Temperature: %d Extruder Temperature %d",self.bedTemp,self.headTemp)
         except:
             pass
         

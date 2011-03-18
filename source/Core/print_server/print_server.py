@@ -257,7 +257,7 @@ def generalCommands(command):
     elif command=="serverStatus":
         print(testBottle.heapWatch.heap())
     
-    testBottle.logger.critical("response %s",str(response))  
+    testBottle.logger.info("response %s",str(response))  
     return response
 
 @testBottle.route('/longpolling/:command' , method='GET')

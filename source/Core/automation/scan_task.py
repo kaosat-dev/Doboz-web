@@ -112,7 +112,7 @@ class ScanTask(Task):
                     if self.status!="NP" and self.status!="SP":   
                         self._do_action_step()
                 else:
-                    if not "G92" in kargs and not "G90" in kargs and not "G21" in kargs and "G1" in kargs and self.status!="NP" and self.status!="SP" :
+                    if not "G92" in kargs and not "G90" in kargs and not "G21" in kargs  and "G1" in kargs and self.status!="NP" and self.status!="SP" :
                         self.connector.send_command("M180")
                         
         else:
