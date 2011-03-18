@@ -190,13 +190,13 @@ void handleCommand(int command,int value)
       break;
       
       case 'u'://got head temp
-        Serial.print(value);
-        Serial.println(" ok");
+        Serial.println(value);
+        //Serial.println(" ok");
       break;
       
        case 'v'://got bed temp
-       Serial.print(value);
-        Serial.println(" ok");
+       Serial.println(value);
+        //Serial.println(" ok");
       break;
       
       case 'd':

@@ -202,7 +202,7 @@ class PrintTask(Task):
 #            self.logFile.write("line="+str(self.currentLine))
 #            self.logFile.close()
             
-            self.logger.critical("Sent command "+ line)
+            self.logger.info("Sent command "+ line)
 #            self.events.OnLineParsed(self,line)
             self.currentLine+=1
             self.lastLine=line
@@ -242,19 +242,18 @@ class PrintTask(Task):
                 self.reconnectionCommand=None
  
         if self.status!="NP" and self.status!="SP":#not paused
-            if "ok" in kargs or "start" in kargs:
-                self._do_action_step()    
+            if "ok" in kargs or "start" in kargs: 
+                 self._do_action_step()  
+#                tmpLastLine=(self.lastLine.rstrip()).replace("\n","")
+#                tmpAnsw=" ".join(kargs.lstrip().split(' ')[:-1])
+#                tmpAnswLine=tmpAnsw.rstrip()
+#     
+#                if tmpLastLine == tmpAnswLine:#did we recieve the right answer
+                     
+
+            
        
-        if "ok" in kargs  and "M105" in kargs:
-            try:
-                self.headTemp=int(kargs.split(' ')[1])
-            except:
-                pass
-        if "ok" in kargs  and "M143" in kargs:
-            try:
-                self.bedTemp=int(kargs.split(' ')[1])
-            except:
-                pass
+      
             
 
     def stop(self):

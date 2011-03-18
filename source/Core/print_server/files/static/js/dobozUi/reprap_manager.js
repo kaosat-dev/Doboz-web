@@ -12,9 +12,9 @@ function ReprapManager(mainUrl)
     this.sentGodeLineEnd="/t/n";
     this.recievedGcodeEnd="ok";
     
-    this.statusAutoFetch=false;
+    this.statusAutoFetch=true;
     this.statusTimer=0; //timer for machine status retrieval
-    this.statusFetchInterval=-1;//in seconds
+    this.statusFetchInterval=5;//in seconds
 
     //pseudo "streaming" for 3d data
     this.streamBlockSize=3;//how many points do we get in one pass
@@ -301,10 +301,9 @@ ReprapManager.prototype.loadSettings=function()
     ReprapManager.prototype.getMachineStatus=function()
     {
           //checks if a print/scan is already in progress
- 
-          alert("here");
+
            var self = this; 
-           self.fetchData(this.mainUrl+"commands/status",function (response){self.onMachineStatusRecieved(response)});     
+           self.fetchData(this.mainUrl+"commands/machineStatus",function (response){self.onMachineStatusRecieved(response)});     
     }
     
     ReprapManager.prototype.onMachineStatusRecieved=function(response)

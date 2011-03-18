@@ -362,7 +362,7 @@ DobozUi.prototype.onJobFinished=function(job)
 
 DobozUi.prototype.onStatusUpdated=function(status)
 {
-   $("#statusInfo").html("Extr T&deg;"+status.ExtruderTemp+" Bed T&deg;"+status.BedTemp);
+   $("#statusInfo").html("Extr T&deg;<FONT COLOR='red'> "+status.ExtruderTemp+"</FONT> Bed T&deg; <FONT COLOR='red'>"+status.BedTemp+"</FONT>");
 }
 
 

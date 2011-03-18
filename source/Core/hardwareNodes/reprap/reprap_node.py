@@ -139,6 +139,20 @@ class ReprapNode(HardwareNode):
       
     def data_recieved(self,args,kargs):
         self.logger.critical("event recieved from reprap %s",str(kargs))
+        if  "M105" in kargs:
+            try:
+                self.headTemp=int(kargs.split(' ')[1])
+            except:
+                pass
+        if  "M143" in kargs:
+            try:
+                self.bedTemp=int(kargs.split(' ')[1])
+            except:
+                pass
+        try:
+            self.logger.critical("Bed Temperature: %d Extruder Temperature %d",self.bedTemp,self.headTemp)
+        except:
+            pass
         
     def on_connector_disconnected(self,args,kargs):
         """

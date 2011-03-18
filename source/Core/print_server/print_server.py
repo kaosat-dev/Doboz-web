@@ -232,10 +232,10 @@ def generalCommands(command):
     callback=request.GET.get('callback', '').strip()
     response=callback+"()"
     if command == "machineStatus":
-        testBottle.reprapManager.sendText("M105")
-        testBottle.reprapManager.sendText("M143")
+        testBottle.reprapManager.connector.send_command("M105")
+        testBottle.reprapManager.connector.send_command("M143")
         try:
-            data={"headTemp":testBottle.reprapManager.headTemp,"bedTemp":testBottle.reprapManager.bedTemp,"lastCommand":testBottle.reprapManager.lastLine or ""}
+            data={"headTemp":testBottle.reprapManager.headTemp,"bedTemp":testBottle.reprapManager.bedTemp}
             response=callback+"("+str(data)+")"
         except Exception as inst:
             testBottle.logger.info("error in getting machine status %s",str(inst))

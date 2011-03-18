@@ -21,10 +21,10 @@ def configure_all():
     """"""""""""""""""""""""""""""""""""
     
     logger=logging.getLogger("Doboz.Core")
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.ERROR)
     formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
     ch = logging.StreamHandler(sys.stdout)
-    ch.setLevel(logging.INFO)
+    ch.setLevel(logging.ERROR)
     ch.setFormatter(formatter)
     logger.addHandler(ch)
 
