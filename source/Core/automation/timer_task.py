@@ -4,7 +4,7 @@ import datetime
 from threading import Thread,Event
 
 
-from Core.connectors.event_sys import *
+from Core.Tools.event_sys import *
 from Core.automation.task import Task, AutomationEvents
 
 class TimerTask(Task,Thread):

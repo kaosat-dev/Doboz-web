@@ -2,6 +2,7 @@ import logging
 import time
 import datetime
 import uuid
+
 class HardwareNode(object):
     """
     Base class for all hardware nodes: a hardware node is a software component handling a physical device such as a webcam, reprap , arduino etc

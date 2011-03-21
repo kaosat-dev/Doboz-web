@@ -1,6 +1,6 @@
 import logging
 
-from Core.connectors.event_sys import *
+from Core.Tools.event_sys import *
 from ..hardware_node import HardwareNode
 
 class WebcamNode(HardwareNode):

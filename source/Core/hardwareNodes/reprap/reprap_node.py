@@ -5,10 +5,9 @@ import sys
 import os
 
 
-from sys import getrefcount
 
 
-from Core.connectors.event_sys import *
+from Core.Tools.event_sys import *
 from ..hardware_node import HardwareNode
 
 """TODO: Make tasks in tasks be weak refs""" 
