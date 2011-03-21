@@ -126,7 +126,7 @@
       //typically one per reprap : for now , only one allowed    
       var reprapMgr=new ReprapManager("http://"+window.location.host+"/"); 
 
-      var dobozUi=new DobozUi();
+      var dobozUi=new DobozUi("http://"+window.location.host+"/");
       var viewer=new WebglViewer();
       
       var styles=[];
@@ -248,16 +248,23 @@
               </div>
               <div id="tabs-3" style="padding:4px;border:0px">
                   <div id="machineOptions" style="overflow:auto;height:87%;">
-                     <div class="ui-widget ui-state-default ui-corner-all titleBar" >Job Settings</div>
-                    <div>
+                     
+                    <div class="tab-acordeon">
+                      
+                      <h3><a href="#"> Status settings</a></h3>
+                      <div>
+                        <input id="statusUpdate" type='text' value="0" class="ui-corner-left" onKeyUp="dobozUi.onStatusUpdateFrequencyChanged()"/> status update frequency (s) <br>
+                        <button  id="machineSettingsButton" onclick="reprapMgr.getMachineStatus()"> Get Status </button>
+                      </div>
+                       <h3><a href="#"> Task settings (NOT IMPLEMENTED)</a></h3>
+                       <div>
                    <div id="betweenJobActionRadio">
                       <input type="radio" id="waitradio" name="betweenJobActionRadio" checked="checked" /><label for="waitradio">Wait</label>
                       <input type="radio" id="dialogradio" name="betweenJobActionRadio" /><label for="dialogradio">Display prompt</label>
                     </div>
                     <input id="jobDelayField" type='text' value="10" class=" ui-corner-left" onKeyUp="dobozUi.onJobsDelayChanged()"/> pause between prints (s)<br>
-                    </div>
-                    <div class="tab-acordeon">
-                      <h3><a href="#">Units</a></h3>
+                    </div>  
+                      <h3><a href="#">Units settings(NOT IMPLEMENTED)</a></h3>
                         <div>
                         <div id="distanceunitsRadio">
                           <input type="radio" id="mmradio" name="distanceunitsRadio" checked="checked" /><label for="mmradio">mm</label>
@@ -268,17 +275,21 @@
                           <input type="radio" id="fradio" name="temperatureunitsRadio" /><label for="fradio">Fahrenheit</label>
                         </div>
                       </div>
-                      <h3><a href="#"> Status</a></h3>
-                      <div>
-                        <input id="statusUpdate" type='text' value="10" class="ui-corner-left"/> status update frequency (s)<br>
-                        <button  id="machineSettingsButton" onclick="reprapMgr.getMachineStatus()"> Get Status </button>
-                      </div>
                     </div>
                   </div>
                   
               </div>
               <div id="tabs-4" style="padding:4px;border:0px">
+                <div class="ui-widget ui-state-default ui-corner-all titleBar">Task view </div>
+                 <div id="taskViewControls">
+                
+                  Refresh frequency (s) <input id="taskRefreshInput" type='text' value="3" class=" ui-corner-left"  style="width:25px"/>
+                   <button onclick="dobozUi.starWebcam()">Set</button>
+                
+                  </div>
+                  <br>
                 <div class="ui-widget ui-state-default ui-corner-all titleBar">Webgl Viewer</div>
+                
                 <div id="webglControls">
                   <input type="checkbox" id="viewerAutoStartRadio"  /><label for="viewerAutoStartRadio">AutoStart</label>
                   <input type="checkbox" id="viewerAutoRotateRadio"  /><label for="viewerAutoRotateRadio">AutoRotate</label><br>
@@ -291,10 +302,15 @@
                       <input type="radio" id="Gl_Triangles_radio"  name="gl_draw_options" value="4"/><label for="Gl_Triangles_radio">Triangles</label>
                        <input type="radio" id="Gl_TrianglesStrip_radio"  name="gl_draw_options" value="5"/><label for="Gl_TrianglesStrip_radio">TriangleStrip</label>
                     </div>
-                </div>
+                </div><br>
                  <div class="ui-widget ui-state-default ui-corner-all titleBar">Webcam Viewer</div>
-                 <button  onclick="">Start Webcam viewer</button>
-                  <button  onclick="">Stop Webcam viewer</button>
+                 <div id="webcamControls">
+                
+                  Refresh frequency (s) <input id="webcamRefreshInput" type='text' value="3" class=" ui-corner-left"  style="width:25px"/>
+                   <button onclick="dobozUi.starWebcam()">Start Webcam viewer</button>
+                  <button onclick="dobozUi.stopWebcam()">Stop Webcam viewer</button>
+                  </div>
+                  <br>
                 <div class="ui-widget ui-state-default ui-corner-all titleBar" >Theme</div>
                 <div id="switcher">
                   <select id="cssselect" onChange="onSelectChange();">
@@ -309,7 +325,11 @@
                <div id="tabs-5" style="padding:4px;border:0px">
                 <div id="serverTabContent" style="overflow:auto;height:87%;">
                   <div class="ui-widget ui-state-default ui-corner-all titleBar">Server Info</div>
-                     <button  onclick="viewer.start()">Get stats</button>
+                     <div style="padding:2px;border:0px;">
+                        <table id="serverTable" class="infoTable" style="width:100%">
+                          <tr class=" ui-widget-header ui-state-active" ><th scope="col" style='width:150px'>Param Name</th><th scope="col" style='width:150px'>Info</th></tr>
+                        </table>
+                      </div>
                 </div>
               </div>
 
@@ -334,6 +354,7 @@
                   <a href="http://www.erichynds.com/jquery/a-jquery-ui-growl-ubuntu-notification-widget/">Jquery Ui notify</a><br>
                   <a href=" http://www.michaelvanderheeren.be/?p=382">Absolution: Jquery Ui Theme</a><br>
                   <a href="http://pyserial.sourceforge.net/">Pyserial</a><br>
+                  <a href="http://gstreamer.freedesktop.org/modules/gst-python.html">PyGst (gstreamer python bindings for python : for webcam support only)</a><br>
                   <a href="http://bottle.paws.de/docs/dev/index.html">Bottle</a><br>
                   <a href="http://www.tornadoweb.org/">Tornado</a>
                   </p>
@@ -362,7 +383,10 @@
             </div>
           </div>
            
-          <div id="jobProgressBar" style="height: 10px; width:100%;float:left"></div>
+          <div id="jobProgressBar" style="height: 10px; width:100%;float:left">
+             <span class="jobpblabel">0%</span> 
+            
+          </div>
         </div>
        </div>
     </div>

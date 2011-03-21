@@ -12,8 +12,8 @@ from Core.automation.gcode_parser import GCodeParser
 
 class PrintTask(Task):
     """ A task for printing gcode files"""
-    def __init__(self,connector=None,filePath=None):
-        Task.__init__(self,connector,"print")
+    def __init__(self,filePath=None):
+        Task.__init__(self,"print")
         self.logger=logging.getLogger("Doboz.Core.Automation.PrintTask")
         self.logger.setLevel(logging.ERROR)
         
@@ -28,8 +28,8 @@ class PrintTask(Task):
         self.currentLayer=0
         self.totalLayers=0
         self.lastLayer=0#for layer counting
+        self.pointCloud=PointCloud()        
         
-
         self.source=None
         
         self.recoveryMode=False
@@ -234,7 +234,7 @@ class PrintTask(Task):
         If the last command was confirmed, read next line frome gcode file, and 
         send it over serial.
         """
-        self.logger.info("event recieved from reprap %s",str(kargs))
+        self.logger.critical("event recieved from reprap %s",str(kargs))
        
         if self.reconnectionCommand and self.status=="SP":
             if self.reconnectionCommand in kargs:

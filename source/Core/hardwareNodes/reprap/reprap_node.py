@@ -3,7 +3,7 @@ import time
 import datetime
 import sys
 import os
-import uuid
+
 
 from sys import getrefcount
 
@@ -23,13 +23,10 @@ class ReprapNode(HardwareNode):
         self.logger=logging.getLogger("Doboz.Core.ReprapNode")
         self.logger.setLevel(logging.ERROR)
         HardwareNode.__init__(self)
-        self.tasks=[]
-        self.currentTask=None
-        self.taskDelay=10;
+ 
         
         self.startTime=time.time()
-        
-      
+
         self.rootPath=None
         self.events=ReprapManagerEvents() 
         self.gcodeSuffix="\n"
@@ -40,64 +37,16 @@ class ReprapNode(HardwareNode):
         """Sets what connector to use """
         self.connector=connector
         if hasattr(self.connector, 'events'):    
-             self.connector.events.disconnected+=self.on_connector_disconnected
-             self.connector.events.reconnected+=self.on_connector_reconnected  
-             self.connector.events.OnDataRecieved+=self.data_recieved
+             self.connector.events.disconnected+=self._on_connector_disconnected
+             self.connector.events.reconnected+=self._on_connector_reconnected  
+             self.connector.events.OnDataRecieved+=self._on_data_recieved
         self.connector.start()    
         
   
         
-    def add_task(self,task):
-        """
-        TODO add weakref to task
-        """
-        self.tasks.append(task)
-        task.id=str(uuid.uuid4())
-        task.events.OnExited+=self.on_task_exited
-        self.logger.critical ("Task %s added , %d remaining tasks before starting",task.id,len(self.tasks)-1)
-        
-        if not self.currentTask:
-            self.start_next_task()
-            
-    def remove_task(self,id):
-        if not self.currentTask:    
-                [self.tasks.remove(task) for task in self.tasks if task.id==id]
-                self.logger.critical ("Task %s Removed ",task.id)         
-        else:
-            if id!=self.currentTask.id :
-                [self.tasks.remove(task) for task in self.tasks if task.id==id]
-                self.logger.critical ("Task %s Removed ",task.id)  
-
     
-    def start_next_task(self):
-        if len(self.tasks)>0:
-            try:
-                self.logger.critical ("Starting next task ,%g remaining tasks",len(self.tasks)-1)
-                self.currentTask=self.tasks[0]
-                print("currenttask",self.currentTask)
-                self.currentTask.connect(self.connector)
-                self.currentTask.start()
-            except Exception as inst:
-                self.logger.critical ("Error while starting next task in queue %s",str(inst))
-            
-    def on_task_exited(self,args,kargs):
         
-        self.task_shutdown()
-        self.logger.critical ("Task Finished ,%g remaining tasks",len(self.tasks)-1)
-        self.start_next_task()
-        
-    def task_shutdown(self):
-        self.currentTask.disconnect()
-        self.currentTask.events.OnExited-=self.on_task_exited
-        self.currentTask=None 
-        del self.tasks[0]
-
-
-        
-    def stop_task(self):
-        if self.currentTask:
-            self.currentTask.stop()
-            self.task_shutdown()
+   
             
     def set_paths(self,rootPath):
         """
@@ -121,6 +70,7 @@ class ReprapNode(HardwareNode):
         self.isStarted=True
         self.totalTime=0
         self.startTime=time.time()  
+        self.logger.critical("Starting Reprap Node")
     
     def stop(self):
         """
@@ -138,7 +88,7 @@ class ReprapNode(HardwareNode):
        
         self.serial.send_data(text+self.gcodeSuffix)   
       
-    def data_recieved(self,args,kargs):
+    def _on_data_recieved(self,args,kargs):
         #self.logger.critical("event recieved from reprap %s",str(kargs))
         if  "M105" in kargs:
             try:
@@ -157,7 +107,7 @@ class ReprapNode(HardwareNode):
         except:
             pass
         
-    def on_connector_disconnected(self,args,kargs):
+    def _on_connector_disconnected(self,args,kargs):
         """
         Function that handles possible serial port disconnection
         """
@@ -165,7 +115,7 @@ class ReprapNode(HardwareNode):
         self.isPaused=True
     
        
-    def on_connector_reconnected(self,args,kargs):
+    def _on_connector_reconnected(self,args,kargs):
         """
         Function that handles possible serial port reconnection
         """ 

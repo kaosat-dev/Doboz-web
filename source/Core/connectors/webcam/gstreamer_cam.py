@@ -29,10 +29,11 @@ class GStreamerCam(Thread,HardwareConnector):
         bus.set_sync_handler(self.on_message)
         
         self.finished=Event() 
-        self.snapshotInterval=5
         self.filePath=None
         self.realPath=None
-        self.newRecording=False
+
+        self.recordingRequested=False
+        self.recordingDone=True
         self.driver=driver#"v4l2src"
         
         self.setup()
@@ -48,7 +49,7 @@ class GStreamerCam(Thread,HardwareConnector):
             if t == gst.MESSAGE_EOS:
                 self.logger.info("Recieved eos message")
                 #self.finished.set()
-                self.newRecording=True
+                self.recordingDone=True
             elif t == gst.MESSAGE_ERROR:
                 self.player.set_state(gst.STATE_NULL)
                 err, debug = message.parse_error()
@@ -100,27 +101,26 @@ class GStreamerCam(Thread,HardwareConnector):
     def run(self):
         """Main loop"""
         while not self.finished.isSet():
-            if self.newRecording:  
+            if self.recordingDone and self.recordingRequested:  
+                self.logger.info("Doing next snapshot")
                 #copy the temporary file to the final file name, to prevent display problems when the webserver tries to server a file currently beeing 
                 #written by gstreamer 
                 if os.path.exists(self.filePath+"tmp.png"):
                     shutil.copy2(self.filePath+"tmp.png", self.filePath+".png")
                 self.player.set_state(gst.STATE_NULL)
                 
-                
-                time.sleep(self.snapshotInterval)
-                self.newRecording=False
-                self.logger.info("Doing next snapshot")
-                
+                self.recordingRequested=False
+                self.recordingDone=False
                 self.player.set_state(gst.STATE_PLAYING)        
             else:
                 time.sleep(0.1)
          
+    def fetch_data(self): 
+        self.recordingRequested=True
 
-    def set_capture(self, filePath,interval):    
+    def set_capture(self, filePath):    
         self.filePath=filePath
-        self.snapshotInterval=interval
-        self.newRecording=True
+        self.newRecording=False
         self.logger.critical("Starting capture to  %s",filePath)
         self.player.get_by_name("file_destination").set_property("location", self.filePath+"tmp.png")
 

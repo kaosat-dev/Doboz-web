@@ -9,6 +9,7 @@ Depencies:
 * You will need to have pySerial installed
 * By default , the web server is now set to use wsgiref (no external dependency required) : to change that , just change the ServerType in the config.cfg file in the "WebServer" section
 to any other web server supported by Bottle (preferably Tornado for now)
+* if you want webcam support you will also need PyGst (Gstreamer)
 
 For more info 
 please see the wiki pages at http://github.com/kaosat-dev/Doboz/wiki/Doboz-web

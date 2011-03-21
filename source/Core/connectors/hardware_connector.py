@@ -16,11 +16,16 @@ class HardwareConnector(object):
         self.maxErrors=5
         self.events=HardwareConnectorEvents()
         
+        
     def connect(self,*args,**kwargs):
         """
         Establish connection to hardware
         """
         raise NotImplementedException()
+    
+    def fetch_data(self):
+        """cheap hack for now"""
+        pass
     
     def send_command(self,command):
         """

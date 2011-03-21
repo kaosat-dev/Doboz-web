@@ -71,6 +71,14 @@
          dobozUi.onStatusUpdated(status);
       });
       
+      $(document).bind("Machine.StatusUpdtFrequencyChanged", function(e, frequency)
+      {
+          
+         reprapMgr.onMachineStatusFrequencyUpdated(frequency);
+      });
+      
+      
+      
        $(document).bind("Files.Recieved", function(e, files)
       {
         dobozUi.onFileListRecieved(files);

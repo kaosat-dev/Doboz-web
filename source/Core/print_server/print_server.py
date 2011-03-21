@@ -7,13 +7,13 @@ import socket
 
 from bottle import Bottle, route, run, send_file, redirect, abort, request, response 
 import bottle
-from guppy import hpy
+#from guppy import hpy
    
 
 from Core.automation.print_task import PrintTask
 from Core.automation.scan_task import ScanTask
 from Core.automation.transition_task import TransitionTask
-from point_cloud import PointCloudBuilder,PointCloud,Point
+from Core.automation.timer_task import TimerTask
 
 testBottle = Bottle()
 testBottle.path=os.path.join(os.path.abspath("."),"Core","print_server")
@@ -30,7 +30,7 @@ testBottle.reprapManager=None
 testBottle.uploadProgress=0
 
 #for profiling:
-testBottle.heapWatch=hpy()
+#testBottle.heapWatch=hpy()
         
 @testBottle.route('/upload', method='POST')
 def do_upload():
@@ -219,8 +219,8 @@ def scanning(command):
 
     return response
 
-
-
+     
+        
 @testBottle.route('/uploads/:filename')
 def download(filename):
     testBottle.logger.info("pouet %s, path: %s",filename,str(os.path.join(testBottle.path,"files","uploads")))
@@ -239,7 +239,30 @@ def generalCommands(command):
             response=callback+"("+str(data)+")"
         except Exception as inst:
             testBottle.logger.info("error in getting machine status %s",str(inst))
-    
+            
+    elif command == "StartWebcam":  #for setting webcam refresh frequency
+        try:
+            if testBottle.webcamsEnabled:
+                frequency=float(request.GET.get('frequency', '').strip())     
+                testBottle.webcam.clear_tasks(True)
+                testBottle.webcam.add_task(TimerTask(frequency))
+        except Exception as inst:
+            testBottle.logger.critical("error in starting webcam /setting refresh rate %s",str(inst))
+    elif command == "StopWebcam":  #for setting webcam refresh frequency
+        try:
+            if testBottle.webcamsEnabled:
+                testBottle.webcam.clear_tasks(True)
+        except Exception as inst:
+            testBottle.logger.critical("error in stopping webcam  %s",str(inst))        
+    elif command=="ServerInfo":
+        """Returns what the current nodes (reprap, webcam etc) can or can't do, or if certain nodes are unactive or not etc"""
+        try:
+
+            data={"config":[{"ParamName":"Webcams","value":str(testBottle.webcamsEnabled).lower()},{"ParamName":"WebServer","value":testBottle.chosenServer}]}
+            response=callback+"("+str(data)+")"
+        except Exception as inst:
+            testBottle.logger.critical("error in getting server info %s",str(inst))
+            
     elif command=="jobStatus":   
         try: 
             """We list all the tasks  + add info if any progress of the current one """
@@ -260,22 +283,7 @@ def generalCommands(command):
     testBottle.logger.info("response %s",str(response))  
     return response
 
-@testBottle.route('/longpolling/:command' , method='GET')
-def longpollresponder(command):
-    testBottle.logger.info("Doing longPoll")
-    machin=False
-    #while (not testBottle.lineparseEventRecieved):
-    #    pass
-    testBottle.lineparseEventRecieved=False
-            
-    import random
-    progress=random.randint(0,100)
-    data={"progress":progress,"lastLine":testBottle.lastRecievedLine}
-    callback=request.GET.get('callback', '').strip()
-    response=callback+"("+str(data)+")"
-    testBottle.logger.info("response %s",str(response))  
-   
-    #return response
+
 
 """"""""""""""""""""""""""""""""""""
 """ static files"""

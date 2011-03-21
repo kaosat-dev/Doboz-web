@@ -33,18 +33,22 @@ def configure_all():
     reprapNode=ReprapNode()
     qs=QSerial(seperator="\r\n",isBuffering=True,Speed=19200)
     reprapNode.set_connector(qs)
+    reprapNode.start()
     
     """"""""""""""""""""""""""""""""""""
     """WebCam config elements"""
     useWebcam=Config.getboolean("WebCam", "use")
     webcamDriver=Config.get("WebCam", "driver")
+    testBottle.webcamsEnabled=useWebcam
     if useWebcam:
          webcamNode=WebcamNode()
          webcamNode.filePath=os.path.join(rootPath,"Core","print_server","files","static","img","test")
          webcamConnector=GStreamerCam(driver=webcamDriver)
          webcamNode.set_connector(webcamConnector)
          webcamNode.start()
-    
+         """"""
+         testBottle.webcam=webcamNode
+
     """"""""""""""""""""""""""""""""""""
     """Web Server config elements"""
     server=server=Config.get("WebServer", "server")

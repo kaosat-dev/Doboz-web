@@ -118,7 +118,7 @@ body p a:hover
 .infoTable
 {         
     font-size:90%;
-    text-align:auto;
+    text-align:center;
     
 } 
 
@@ -219,3 +219,5 @@ canvas
   height: 100%;
 
 }
+
+.jobpblabel { position: absolute;   line-height: 0.9em; margin-left:28%;margin-bottom:1px }

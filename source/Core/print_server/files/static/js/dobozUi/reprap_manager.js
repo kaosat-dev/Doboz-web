@@ -12,9 +12,10 @@ function ReprapManager(mainUrl)
     this.sentGodeLineEnd="/t/n";
     this.recievedGcodeEnd="ok";
     
-    this.statusAutoFetch=true;
+    this.statusAutoFetch=false;
     this.statusTimer=0; //timer for machine status retrieval
-    this.statusFetchInterval=5;//in seconds
+    this.statusFetchInterval=10;//in seconds!!!WARNING!! in the current version (march 21 2011 if you want a status update every n seconds you need to set the inteval
+      //to n/2 seconds)
 
     //pseudo "streaming" for 3d data
     this.streamBlockSize=3;//how many points do we get in one pass
@@ -314,6 +315,21 @@ ReprapManager.prototype.loadSettings=function()
         //Trigger machine status update
 
         $(document).trigger('Status.updated',[{"ExtruderTemp":response.headTemp,"BedTemp":response.bedTemp}])
+    }
+    
+    ReprapManager.prototype.onMachineStatusFrequencyUpdated=function(frequency)
+    {   
+      clearInterval(this.statusTimer);
+        this.statusFetchInterval=frequency;
+        if(frequency>0)
+        {
+          this.statusAutoFetch=true;
+          this.setupMachineStatus();
+        }
+        else
+        {
+          this.statusAutoFetch=false; 
+        }
     }
     
     

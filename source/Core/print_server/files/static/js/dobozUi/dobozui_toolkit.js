@@ -1,5 +1,6 @@
-function DobozUi()
+function DobozUi(mainUrl)
 {
+    this.mainUrl=mainUrl;
     this.defaultScanWidth=1;
     this.defaultScanHeight=1;
     this.defaultScanRes=1;
@@ -13,7 +14,16 @@ function DobozUi()
 DobozUi.prototype.onDocumentReady=function()
 {
     
-    $("#jobProgressBar").progressbar({ value: 0 });
+
+    $("#jobProgressBar").progressbar({
+    value: 0,
+    change: function(event, ui) {
+      var newVal = $(this).progressbar('option', 'value');
+      $('.jobpblabel', this).text(Math.round(newVal) + '%');
+    }
+  });
+    
+    
     $("#uploadProgressBar").progressbar({ value: 0 });
     //////////////////////////////////////////////////////
     $( "#radio" ).buttonset();
@@ -70,6 +80,17 @@ DobozUi.prototype.onDocumentReady=function()
          ;
     //////////////////////////////////////////////////////
     $( "#webglControls button:first" ).button
+        ({
+            icons: {primary: "ui-icon-play",},
+            text: true
+          }).next().button
+         ({
+            icons: {primary: "ui-icon-stop" },
+            text: true
+          }
+         );
+         
+        $( "#webcamControls button:first" ).button
         ({
             icons: {primary: "ui-icon-play",},
             text: true
@@ -143,17 +164,9 @@ DobozUi.prototype.onDocumentReady=function()
        });
       $( "#drawModeRadio").change(    function() {
 
-           
            $(document).trigger('Viewer.drawmodeSet',[$("input[name='gl_draw_options']:checked").val()]);
          
        });
-      
-      
-      
-      
-     
-      
-      
       
       
       if(this.firstStart)
@@ -207,6 +220,7 @@ DobozUi.prototype.init=function()
 {
   this.loadSettings();
   this.onDocumentReady();
+  this.getServerInfo();
   
 
    
@@ -234,6 +248,29 @@ DobozUi.prototype.loadSettings=function()
   //$(document).trigger('DobozUi.Configured',[ {'defaultScanWidth':this.defaultScanWidth,'defaultScanHeight':this.defaultScanHeight,'defaultScanRes':this.defaultScanRes}]);
 }
 
+ DobozUi.prototype.getServerInfo=function()
+    {
+          //checks if a print/scan is already in progress
+
+           var self = this; 
+           self.fetchData(this.mainUrl+"commands/ServerInfo",function (response){self.onServerInfoRecieved(response)});     
+    }
+    
+    DobozUi.prototype.onServerInfoRecieved=function(response)
+    {
+      config=response.config;
+       $("#serverTable").find("tr:gt(0)").remove();
+  
+   for(var i=0;i<config.length;i++)
+  {
+
+   $("#serverTable" ).append("<tr  scope='row' class=' ui-widget-content '><td style='width:150px; '>"+config[i].ParamName+"</td><td style='width:150px'>"+config[i].value+"</td></tr>");
+  }
+       
+
+       
+    }
+
 DobozUi.prototype.onViewerConfigured=function(config)
 {
   $( "#viewerAutoStartRadio").attr('checked', config.autoStart);
@@ -241,14 +278,19 @@ DobozUi.prototype.onViewerConfigured=function(config)
 }
 
 
+DobozUi.prototype.onStatusUpdateFrequencyChanged=function()
+{
+  var freq=$("#statusUpdate").val();
 
+  //fire event
+  $(document).trigger('Machine.StatusUpdtFrequencyChanged',[freq]);
+}
 
 DobozUi.prototype.onScanWidthChanged=function()
 {
   var scanW=$("#scanWidth").val();
   //fire event
   $(document).trigger('Scan.WidthChanged',[scanW]);
-  
 }
 DobozUi.prototype.onScanHeightChanged=function()
 {
@@ -390,6 +432,33 @@ DobozUi.prototype.onFileDeletionConfirmed=function()
     $("#"+this.selectedFile.id).remove();
 }
 
+
+////////////////////////////
+//Webcam info
+DobozUi.prototype.starWebcam=function()
+{
+  
+  var frequency=$("#webcamRefreshInput").val();
+  clearInterval(this.timer);
+  self=this;
+  this.timer=setInterval(function()
+                { 
+                  self.OnImageUpdateTimeout(); 
+                }, frequency*1000); 
+  
+  this.fetchData(this.mainUrl+"commands/StartWebcam?frequency="+frequency,function (response){this.genericSuccessHandler(response)});     
+  
+
+  
+}
+
+DobozUi.prototype.stopWebcam=function()
+{
+  clearInterval(this.timer);
+  this.fetchData(this.mainUrl+"commands/StopWebcam",function (response){this.genericSuccessHandler(response)});    
+   
+}
+
 DobozUi.prototype.OnImageUpdateTimeout=function()
 {
    //flip flop trick to force image update, without having to use the datetime trick
@@ -401,7 +470,6 @@ DobozUi.prototype.OnImageUpdateTimeout=function()
    {
      self.camFliFlopid=0;
    }
-
 }
 
 

@@ -1,1 +1,1 @@
-path=/home/ckaos/data/Projects/Doboz/source/Core/print_server/files/machine/printFiles/rack_herringbone_export_dummy.gcode
+path=/home/ckaos/data/Projects/Doboz/source/Core/print_server/files/machine/printFiles/bar-clamp_export.gcode, shutdown=ok

@@ -5,21 +5,20 @@ import sys
 import os
 
 
-from Core.Tools.point_cloud2 import PointCloud
 from Core.connectors.event_sys import *
 
 
 class AutomationEvents(Events):
-    __events__=("OnEntered","OnExited")
+    __events__=("OnEntered","OnExited","ActionDone")
     
 
 class Task(object):
     """
     Base class for tasks (printing , scanning etc
     """
-    def __init__(self,connector,type=None):
+    def __init__(self,type=None):
     
-        self.connector=connector
+        self.connector=None
         self.type=type
             
         self.startTime=time.time()        
@@ -30,7 +29,6 @@ class Task(object):
         self.status="NP" #can be : NP: not started, paused , SP: started, paused, SR:started, running
         self.id=-1
         
-        self.pointCloud=PointCloud()        
         self.events=AutomationEvents()
     
     def startPause(self):

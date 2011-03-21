@@ -16,8 +16,8 @@ from Core.automation.task import Task, AutomationEvents
 
 class ScanTask(Task):
     """For all things related to the scanning   """    
-    def __init__(self,connector=None,scanWidth=1,scanLength=1,resolution=1,passes=1,filePath=None,saveScan=False):
-        Task.__init__(self,connector,"scan")
+    def __init__(self,scanWidth=1,scanLength=1,resolution=1,passes=1,filePath=None,saveScan=False):
+        Task.__init__(self,"scan")
         self.logger=logging.getLogger("Doboz.Core.Automation.ScanTask")
         self.logger.setLevel(logging.ERROR)
        
@@ -27,6 +27,7 @@ class ScanTask(Task):
         self.filePath=filePath
         self.saveScan=saveScan
         
+        self.pointCloud=PointCloud()        
         self.pointCloudBuilder=PointCloudBuilder(resolution=resolution,width=scanWidth,length=scanLength,passes=passes)
         totalPoints=(int(scanWidth/resolution)+1)*(int(scanLength/resolution)+1)*passes
         self.logger.info("Total scan points %d",totalPoints)
@@ -64,8 +65,6 @@ class ScanTask(Task):
        
         self.connector.send_command("G1 X"+str(ptBld.x)+" Y"+str(ptBld.y))  
 
-
-            
     def stop(self):
         self.status="NP"
         self.events.OnExited(self,"OnExited")

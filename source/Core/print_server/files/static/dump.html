@@ -1,5 +1,12 @@
  
-                 
+    <div class="ui-widget ui-state-default ui-corner-all titleBar" >Job Settings</div>
+                    <div>
+                   <div id="betweenJobActionRadio">
+                      <input type="radio" id="waitradio" name="betweenJobActionRadio" checked="checked" /><label for="waitradio">Wait</label>
+                      <input type="radio" id="dialogradio" name="betweenJobActionRadio" /><label for="dialogradio">Display prompt</label>
+                    </div>
+                    <input id="jobDelayField" type='text' value="10" class=" ui-corner-left" onKeyUp="dobozUi.onJobsDelayChanged()"/> pause between prints (s)<br>
+                    </div>             
 
                 
 <div id="viewTabs">
