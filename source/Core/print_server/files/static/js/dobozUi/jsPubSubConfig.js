@@ -66,6 +66,11 @@
          //reprapMgr.jobDelay=delay
       });
       
+       $(document).bind("GeneralRefresh.Changed", function(e, frequency)
+      {
+         reprapMgr.onRefreshChanged(frequency);
+      });
+      
       $(document).bind("Status.updated", function(e, status)
       {
          dobozUi.onStatusUpdated(status);

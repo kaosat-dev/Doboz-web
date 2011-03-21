@@ -433,6 +433,15 @@ DobozUi.prototype.onFileDeletionConfirmed=function()
 }
 
 
+///////////////////////
+DobozUi.prototype.changeGeneralRefresh=function()
+{
+   var frequency=$("#generalRefreshInput").val();
+  $(document).trigger('GeneralRefresh.Changed',[frequency]);
+}
+
+
+
 ////////////////////////////
 //Webcam info
 DobozUi.prototype.starWebcam=function()

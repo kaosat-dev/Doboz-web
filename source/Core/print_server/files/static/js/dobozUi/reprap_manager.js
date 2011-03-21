@@ -5,6 +5,7 @@ function ReprapManager(mainUrl)
     this.mainUrl=mainUrl;
     this.isJobPaused=false;
     this.isJobStarted=false;
+    this.jobStatusInterval=0.1;//in seconds
     this.timer=null;
      ////////////////
     //TODO Reprap machine settable options
@@ -111,7 +112,7 @@ ReprapManager.prototype.loadSettings=function()
            this.timer=setInterval(function()
             { 
               self.getJobProgressData(); 
-            }, 100); 
+            }, this.jobStatusInterval*1000); 
         }
         else
         {
@@ -153,7 +154,7 @@ ReprapManager.prototype.loadSettings=function()
                 this.timer=setInterval(function()
                 { 
                   self.getJobProgressData(); 
-                }, 100); 
+                }, self.jobStatusInterval*1000); 
                 
             
           }
@@ -208,7 +209,7 @@ ReprapManager.prototype.loadSettings=function()
           this.timer=setInterval(function()
           { 
           self.getJobProgressData(); 
-          }, 100);  
+          }, self.jobStatusInterval*1000);  
         }
         else
         {
@@ -332,4 +333,8 @@ ReprapManager.prototype.loadSettings=function()
         }
     }
     
-    
+ReprapManager.prototype.onRefreshChanged=function(frequency)
+{
+  alert("here")
+  this.jobStatusInterval=frequency;
+}

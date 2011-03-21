@@ -279,16 +279,21 @@
                   </div>
                   
               </div>
-              <div id="tabs-4" style="padding:4px;border:0px">
-                <div class="ui-widget ui-state-default ui-corner-all titleBar">Task view </div>
+              <div id="tabs-4" style="padding:4px;border:0px;">
+                <div id="uiTabContent" style="overflow:auto;height:87%;">
+                  <div class="tab-acordeon">
+                  <h3><a href="#"> Global timer</a></h3>
                  <div id="taskViewControls">
                 
-                  Refresh frequency (s) <input id="taskRefreshInput" type='text' value="3" class=" ui-corner-left"  style="width:25px"/>
-                   <button onclick="dobozUi.starWebcam()">Set</button>
+                  Refresh frequency (s) <input id="generalRefreshInput" type='text' value="0.1" class=" ui-corner-left"  style="width:25px"/>
+                  <button onclick="dobozUi.changeGeneralRefresh()">Set</button>
+                  <p>This set the refresh frequency for the progressbar, the general status, and the retrieval of 3d movement data (all done in the same request)<br>
+                    Please avoid changing this, unless necessary
+                  </p>
                 
                   </div>
-                  <br>
-                <div class="ui-widget ui-state-default ui-corner-all titleBar">Webgl Viewer</div>
+
+                  <h3><a href="#"> Webgl Viewer</a></h3>
                 
                 <div id="webglControls">
                   <input type="checkbox" id="viewerAutoStartRadio"  /><label for="viewerAutoStartRadio">AutoStart</label>
@@ -302,16 +307,17 @@
                       <input type="radio" id="Gl_Triangles_radio"  name="gl_draw_options" value="4"/><label for="Gl_Triangles_radio">Triangles</label>
                        <input type="radio" id="Gl_TrianglesStrip_radio"  name="gl_draw_options" value="5"/><label for="Gl_TrianglesStrip_radio">TriangleStrip</label>
                     </div>
-                </div><br>
-                 <div class="ui-widget ui-state-default ui-corner-all titleBar">Webcam Viewer</div>
+                </div>
+                <h3><a href="#"> Webcam Viewer</a></h3>
                  <div id="webcamControls">
                 
                   Refresh frequency (s) <input id="webcamRefreshInput" type='text' value="3" class=" ui-corner-left"  style="width:25px"/>
                    <button onclick="dobozUi.starWebcam()">Start Webcam viewer</button>
                   <button onclick="dobozUi.stopWebcam()">Stop Webcam viewer</button>
                   </div>
-                  <br>
-                <div class="ui-widget ui-state-default ui-corner-all titleBar" >Theme</div>
+                  
+                 <h3><a href="#"> Theme Switcher</a></h3>
+                
                 <div id="switcher">
                   <select id="cssselect" onChange="onSelectChange();">
                     <option value="/css/absolution/jquery-ui-1.8.10.custom.css" selected="selected">Absolution</option>
@@ -320,6 +326,8 @@
                     <option value="/css/vader/jquery-ui-1.8.10.custom.css">Vader</option>
                     <option value="/css/smoothness/jquery-ui-1.8.10.custom.css">Smoothness</option>
                   </select>
+                </div>
+                </div>
                 </div>
               </div>
                <div id="tabs-5" style="padding:4px;border:0px">
