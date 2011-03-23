@@ -1,0 +1,1 @@
+path=/home/ckaos/data/Projects/Doboz/source/Core/print_server/files/machine/printFiles/pulley_export.gcode

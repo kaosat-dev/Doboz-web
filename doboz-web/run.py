@@ -1,3 +1,4 @@
+#!python
 import os
 import socket
 import logging
@@ -56,10 +57,13 @@ def configure_all():
     testBottle.chosenServer=server
     testBottle.chosenPort=port
     testBottle.reprapManager=reprapNode
-    
 
+def start_server():
+    configure_all()
+    start_webServer()
+        
+if __name__=="__main__":
+    start_server()
 
-configure_all()
-start_webServer()
 
 
