@@ -1,3 +1,8 @@
+"""
+.. py:module:: hardware_node
+   :synopsis: hardware node for reprap handling.
+"""
+
 import logging
 import time
 import datetime

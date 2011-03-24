@@ -1,14 +1,21 @@
 #!python
+"""
+.. py:module:: run
+   :platform: Unix, Windows, Mac
+   :synopsis: Main entry point to doboz-web.
+"""
 from core.components.connectors.serial.queuable_serial import *
-from core.components.connectors.webcam.gstreamer_cam import *
 from core.components.hardware_nodes.reprap.reprap_node import ReprapNode
 from core.components.hardware_nodes.webcam.webcam_node import WebcamNode
 from core.print_server.print_server import *
+
 import ConfigParser
 import logging
 import os
 import socket
 
+
+   
 
 def configure_all():
     """
@@ -18,6 +25,7 @@ def configure_all():
     rootPath = os.path.abspath(".")
     Config.read(os.path.join(rootPath, "config.cfg"))
     """"""""""""""""""""""""""""""""""""
+
     
     logger = logging.getLogger("Doboz.core")
     logger.setLevel(logging.ERROR)
@@ -38,8 +46,10 @@ def configure_all():
     """WebCam config elements"""
     useWebcam = Config.getboolean("WebCam", "use")
     webcamDriver = Config.get("WebCam", "driver")
-    testBottle.webcamsEnabled = useWebcam
+    
     if useWebcam:
+         from core.components.connectors.webcam.gstreamer_cam import GStreamerCam
+         testBottle.webcamsEnabled = useWebcam
          webcamNode = WebcamNode()
          webcamNode.filePath = os.path.join(rootPath, "core", "print_server", "files", "static", "img", "test")
          webcamConnector = GStreamerCam(driver=webcamDriver)
@@ -50,6 +60,7 @@ def configure_all():
 
     """"""""""""""""""""""""""""""""""""
     """Web Server config elements"""
+   
     server = server = Config.get("WebServer", "server")
     port = Config.getint("WebServer", "port")
     testBottle.chosenServer = server
@@ -57,10 +68,13 @@ def configure_all():
     testBottle.reprapManager = reprapNode
 
 def start_server():
-    configure_all()
+    """
+    starts all server components
+    """
     start_webServer()
         
 if __name__ == "__main__":
+    configure_all()
     start_server()
 
 

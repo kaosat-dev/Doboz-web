@@ -1,3 +1,9 @@
+
+"""
+.. py:module:: reprap_node
+   :synopsis: hardware node for reprap handling.
+"""
+
 import logging
 import time
 import datetime
@@ -7,7 +13,7 @@ import os
 
 
 
-from core.Tools.event_sys import *
+from core.tools.event_sys import *
 from ..hardware_node import HardwareNode
 
 """TODO: Make tasks in tasks be weak refs""" 
@@ -33,20 +39,17 @@ class ReprapNode(HardwareNode):
         self.logger.critical("Reprap Node Init Done")
         
     def set_connector(self,connector):
-        """Sets what connector to use """
+        """
+        Sets what connector to use
+         
+        """
         self.connector=connector
         if hasattr(self.connector, 'events'):    
              self.connector.events.disconnected+=self._on_connector_disconnected
              self.connector.events.reconnected+=self._on_connector_reconnected  
              self.connector.events.OnDataRecieved+=self._on_data_recieved
         self.connector.start()    
-        
-  
-        
-    
-        
-   
-            
+         
     def set_paths(self,rootPath):
         """
         Configure paths

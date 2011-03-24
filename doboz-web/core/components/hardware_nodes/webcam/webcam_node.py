@@ -1,11 +1,17 @@
+
+"""
+.. py:module:: webcam_node
+   :synopsis: hardware node for webcam handling. 
+"""
+
 import logging
 
-from core.Tools.event_sys import *
+from core.tools.event_sys import *
 from ..hardware_node import HardwareNode
 
 class WebcamNode(HardwareNode):
     """
-    Dummy Node class, for testing purposes
+    webcam Node class
     """
     def __init__(self):
         self.logger=logging.getLogger("Doboz.core.WebcamNode")
@@ -29,12 +35,15 @@ class WebcamNode(HardwareNode):
         self.connector.start()   
     
     def start(self):
+        """
+        Sets up the capture process
+        """
         self.connector.set_capture(self.filePath)
         self.logger.critical("Starting Webcam Node")
         
     def _on_connector_disconnected(self,args,kargs):
         """
-        Function that handles possible Webcam connector disconnection
+        Function that handles possible Webcam connector disconnection 
         """
         self.logger.critical("Webcam connector disconnected !!!")
         self.isPaused=True

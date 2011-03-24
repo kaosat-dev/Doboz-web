@@ -1,0 +1,225 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tools &mdash; Doboz-web v0.3.2 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.3.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Doboz-web v0.3.2 documentation" href="index.html" />
+    <link rel="prev" title="Automation (tasks)" href="automation.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="automation.html" title="Automation (tasks)"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Doboz-web v0.3.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="tools">
+<h1>Tools<a class="headerlink" href="#tools" title="Permalink to this headline">¶</a></h1>
+<p>Contents:</p>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<span class="target" id="module-core.tools"></span><div class="section" id="event-sys">
+<h2>Event Sys<a class="headerlink" href="#event-sys" title="Permalink to this headline">¶</a></h2>
+<p>very basic event system</p>
+<span class="target" id="module-core.tools.event_sys"></span><dl class="class">
+<dt id="core.tools.event_sys.EventSlot">
+<em class="property">class </em><tt class="descclassname">core.tools.event_sys.</tt><tt class="descname">EventSlot</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#core.tools.event_sys.EventSlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="core.tools.event_sys.Events">
+<em class="property">class </em><tt class="descclassname">core.tools.event_sys.</tt><tt class="descname">Events</tt><a class="headerlink" href="#core.tools.event_sys.Events" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="gcode-parser">
+<h2>GCode Parser<a class="headerlink" href="#gcode-parser" title="Permalink to this headline">¶</a></h2>
+<p>parser used to isolate components (X,Y,Z,E etc) in gcode files</p>
+<span class="target" id="module-core.tools.gcodeparser"></span><dl class="class">
+<dt id="core.tools.gcodeparser.GCodeParser">
+<em class="property">class </em><tt class="descclassname">core.tools.gcodeparser.</tt><tt class="descname">GCodeParser</tt><a class="headerlink" href="#core.tools.gcodeparser.GCodeParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Basic gcode parser, takes a line from a gcode files, and spits out the different sub elements : X,Y,Z,E,F,S</p>
+<dl class="method">
+<dt id="core.tools.gcodeparser.GCodeParser.convertFloats">
+<tt class="descname">convertFloats</tt><big>(</big><em>tokens</em><big>)</big><a class="headerlink" href="#core.tools.gcodeparser.GCodeParser.convertFloats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.tools.gcodeparser.GCodeParser.convertIntegers">
+<tt class="descname">convertIntegers</tt><big>(</big><em>tokens</em><big>)</big><a class="headerlink" href="#core.tools.gcodeparser.GCodeParser.convertIntegers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.tools.gcodeparser.GCodeParser.parse">
+<tt class="descname">parse</tt><big>(</big><em>line</em><big>)</big><a class="headerlink" href="#core.tools.gcodeparser.GCodeParser.parse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-core.tools.point_cloud">
+<span id="point-cloud"></span><h2>Point cloud<a class="headerlink" href="#module-core.tools.point_cloud" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="core.tools.point_cloud.Point">
+<em class="property">class </em><tt class="descclassname">core.tools.point_cloud.</tt><tt class="descname">Point</tt><big>(</big><em>x</em>, <em>y</em>, <em>z</em><big>)</big><a class="headerlink" href="#core.tools.point_cloud.Point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Simple 3d point storage</p>
+<dl class="method">
+<dt id="core.tools.point_cloud.Point.alt_str">
+<tt class="descname">alt_str</tt><big>(</big><big>)</big><a class="headerlink" href="#core.tools.point_cloud.Point.alt_str" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="core.tools.point_cloud.PointCloud">
+<em class="property">class </em><tt class="descclassname">core.tools.point_cloud.</tt><tt class="descname">PointCloud</tt><big>(</big><em>width=0</em>, <em>length=0</em><big>)</big><a class="headerlink" href="#core.tools.point_cloud.PointCloud" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Simple 3d pointcloud storage</p>
+<dl class="method">
+<dt id="core.tools.point_cloud.PointCloud.add_point">
+<tt class="descname">add_point</tt><big>(</big><em>point</em><big>)</big><a class="headerlink" href="#core.tools.point_cloud.PointCloud.add_point" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="core.tools.point_cloud.PointCloud.length">
+<tt class="descname">length</tt><a class="headerlink" href="#core.tools.point_cloud.PointCloud.length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximum amount of points per line</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.tools.point_cloud.PointCloud.save">
+<tt class="descname">save</tt><big>(</big><em>filePath</em><big>)</big><a class="headerlink" href="#core.tools.point_cloud.PointCloud.save" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-core.tools.point_cloud_builder">
+<span id="point-cloud-builder"></span><h2>Point cloud builder<a class="headerlink" href="#module-core.tools.point_cloud_builder" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="core.tools.point_cloud_builder.PointCloudBuilder">
+<em class="property">class </em><tt class="descclassname">core.tools.point_cloud_builder.</tt><tt class="descname">PointCloudBuilder</tt><big>(</big><em>resolution=1</em>, <em>width=1</em>, <em>length=1</em>, <em>passes=1</em>, <em>passMethod=0</em>, <em>nextPointMethod=0</em>, <em>passCombineMethod=0</em><big>)</big><a class="headerlink" href="#core.tools.point_cloud_builder.PointCloudBuilder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="core.tools.point_cloud_builder.PointCloudBuilder.add_point">
+<tt class="descname">add_point</tt><big>(</big><em>z</em><big>)</big><a class="headerlink" href="#core.tools.point_cloud_builder.PointCloudBuilder.add_point" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.tools.point_cloud_builder.PointCloudBuilder.next_point_backandforth">
+<tt class="descname">next_point_backandforth</tt><big>(</big><big>)</big><a class="headerlink" href="#core.tools.point_cloud_builder.PointCloudBuilder.next_point_backandforth" title="Permalink to this definition">¶</a></dt>
+<dd><p>After each column&#8217;s end ; increases column index and position, and goes back to row zero</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.tools.point_cloud_builder.PointCloudBuilder.next_point_continuous">
+<tt class="descname">next_point_continuous</tt><big>(</big><big>)</big><a class="headerlink" href="#core.tools.point_cloud_builder.PointCloudBuilder.next_point_continuous" title="Permalink to this definition">¶</a></dt>
+<dd><p>If it is even move forward,else move &#8220;backwards&#8221;</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Tools</a><ul>
+<li><a class="reference internal" href="#event-sys">Event Sys</a></li>
+<li><a class="reference internal" href="#gcode-parser">GCode Parser</a></li>
+<li><a class="reference internal" href="#module-core.tools.point_cloud">Point cloud</a></li>
+<li><a class="reference internal" href="#module-core.tools.point_cloud_builder">Point cloud builder</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="automation.html"
+                        title="previous chapter">Automation (tasks)</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/tools.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="automation.html" title="Automation (tasks)"
+             >previous</a> |</li>
+        <li><a href="index.html">Doboz-web v0.3.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Mark &#39;ckaos&#39; Moissette.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
+    </div>
+  </body>
+</html>

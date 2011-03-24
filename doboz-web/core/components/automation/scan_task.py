@@ -5,10 +5,10 @@ import sys
 import os
 
 #from core.hardware_nodes.point_cloud import PointCloudBuilder,Point,PointCloud
-from core.Tools.point_cloud2 import Point,PointCloud
-from core.Tools.point_cloud_builder import PointCloudBuilder
+from core.tools.point_cloud import Point,PointCloud
+from core.tools.point_cloud_builder import PointCloudBuilder
 
-from core.Tools.event_sys import *
+from core.tools.event_sys import *
 from core.components.automation.task import Task, AutomationEvents
 
 #class ScanTaskEvents(Events):

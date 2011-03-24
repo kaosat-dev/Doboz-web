@@ -1,0 +1,307 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Hardware connectors &mdash; Doboz-web v0.3.2 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.3.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Doboz-web v0.3.2 documentation" href="index.html" />
+    <link rel="next" title="Hardware Drivers" href="hardware_drivers.html" />
+    <link rel="prev" title="Hardware nodes" href="hardware_nodes.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="hardware_drivers.html" title="Hardware Drivers"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="hardware_nodes.html" title="Hardware nodes"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Doboz-web v0.3.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="hardware-connectors">
+<h1>Hardware connectors<a class="headerlink" href="#hardware-connectors" title="Permalink to this headline">¶</a></h1>
+<p>Contents:</p>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<span class="target" id="module-core.components.connectors"></span><div class="section" id="hardware-connector">
+<h2>Hardware Connector<a class="headerlink" href="#hardware-connector" title="Permalink to this headline">¶</a></h2>
+<p>Base class for all hardware connectors</p>
+<span class="target" id="module-core.components.connectors.hardware_connector"></span><dl class="class">
+<dt id="core.components.connectors.hardware_connector.HardwareConnector">
+<em class="property">class </em><tt class="descclassname">core.components.connectors.hardware_connector.</tt><tt class="descname">HardwareConnector</tt><big>(</big><em>driver=None</em><big>)</big><a class="headerlink" href="#core.components.connectors.hardware_connector.HardwareConnector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="core.components.connectors.hardware_connector.HardwareConnector.add_command">
+<tt class="descname">add_command</tt><big>(</big><em>command</em><big>)</big><a class="headerlink" href="#core.components.connectors.hardware_connector.HardwareConnector.add_command" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a command to the hardware abstractions command queue</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.components.connectors.hardware_connector.HardwareConnector.clear_commands">
+<tt class="descname">clear_commands</tt><big>(</big><big>)</big><a class="headerlink" href="#core.components.connectors.hardware_connector.HardwareConnector.clear_commands" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear all the commands of the hardware abstraction&#8217;s command queue</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.components.connectors.hardware_connector.HardwareConnector.connect">
+<tt class="descname">connect</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#core.components.connectors.hardware_connector.HardwareConnector.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Establish connection to hardware</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.components.connectors.hardware_connector.HardwareConnector.fetch_data">
+<tt class="descname">fetch_data</tt><big>(</big><big>)</big><a class="headerlink" href="#core.components.connectors.hardware_connector.HardwareConnector.fetch_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>cheap hack for now</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.components.connectors.hardware_connector.HardwareConnector.send_command">
+<tt class="descname">send_command</tt><big>(</big><em>command</em><big>)</big><a class="headerlink" href="#core.components.connectors.hardware_connector.HardwareConnector.send_command" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a command to the hardware abstractions command queue</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="core.components.connectors.hardware_connector.HardwareConnectorEvents">
+<em class="property">class </em><tt class="descclassname">core.components.connectors.hardware_connector.</tt><tt class="descname">HardwareConnectorEvents</tt><a class="headerlink" href="#core.components.connectors.hardware_connector.HardwareConnectorEvents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="tools.html#core.tools.event_sys.Events" title="core.tools.event_sys.Events"><tt class="xref py py-class docutils literal"><span class="pre">core.tools.event_sys.Events</span></tt></a></p>
+<p>Class defining events associated to HardwareConnector Class</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-core.components.connectors.serial.queuable_serial">
+<span id="serial"></span><h2>Serial<a class="headerlink" href="#module-core.components.connectors.serial.queuable_serial" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="core.components.connectors.serial.queuable_serial.QSerial">
+<em class="property">class </em><tt class="descclassname">core.components.connectors.serial.queuable_serial.</tt><tt class="descname">QSerial</tt><big>(</big><em>pseudoName='serial'</em>, <em>port=None</em>, <em>isBuffering=False</em>, <em>seperator='rn'</em>, <em>Speed=115200</em>, <em>bannedPorts=None</em>, <em>arduinoId=None</em>, <em>maxErrors=5</em>, <em>waitForAnswer=False</em>, <em>protocol=None</em><big>)</big><a class="headerlink" href="#core.components.connectors.serial.queuable_serial.QSerial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">threading.Thread</span></tt>, <a class="reference internal" href="#core.components.connectors.hardware_connector.HardwareConnector" title="core.components.connectors.hardware_connector.HardwareConnector"><tt class="xref py py-class docutils literal"><span class="pre">core.components.connectors.hardware_connector.HardwareConnector</span></tt></a></p>
+<p>Class for sending out events each time data is sent through the observed serial port</p>
+<dl class="method">
+<dt id="core.components.connectors.serial.queuable_serial.QSerial.add_command">
+<tt class="descname">add_command</tt><big>(</big><em>command</em><big>)</big><a class="headerlink" href="#core.components.connectors.serial.queuable_serial.QSerial.add_command" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enqueue a command</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.components.connectors.serial.queuable_serial.QSerial.checkIdAndHandshake">
+<tt class="descname">checkIdAndHandshake</tt><big>(</big><big>)</big><a class="headerlink" href="#core.components.connectors.serial.queuable_serial.QSerial.checkIdAndHandshake" title="Permalink to this definition">¶</a></dt>
+<dd><p>IF we need an arduino with a specific id</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.components.connectors.serial.queuable_serial.QSerial.connect">
+<tt class="descname">connect</tt><big>(</big><big>)</big><a class="headerlink" href="#core.components.connectors.serial.queuable_serial.QSerial.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Port connection/reconnection procedure</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.components.connectors.serial.queuable_serial.QSerial.disconnect">
+<tt class="descname">disconnect</tt><big>(</big><big>)</big><a class="headerlink" href="#core.components.connectors.serial.queuable_serial.QSerial.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.components.connectors.serial.queuable_serial.QSerial.get_data">
+<tt class="descname">get_data</tt><big>(</big><big>)</big><a class="headerlink" href="#core.components.connectors.serial.queuable_serial.QSerial.get_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main funtion for getting the data recievd on the serial port
+If attemps to get the serial data fail,shutdown</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.components.connectors.serial.queuable_serial.QSerial.list_ports">
+<tt class="descname">list_ports</tt><big>(</big><big>)</big><a class="headerlink" href="#core.components.connectors.serial.queuable_serial.QSerial.list_ports" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of ports</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.components.connectors.serial.queuable_serial.QSerial.run">
+<tt class="descname">run</tt><big>(</big><big>)</big><a class="headerlink" href="#core.components.connectors.serial.queuable_serial.QSerial.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main loop in thread, checks for new recieved data on the serial port at a regular interval
+If buffered mode is active and a seperator set, all data is added to the current data
+buffer until a seperator is found, and then an event containing the datablock (up until the 
+seperator) is dispatched</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.components.connectors.serial.queuable_serial.QSerial.scan">
+<tt class="descname">scan</tt><big>(</big><big>)</big><a class="headerlink" href="#core.components.connectors.serial.queuable_serial.QSerial.scan" title="Permalink to this definition">¶</a></dt>
+<dd><p>scan for available ports.
+Returns a list of actual available ports</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.components.connectors.serial.queuable_serial.QSerial.send_command">
+<tt class="descname">send_command</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#core.components.connectors.serial.queuable_serial.QSerial.send_command" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple wrapper to send data over serial</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.components.connectors.serial.queuable_serial.QSerial.tearDown">
+<tt class="descname">tearDown</tt><big>(</big><big>)</big><a class="headerlink" href="#core.components.connectors.serial.queuable_serial.QSerial.tearDown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clean shutdown function</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="core.components.connectors.serial.queuable_serial.getrandbits">
+<tt class="descclassname">core.components.connectors.serial.queuable_serial.</tt><tt class="descname">getrandbits</tt><big>(</big><big>)</big><a class="headerlink" href="#core.components.connectors.serial.queuable_serial.getrandbits" title="Permalink to this definition">¶</a></dt>
+<dd><p>getrandbits(k) -&gt; x.  Generates a long int with k random bits.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.components.connectors.serial.queuable_serial.jumpahead">
+<tt class="descclassname">core.components.connectors.serial.queuable_serial.</tt><tt class="descname">jumpahead</tt><big>(</big><big>)</big><a class="headerlink" href="#core.components.connectors.serial.queuable_serial.jumpahead" title="Permalink to this definition">¶</a></dt>
+<dd><p>jumpahead(int) -&gt; None.  Create new state from existing state and integer.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="core.components.connectors.serial.queuable_serial.random">
+<tt class="descclassname">core.components.connectors.serial.queuable_serial.</tt><tt class="descname">random</tt><big>(</big><big>)</big><a class="headerlink" href="#core.components.connectors.serial.queuable_serial.random" title="Permalink to this definition">¶</a></dt>
+<dd><p>random() -&gt; x in the interval [0, 1).</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-core.components.connectors.webcam.gstreamer_cam">
+<span id="webcam"></span><h2>Webcam<a class="headerlink" href="#module-core.components.connectors.webcam.gstreamer_cam" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="core.components.connectors.webcam.gstreamer_cam.GStreamerCam">
+<em class="property">class </em><tt class="descclassname">core.components.connectors.webcam.gstreamer_cam.</tt><tt class="descname">GStreamerCam</tt><big>(</big><em>driver=None</em><big>)</big><a class="headerlink" href="#core.components.connectors.webcam.gstreamer_cam.GStreamerCam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">threading.Thread</span></tt>, <a class="reference internal" href="#core.components.connectors.hardware_connector.HardwareConnector" title="core.components.connectors.hardware_connector.HardwareConnector"><tt class="xref py py-class docutils literal"><span class="pre">core.components.connectors.hardware_connector.HardwareConnector</span></tt></a></p>
+<p>Gstreamer based webcam connector</p>
+<dl class="method">
+<dt id="core.components.connectors.webcam.gstreamer_cam.GStreamerCam.fetch_data">
+<tt class="descname">fetch_data</tt><big>(</big><big>)</big><a class="headerlink" href="#core.components.connectors.webcam.gstreamer_cam.GStreamerCam.fetch_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.components.connectors.webcam.gstreamer_cam.GStreamerCam.on_message">
+<tt class="descname">on_message</tt><big>(</big><em>bus</em>, <em>message</em><big>)</big><a class="headerlink" href="#core.components.connectors.webcam.gstreamer_cam.GStreamerCam.on_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gstreamer message handling</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.components.connectors.webcam.gstreamer_cam.GStreamerCam.run">
+<tt class="descname">run</tt><big>(</big><big>)</big><a class="headerlink" href="#core.components.connectors.webcam.gstreamer_cam.GStreamerCam.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main loop</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.components.connectors.webcam.gstreamer_cam.GStreamerCam.set_capture">
+<tt class="descname">set_capture</tt><big>(</big><em>filePath</em><big>)</big><a class="headerlink" href="#core.components.connectors.webcam.gstreamer_cam.GStreamerCam.set_capture" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.components.connectors.webcam.gstreamer_cam.GStreamerCam.setup">
+<tt class="descname">setup</tt><big>(</big><big>)</big><a class="headerlink" href="#core.components.connectors.webcam.gstreamer_cam.GStreamerCam.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configure the gstreamer pipeline element</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Hardware connectors</a><ul>
+<li><a class="reference internal" href="#hardware-connector">Hardware Connector</a></li>
+<li><a class="reference internal" href="#module-core.components.connectors.serial.queuable_serial">Serial</a></li>
+<li><a class="reference internal" href="#module-core.components.connectors.webcam.gstreamer_cam">Webcam</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="hardware_nodes.html"
+                        title="previous chapter">Hardware nodes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="hardware_drivers.html"
+                        title="next chapter">Hardware Drivers</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/hardware_connectors.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="hardware_drivers.html" title="Hardware Drivers"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="hardware_nodes.html" title="Hardware nodes"
+             >previous</a> |</li>
+        <li><a href="index.html">Doboz-web v0.3.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Mark &#39;ckaos&#39; Moissette.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
+    </div>
+  </body>
+</html>

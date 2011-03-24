@@ -7,7 +7,7 @@ dda::dda()
   live=false;
   using_mm=true;
   
-  steppers[0]=Stepper(16,13,9,500,75);//extuder//240//feedrate:95 //ideal :3000/12G1 X30 E240
+  steppers[0]=Stepper(16,13,9,500,150);//extuder//240//feedrate:95 //ideal :3000/12G1 X30 E240
   steppers[1]=Stepper(14,10,6,80,3200);//x axis//feedrate:29
   steppers[2]=Stepper(17,12,8,80,3200);//y axis//
   steppers[3]=Stepper(15,11,7,180,5200);//z axis// 
@@ -291,7 +291,7 @@ void dda::dda_step()
                 }
                 else
                 {
-                 delayMicroseconds(75); 
+                 delayMicroseconds(90); 
                 }
                
                 feed_change = false;

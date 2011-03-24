@@ -33,7 +33,7 @@ class QSerial(Thread,HardwareConnector):
             up until it is dispatched via an event
             speed -- serial port speed
         """
-        self.logger = logging.getLogger("Doboz.core.Tools.Serial")
+        self.logger = logging.getLogger("Doboz.core.tools.Serial")
         self.logger.setLevel(logging.INFO)
         
         Thread.__init__(self)

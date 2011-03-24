@@ -18,7 +18,7 @@ setup(
     ], 
     packages=find_packages(),   
     entry_points = {
-        'console_scripts': ['doboz-web = dobozweb.run:start_server']
+        'console_scripts': ['doboz-web = doboz-web.run:start_server']
     },
     install_requires=[
         'pyparsing','pySerial'

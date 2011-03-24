@@ -15,6 +15,7 @@ from core.components.automation.scan_task import ScanTask
 from core.components.automation.transition_task import TransitionTask
 from core.components.automation.timer_task import TimerTask
 
+
 testBottle = Bottle()
 testBottle.path=os.path.join(os.path.abspath("."),"core","print_server")
 printFilesPath=os.path.join(testBottle.path,"files","machine","printFiles")
@@ -23,12 +24,11 @@ if not os.path.exists(printFilesPath):
     os.mkdir(printFilesPath)
 if not os.path.exists(scanFilesPath):
     os.mkdir(scanFilesPath)
-
-
+    
+    
 testBottle.logger=logging.getLogger("Doboz.core.WebServer")
 testBottle.reprapManager=None
 testBottle.uploadProgress=0
-
 #for profiling:
 #testBottle.heapWatch=hpy()
         
@@ -320,6 +320,10 @@ def server_static(path):
 
 
 def start_webServer():
+    
+    
+    
+    
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(('google.com', 0))
     hostIp=s.getsockname()[0]

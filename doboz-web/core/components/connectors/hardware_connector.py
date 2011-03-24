@@ -1,4 +1,4 @@
-from core.Tools.event_sys import *
+from core.tools.event_sys import *
 
 class HardwareConnectorEvents(Events):
     """

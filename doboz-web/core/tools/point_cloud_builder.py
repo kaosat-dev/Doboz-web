@@ -5,7 +5,7 @@ LocalPasses=0#do consecutive passes on same point before moving on to the next o
 GlobalPasses=1#do consecutive passes on point cloud before redoing it s
 import logging
 
-from core.Tools.point_cloud2 import *
+from core.tools.point_cloud import *
 
 class PointCloudBuilder(object):
     def __init__(self,resolution=1,width=1,length=1,passes=1,passMethod=0,nextPointMethod=0,passCombineMethod=0):

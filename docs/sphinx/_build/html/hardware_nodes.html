@@ -1,0 +1,256 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Hardware nodes &mdash; Doboz-web v0.3.2 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.3.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Doboz-web v0.3.2 documentation" href="index.html" />
+    <link rel="next" title="Hardware connectors" href="hardware_connectors.html" />
+    <link rel="prev" title="Main start script : run" href="run.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="hardware_connectors.html" title="Hardware connectors"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="run.html" title="Main start script : run"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Doboz-web v0.3.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="hardware-nodes">
+<h1>Hardware nodes<a class="headerlink" href="#hardware-nodes" title="Permalink to this headline">¶</a></h1>
+<p>Contents:</p>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<p>sdfsdfsd</p>
+<span class="target" id="module-core.components.hardware_nodes"></span><div class="section" id="hardware-node">
+<h2>Hardware Node<a class="headerlink" href="#hardware-node" title="Permalink to this headline">¶</a></h2>
+<p>This is something I want to say that is not in the docstring.</p>
+<span class="target" id="module-core.components.hardware_nodes.hardware_node"></span><span class="target" id="module-hardware_node"></span><dl class="class">
+<dt id="core.components.hardware_nodes.hardware_node.HardwareNode">
+<em class="property">class </em><tt class="descclassname">core.components.hardware_nodes.hardware_node.</tt><tt class="descname">HardwareNode</tt><a class="headerlink" href="#core.components.hardware_nodes.hardware_node.HardwareNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Base class for all hardware nodes: a hardware node is a software component handling a physical device such as a webcam, reprap , arduino etc</p>
+<dl class="method">
+<dt id="core.components.hardware_nodes.hardware_node.HardwareNode.add_task">
+<tt class="descname">add_task</tt><big>(</big><em>task</em><big>)</big><a class="headerlink" href="#core.components.hardware_nodes.hardware_node.HardwareNode.add_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds the task to the tasklist, and if there are not tasks running, starts it
+TODO add weakref to task</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.components.hardware_nodes.hardware_node.HardwareNode.clear_tasks">
+<tt class="descname">clear_tasks</tt><big>(</big><em>forceStop=False</em><big>)</big><a class="headerlink" href="#core.components.hardware_nodes.hardware_node.HardwareNode.clear_tasks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clears the task list completely 
+Params: forceStop: if set to true, the current running task gets stopped and removed aswell</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="core.components.hardware_nodes.hardware_node.HardwareNode.components">
+<tt class="descname">components</tt><a class="headerlink" href="#core.components.hardware_nodes.hardware_node.HardwareNode.components" title="Permalink to this definition">¶</a></dt>
+<dd><p>For Uptime calculation</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.components.hardware_nodes.hardware_node.HardwareNode.remove_task">
+<tt class="descname">remove_task</tt><big>(</big><em>id</em><big>)</big><a class="headerlink" href="#core.components.hardware_nodes.hardware_node.HardwareNode.remove_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the task with id==id ,if and only if the task is not already running</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.components.hardware_nodes.hardware_node.HardwareNode.set_driver">
+<tt class="descname">set_driver</tt><big>(</big><em>driver</em><big>)</big><a class="headerlink" href="#core.components.hardware_nodes.hardware_node.HardwareNode.set_driver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets what driver to use : NOT IMPLEMENTED FOR NOW!!</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.components.hardware_nodes.hardware_node.HardwareNode.stop_task">
+<tt class="descname">stop_task</tt><big>(</big><big>)</big><a class="headerlink" href="#core.components.hardware_nodes.hardware_node.HardwareNode.stop_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stops the currenlty running task</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="reprap-node">
+<h2>Reprap Node<a class="headerlink" href="#reprap-node" title="Permalink to this headline">¶</a></h2>
+<p>This is something I want to say that is not in the docstring.</p>
+<span class="target" id="module-core.components.hardware_nodes.reprap.reprap_node"></span><span class="target" id="module-reprap_node"></span><dl class="class">
+<dt id="core.components.hardware_nodes.reprap.reprap_node.ReprapManagerEvents">
+<em class="property">class </em><tt class="descclassname">core.components.hardware_nodes.reprap.reprap_node.</tt><tt class="descname">ReprapManagerEvents</tt><a class="headerlink" href="#core.components.hardware_nodes.reprap.reprap_node.ReprapManagerEvents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="tools.html#core.tools.event_sys.Events" title="core.tools.event_sys.Events"><tt class="xref py py-class docutils literal"><span class="pre">core.tools.event_sys.Events</span></tt></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="core.components.hardware_nodes.reprap.reprap_node.ReprapNode">
+<em class="property">class </em><tt class="descclassname">core.components.hardware_nodes.reprap.reprap_node.</tt><tt class="descname">ReprapNode</tt><a class="headerlink" href="#core.components.hardware_nodes.reprap.reprap_node.ReprapNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#core.components.hardware_nodes.hardware_node.HardwareNode" title="core.components.hardware_nodes.hardware_node.HardwareNode"><tt class="xref py py-class docutils literal"><span class="pre">core.components.hardware_nodes.hardware_node.HardwareNode</span></tt></a></p>
+<p>A reprap node : hardware node (ie &#8220;Arduino or similar with attached components such as sensors and actors: ie in the case of a reprap: endstops, temperature sensors, steppers, heaters&#8221;)</p>
+<dl class="method">
+<dt id="core.components.hardware_nodes.reprap.reprap_node.ReprapNode.sendText">
+<tt class="descname">sendText</tt><big>(</big><em>text</em><big>)</big><a class="headerlink" href="#core.components.hardware_nodes.reprap.reprap_node.ReprapNode.sendText" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple function to send text over serial</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.components.hardware_nodes.reprap.reprap_node.ReprapNode.set_connector">
+<tt class="descname">set_connector</tt><big>(</big><em>connector</em><big>)</big><a class="headerlink" href="#core.components.hardware_nodes.reprap.reprap_node.ReprapNode.set_connector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets what connector to use</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.components.hardware_nodes.reprap.reprap_node.ReprapNode.set_paths">
+<tt class="descname">set_paths</tt><big>(</big><em>rootPath</em><big>)</big><a class="headerlink" href="#core.components.hardware_nodes.reprap.reprap_node.ReprapNode.set_paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configure paths</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.components.hardware_nodes.reprap.reprap_node.ReprapNode.start">
+<tt class="descname">start</tt><big>(</big><big>)</big><a class="headerlink" href="#core.components.hardware_nodes.reprap.reprap_node.ReprapNode.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the whole system</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.components.hardware_nodes.reprap.reprap_node.ReprapNode.startPause">
+<tt class="descname">startPause</tt><big>(</big><big>)</big><a class="headerlink" href="#core.components.hardware_nodes.reprap.reprap_node.ReprapNode.startPause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Switches between active and inactive mode.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.components.hardware_nodes.reprap.reprap_node.ReprapNode.stop">
+<tt class="descname">stop</tt><big>(</big><big>)</big><a class="headerlink" href="#core.components.hardware_nodes.reprap.reprap_node.ReprapNode.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stops the current task and shuts down</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="webcam-node">
+<h2>Webcam Node<a class="headerlink" href="#webcam-node" title="Permalink to this headline">¶</a></h2>
+<p>This is something I want to say that is not in the docstring.</p>
+<span class="target" id="module-core.components.hardware_nodes.webcam.webcam_node"></span><span class="target" id="module-webcam_node"></span><dl class="class">
+<dt id="core.components.hardware_nodes.webcam.webcam_node.WebcamNode">
+<em class="property">class </em><tt class="descclassname">core.components.hardware_nodes.webcam.webcam_node.</tt><tt class="descname">WebcamNode</tt><a class="headerlink" href="#core.components.hardware_nodes.webcam.webcam_node.WebcamNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#core.components.hardware_nodes.hardware_node.HardwareNode" title="core.components.hardware_nodes.hardware_node.HardwareNode"><tt class="xref py py-class docutils literal"><span class="pre">core.components.hardware_nodes.hardware_node.HardwareNode</span></tt></a></p>
+<p>webcam Node class</p>
+<dl class="method">
+<dt id="core.components.hardware_nodes.webcam.webcam_node.WebcamNode.set_connector">
+<tt class="descname">set_connector</tt><big>(</big><em>connector</em><big>)</big><a class="headerlink" href="#core.components.hardware_nodes.webcam.webcam_node.WebcamNode.set_connector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets what connector to use</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.components.hardware_nodes.webcam.webcam_node.WebcamNode.start">
+<tt class="descname">start</tt><big>(</big><big>)</big><a class="headerlink" href="#core.components.hardware_nodes.webcam.webcam_node.WebcamNode.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets up the capture process</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Hardware nodes</a><ul>
+<li><a class="reference internal" href="#hardware-node">Hardware Node</a></li>
+<li><a class="reference internal" href="#reprap-node">Reprap Node</a></li>
+<li><a class="reference internal" href="#webcam-node">Webcam Node</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="run.html"
+                        title="previous chapter">Main start script : run</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="hardware_connectors.html"
+                        title="next chapter">Hardware connectors</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/hardware_nodes.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="hardware_connectors.html" title="Hardware connectors"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="run.html" title="Main start script : run"
+             >previous</a> |</li>
+        <li><a href="index.html">Doboz-web v0.3.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Mark &#39;ckaos&#39; Moissette.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
+    </div>
+  </body>
+</html>

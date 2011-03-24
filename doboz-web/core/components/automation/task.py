@@ -5,7 +5,7 @@ import sys
 import os
 
 
-from core.Tools.event_sys import *
+from core.tools.event_sys import *
 
 
 class AutomationEvents(Events):
@@ -47,12 +47,19 @@ class Task(object):
             self._do_action_step()
             
     def enter(self):
-        """"""
+        """
+        When taks is entered
+        """
         self.events.OnEntered(self,"Entered")
         
     def exit(self):
-        """"""
+        """
+        When taks is exited
+        """
         self.events.OnExited(self,"Exited")
 
     def _do_action_step(self):
+        """
+        do sub action in task
+        """
         raise NotImplementedException("This needs to be implemented in a subclass")
