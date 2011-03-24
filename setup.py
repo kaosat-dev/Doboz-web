@@ -21,6 +21,6 @@ setup(
         'console_scripts': ['doboz-web = dobozweb.run:start_server']
     },
     install_requires=[
-        'pyparsing',
+        'pyparsing','pySerial'
       ],
     )
