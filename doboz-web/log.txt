@@ -1,1 +1,1 @@
-path=/home/ckaos/data/Projects/Doboz/doboz-web/core/print_server/files/machine/printFiles/pulley_export.gcode, shutdown=ok
+path=/home/ckaos/data/Projects/Doboz/doboz-web/core/print_server/files/machine/printFiles/bushingx4_export.gcode, shutdown=ok

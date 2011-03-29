@@ -46,10 +46,9 @@ def configure_all():
     """WebCam config elements"""
     useWebcam = Config.getboolean("WebCam", "use")
     webcamDriver = Config.get("WebCam", "driver")
-    
+    testBottle.webcamsEnabled = useWebcam
     if useWebcam:
          from core.components.connectors.webcam.gstreamer_cam import GStreamerCam
-         testBottle.webcamsEnabled = useWebcam
          webcamNode = WebcamNode()
          webcamNode.filePath = os.path.join(rootPath, "core", "print_server", "files", "static", "img", "test")
          webcamConnector = GStreamerCam(driver=webcamDriver)
