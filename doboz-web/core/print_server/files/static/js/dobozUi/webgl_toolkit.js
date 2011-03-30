@@ -37,6 +37,10 @@ WebglViewer.prototype.init=function()
         this.gl.viewportWidth =this.canvas.offsetWidth;//this.canvas.width;
         this.gl.viewportHeight = this.canvas.offsetHeight;//this.canvas.height;
 
+        
+
+
+
       } 
       catch(e) 
       {
@@ -69,6 +73,48 @@ WebglViewer.prototype.loadSettings=function()
   }
   
 }
+
+
+WebglViewer.prototype.requestAnimFrame = function(callback,element) 
+{
+      if(! this.requestAnimFrameMethod)
+      {
+        this.requestAnimFrameMethod=function()
+        {
+         
+          var requestAnimMethods = [
+            "requestAnimationFrame",
+            "webkitRequestAnimationFrame",
+            "mozRequestAnimationFrame",
+            "oRequestAnimationFrame",
+            "msRequestAnimationFrame"
+          ];
+          for (var i = 0; i < requestAnimMethods.length; i++) 
+          {
+            var methName = requestAnimMethods[i];
+            if (window[methName]) 
+            {
+              return function(name) 
+              {
+                return function(callback, element) 
+                {
+                  alert(callback+ " "+ element)
+                  window[name].call(window, callback, element);
+                };
+              }(methName);
+            }
+          }
+           return function(callback, element) {
+           window.setTimeout(callback, 1000 / 60);
+        };
+       }();
+     }
+     this.requestAnimFrameMethod(callback, element); 
+    
+}
+
+
+
 
 
 WebglViewer.prototype.getShader=function (id) 
@@ -208,14 +254,14 @@ WebglViewer.prototype.start=function(canvas)
   var self = this; 
 
     
-  this.drawTimer=setInterval(function()
-      { 
-      self.tick(); 
-      }, 15); 
+  //this.drawTimer=setInterval(function()
+    //  { 
+     
+   //   }, 15); 
   
   this.isRendering=true;
   lastTime=new Date().getTime();
-  
+   self.tick(); 
   
 
 }
@@ -334,7 +380,7 @@ WebglViewer.prototype.stop=function()
 {
 
     
-    clearInterval(this.drawTimer);
+   //clearInterval(this.drawTimer);
     this.isRendering=false;
 }
 
@@ -443,11 +489,12 @@ WebglViewer.prototype.animate=function()
 
 WebglViewer.prototype.tick=function() 
 {
-    
+     
     if(this.isRendering)
     {
-    this.drawScene();
-    this.animate();
+      this.drawScene();
+      this.animate();
+
     }
 
 }

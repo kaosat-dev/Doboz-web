@@ -110,6 +110,7 @@
   }
 </script>
     <script  type="text/javascript" src="/js/webgl-trace.js"></script>
+    <script  type="text/javascript" src="/js/webgl-utils.js"></script>
     <script type="text/javascript" src="/js/glMatrix-0.9.5.min.js"></script>
     <!--<script language="javascript" type="text/javascript" src="/js/glu.js"></script>-->
    
@@ -128,6 +129,28 @@
 
       var dobozUi=new DobozUi("http://"+window.location.host+"/");
       var viewer=new WebglViewer();
+      var isRendering=false;
+      
+    function startRender()
+    {
+       isRendering=true;
+       renderGl();
+      
+    }
+    function stopRender()
+    {
+      isRendering=false;
+    }
+    function renderGl() 
+    {
+      if(isRendering)
+      {
+        
+        viewer.tick();
+        requestAnimFrame(renderGl);
+      }
+    }
+    
       
       var styles=[];
      
@@ -148,6 +171,7 @@
               viewer.canvas=document.getElementById("glcanvas");
               if (viewer.autoStart)
               {
+                startRender();
                 viewer.start(document.getElementById("glcanvas"));
               }
               
@@ -157,6 +181,7 @@
               $('#viewer').bind("mouseup", jQuery.proxy( viewer, 'handleMouseUp'));
               $('#viewer').bind('mousewheel', jQuery.proxy( viewer,'handleMouseWheel'));
               $(document).bind('keydown', jQuery.proxy( viewer,'handleKeyDown'));
+              
               
               
             }
@@ -204,7 +229,7 @@
                 <li><a href="#tabs-6">About</a> </li>
               </ul>
               <div id="tabs-1" style="padding:4px;border:0px">
-                <div id="printOptions" style="overflow:auto;height:80%;">
+                <div id="printOptions" style="overflow:auto;height:87%;">
                   <div>
                     <button  id="fileUploadButton" onclick="$('#fileUploadDialog').dialog('open');"> Upload </button>
                   </div>
@@ -298,8 +323,8 @@
                 <div id="webglControls">
                   <input type="checkbox" id="viewerAutoStartRadio"  /><label for="viewerAutoStartRadio">AutoStart</label>
                   <input type="checkbox" id="viewerAutoRotateRadio"  /><label for="viewerAutoRotateRadio">AutoRotate</label><br>
-                  <button  onclick="viewer.start()">Start Webgl viewer</button>
-                  <button  onclick="viewer.stop()">Stop Webgl viewer</button>
+                  <button  onclick="viewer.start();startRender();">Start Webgl viewer</button>
+                  <button  onclick="viewer.stop();stopRender()">Stop Webgl viewer</button>
                    <div id="drawModeRadio">
                       <input type="radio" id="GL_LineStrip_radio" checked="checked" name="gl_draw_options" value="3"/><label for="GL_LineStrip_radio">LineStrip</label>
                       <input type="radio" id="GL_Lines_radio" name="gl_draw_options" value="1"/><label for="GL_Lines_radio">Lines</label>
@@ -312,8 +337,8 @@
                  <div id="webcamControls">
                 
                   Refresh frequency (s) <input id="webcamRefreshInput" type='text' value="3" class=" ui-corner-left"  style="width:25px"/>
-                   <button onclick="dobozUi.starWebcam()">Start Webcam viewer</button>
-                  <button onclick="dobozUi.stopWebcam()">Stop Webcam viewer</button>
+                   <button onclick="dobozUi.starWebcam();">Start Webcam viewer</button>
+                  <button onclick="dobozUi.stopWebcam();">Stop Webcam viewer</button>
                   </div>
                   
                  <h3><a href="#"> Theme Switcher</a></h3>
