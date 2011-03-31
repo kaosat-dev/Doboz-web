@@ -1,1 +1,1 @@
-path=/home/ckaos/data/Projects/Doboz/doboz-web/core/print_server/files/machine/printFiles/z-top-motor_export.gcode, shutdown=ok
+path=/home/ckaos/data/Projects/Doboz/doboz-web/core/print_server/files/machine/printFiles/z-top-motor_export.gcode

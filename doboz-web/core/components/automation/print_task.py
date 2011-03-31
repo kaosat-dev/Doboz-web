@@ -25,9 +25,9 @@ class PrintTask(Task):
         self.currentLine=0#for post error recup
         self.reconnectionCommand=None
         
-        self.currentLayer=0
+        self.currentLayer=0#for layer counting
         self.totalLayers=0
-        self.lastLayer=0#for layer counting
+        self.currentLayerValue=0#the actual z component
         self.pointCloud=PointCloud()        
         
         self.source=None
@@ -202,7 +202,7 @@ class PrintTask(Task):
 #            self.logFile.write("line="+str(self.currentLine))
 #            self.logFile.close()
             
-            self.logger.info("Sent command "+ line)
+            self.logger.critical("Sent command "+ line)
 #            self.events.OnLineParsed(self,line)
             self.currentLine+=1
             self.lastLine=line
@@ -218,10 +218,13 @@ class PrintTask(Task):
             if pos:
                 try:
                     #self.position=[pos.xcmd.value.to_eng_string(),pos.zcmd.value.to_eng_string(),pos.ycmd.value.to_eng_string()]
-                    x=float(pos.xcmd.value.to_eng_string())/20
-                    y=float(pos.ycmd.value.to_eng_string())/20
-                    z=float(pos.zcmd.value.to_eng_string())/20
-                    self.pointCloud.add_point(Point(x,y,z))             
+                    x=float(pos.xcmd.value.to_eng_string())
+                    y=float(pos.ycmd.value.to_eng_string())
+                    z=float(pos.zcmd.value.to_eng_string())
+                    if z!=self.currentLayerValue:
+                        self.currentLayer+=1
+                        self.currentLayerValue=z
+                    self.pointCloud.add_point(Point(x/20,y/20,z/20))             
                 except Exception as inst:
                     self.logger.critical("failed to add point to movement map %s",str(inst))
             

@@ -53,6 +53,8 @@ class dda
     volatile boolean e_can_step;
     volatile boolean f_can_step;
     
+  
+    
     boolean xCanStep(long current, long target, boolean dir);
     boolean yCanStep(long current, long target, boolean dir);
     boolean zCanStep(long current, long target, boolean dir);
@@ -97,6 +99,7 @@ class dda
       void extruder_backwards();
       void stop_extruder();
       void start_extruder();
+        String currentCommand;//hack
 };
 
 

@@ -2,7 +2,6 @@
 //#define TIMER_CLOCK_FREQ 2000000.0 //2MHz for /8 prescale from 16MHz
 #include <ctype.h>
 #include <stdio.h>
-#include <HardwareSerial.h>
 #include <avr/pgmspace.h>
 
 #include "stepper.h"
@@ -11,7 +10,7 @@
 #include "helpers.h"
 #include "GCode_interpreter.h"
 #include "dda.h"
-
+#include <WString.h>
 #include <avr/pgmspace.h>
 
 bool running=false;
@@ -80,7 +79,8 @@ void request_3dPoint()
 
 
 
-
+  String tmp="";
+  String confirmation = "";
 
 long now;
 long then;
@@ -91,11 +91,13 @@ void setup()
   DDRB = DDRB | B11111111;
   DDRD = DDRD | B11110000;
   
-  DDa=dda();
-  interp=GCodeInterpreter(&DDa);
+
 
   Serial.begin(19200);
   Serial.println("start");
+  
+  DDa=dda();
+  interp=GCodeInterpreter(&DDa);
   Wire.begin(THIS_ADDRESS);
   Wire.onReceive(receiveEvent);  
   then=millis();
@@ -190,19 +192,26 @@ void handleCommand(int command,int value)
       break;
       
       case 'u'://got head temp
-        Serial.println(value);
-        //Serial.println(" ok");
+          //char buf[16];
+         //sprintf(buf, "M105 %3d", value);
+          tmp=String(value);
+          confirmation =  String("M105 "+ tmp); 
+         Serial.println(confirmation);
+         
       break;
       
        case 'v'://got bed temp
-       Serial.println(value);
-        //Serial.println(" ok");
+         tmp=String(value);
+         confirmation =  String("M143 "+ tmp); 
+        Serial.println(confirmation);
       break;
       
       case 'd':
-        Serial.print("height: ");
-        Serial.print(value);
-        Serial.println(" ok");
+        tmp=String(value);
+        confirmation =  String("M180 height: "+ tmp+" ok"); 
+         //char buf2[16];
+         //sprintf(buf, "M180 height: %4d ok", value);
+         Serial.println(confirmation);   
       break;
     }
 }
@@ -212,12 +221,8 @@ void receiveEvent(int howMany)
   
   while (Wire.available() > 0)
   {
-    
     char c = Wire.receive();
-    //Serial.println("recieved ");
-    //Serial.println(c);
     int v=Wire.receive();
-    //Serial.println(v,DEC);
     handleCommand(c,v);
     
   }

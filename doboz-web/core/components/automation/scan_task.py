@@ -74,8 +74,8 @@ class ScanTask(Task):
         if not self.pointCloudBuilder.finished:
             self.progress+=self.progressFraction
             ptBld=self.pointCloudBuilder.currentPoint
-           
-            self.connector.send_command("G1 X"+str(ptBld.x)+" Y"+str(ptBld.y))     
+            ptStr="G1 X"+str(ptBld.x)+" Y"+str(ptBld.y)
+            self.connector.send_command(ptStr)     
         else:
             self.progress=100
             self.pointCloud=self.pointCloudBuilder.pointCloud 
@@ -86,6 +86,8 @@ class ScanTask(Task):
                 else:
                     pass
             self.connector.send_command("G1 X0 Y0")
+        self.totalTime+=time.time()-self.startTime
+        self.startTime=time.time()
             
 
     def _data_recieved(self,args,kargs):
@@ -111,7 +113,7 @@ class ScanTask(Task):
                     if self.status!="NP" and self.status!="SP":   
                         self._do_action_step()
                 else:
-                    if not "G92" in kargs and not "G90" in kargs and not "G21" in kargs  and "G1" in kargs and self.status!="NP" and self.status!="SP" :
+                    if not "G92" in kargs and not "G90" in kargs and not "G21" in kargs  and "G1" in kargs and self.status!="NP" and self.status!="SP" :    
                         self.connector.send_command("M180")
                         
         else:

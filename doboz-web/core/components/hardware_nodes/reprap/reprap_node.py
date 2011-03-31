@@ -35,6 +35,7 @@ class ReprapNode(HardwareNode):
         self.rootPath=None
         self.events=ReprapManagerEvents() 
         self.gcodeSuffix="\n"
+        
             
         self.logger.critical("Reprap Node Init Done")
         
@@ -91,7 +92,7 @@ class ReprapNode(HardwareNode):
         self.serial.send_data(text+self.gcodeSuffix)   
       
     def _on_data_recieved(self,args,kargs):
-        #self.logger.critical("event recieved from reprap %s",str(kargs))
+        self.logger.critical("event recieved from reprap %s",str(kargs))
         if  "M105" in kargs:
             try:
                 self.headTemp=int(kargs.split(' ')[1])

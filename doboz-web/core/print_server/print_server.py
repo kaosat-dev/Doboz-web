@@ -136,7 +136,7 @@ def printing(command):
             truc=",".join(str(pt) for pt in truc)
             truc='['+truc+']'
             progress=testBottle.reprapManager.currentTask.progress
-            data={"jobType":'print',"progress":progress,"positions":str(truc)}
+            data={"jobType":'print',"progress":progress,"duration":testBottle.reprapManager.currentTask.totalTime,"positions":str(truc),"lastCommand":testBottle.reprapManager.connector.lastCommand}
             response=callback+"("+str(data)+")"
             testBottle.logger.info("response %s",str(response))  
 

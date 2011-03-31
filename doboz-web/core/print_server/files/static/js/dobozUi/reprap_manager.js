@@ -311,7 +311,7 @@ ReprapManager.prototype.loadSettings=function()
     ReprapManager.prototype.onMachineStatusRecieved=function(response)
     {
         
-        lastCommand=response.lastCommand;
+        //lastCommand=response.lastCommand;
        
         //Trigger machine status update
 

@@ -21,6 +21,7 @@ class QSerial(Thread,HardwareConnector):
     Class for sending out events each time data is sent through the observed serial port
     """
     blockedPorts=[]
+    """A class level list of all , already in use serial ports: neeeded for multiplatform correct behaviour of serial ports """
     
     def __init__(self,pseudoName="serial",port=None,isBuffering=False,seperator='\r\n',Speed=115200,bannedPorts=None,arduinoId=None,maxErrors=5,waitForAnswer=False,protocol=None):
         """ Inits the thread
@@ -65,7 +66,7 @@ class QSerial(Thread,HardwareConnector):
         
 
         self.regex = re.compile(self.seperator)
-       
+        self.lastCommand=""
         
             
     def connect(self):
@@ -233,8 +234,10 @@ class QSerial(Thread,HardwareConnector):
                                     results=self.regex.search(self.buffer)
                             except:
                                 pass
-                            while results is not None: 
-                                    self.events.OnDataRecieved(self,self.buffer[:results.start()])
+                            while results is not None:
+                                    nDataBlock= self.buffer[:results.start()]
+                                    self.lastCommand=nDataBlock
+                                    self.events.OnDataRecieved(self,nDataBlock)
                                     self.logger.debug("serial seperator reached : event sent containing : %s"%(self.buffer+str(data)))
                                     #command buffer handling
                                     if len(self.commandQueue)>0:

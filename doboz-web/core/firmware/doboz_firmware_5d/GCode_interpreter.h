@@ -49,7 +49,7 @@ class GCodeInterpreter
        void parseCommand(char cmd[],struct GcodeParser * gc, int size);
        void processCommand(char cmd[], int size);
        void addToCommand(char c);
-       void confirmCommand();
+       void confirmCommand(char*);
        
        void set_absolute();
        void set_relative();

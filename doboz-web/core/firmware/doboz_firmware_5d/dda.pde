@@ -6,6 +6,7 @@ dda::dda()
 {
   live=false;
   using_mm=true;
+  currentCommand="";
   
   steppers[0]=Stepper(16,13,9,500,150);//extuder//240//feedrate:95 //ideal :3000/12G1 X30 E240
   steppers[1]=Stepper(14,10,6,80,3200);//x axis//feedrate:29
@@ -93,7 +94,10 @@ void dda::set_target(const FloatPoint& p)
         if(total_steps == 0)
         {
            current_position=p;
-           Serial.println("ok");
+          
+           String confirmation =  String(currentCommand + " ok"); 
+           Serial.println(confirmation);   
+
            return; 
         }
 
@@ -184,7 +188,8 @@ void dda::dda_step()
      
       if(isRunning)
       {
-        Serial.println("ok");
+         String confirmation =  String(currentCommand + " ok"); 
+         Serial.println(confirmation); 
         isRunning=false;
       }
       return;

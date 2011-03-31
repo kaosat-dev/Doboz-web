@@ -134,8 +134,8 @@ void GCodeInterpreter::processCommand(char instruction[], int size)
     parseCommand(instruction,&gc,size);
     cmdsize=0;
     
-    Serial.print(instruction);
-    Serial.print(" ");
+    //Serial.print(instruction);
+    //Serial.print(" ");
     /* if no command was seen, but parameters were, then use the last G code as 
 	 * the current command
 	 */
@@ -189,14 +189,18 @@ void GCodeInterpreter::processCommand(char instruction[], int size)
 			case 0:
                                 //fr = fp.f;
                                 //fp.f = FAST_XY_FEEDRATE;
+                                Dda->currentCommand=String(instruction);
                                 Dda->set_target(fp);
+                                
                                 //qMove(fp);
                                 //fp.f = fr;
                                 return;
                                 
                         // Controlled move; -ve coordinate means zero the axis
 			case 1:
+                                  Dda->currentCommand=String(instruction);
                                   Dda->set_target(fp);
+                                  
                                  //qMove(fp);
                                  return;                                  
                                 
@@ -242,31 +246,31 @@ void GCodeInterpreter::processCommand(char instruction[], int size)
   			 //Dwell
 			case 4:
 				delay((int)(gc.P + 0.5)); 
-                                confirmCommand();
+                                confirmCommand(instruction);
 				break;
 
 			//Inches for Units
 			case 20:
                                 Dda->set_units(false);
-                                confirmCommand();
+                                confirmCommand(instruction);
 				break;
 
 			//mm for Units
 			case 21:
                                 Dda->set_units(true);
-                                confirmCommand();
+                                confirmCommand(instruction);
 				break;
 
 			//Absolute Positioning
 			case 90: 
 				abs_mode = true;
-                                confirmCommand();
+                                confirmCommand(instruction);
 				break;
 
 			//Incremental Positioning
 			case 91: 
 				abs_mode = false;
-                                confirmCommand();
+                                confirmCommand(instruction);
 				break;
 
 			//Set position as fp
@@ -308,11 +312,11 @@ void GCodeInterpreter::processCommand(char instruction[], int size)
                                 }
 
                                 
-                                confirmCommand();
+                                confirmCommand(instruction);
 				break;
 
 			default:
-                          confirmCommand();
+                          
                           break;
 				//Serial.println("ok");
 		  }
@@ -326,16 +330,20 @@ void GCodeInterpreter::processCommand(char instruction[], int size)
                   case 101:
                     //Dda->extruder_forward();
 		    //Dda->start_extruder();
-                    confirmCommand();
+                    confirmCommand(instruction);
 		    break;
                   case 102:
 		    //Dda->extruder_backwards();
 		    //Dda->start_extruder();
-                    confirmCommand();
+                    confirmCommand(instruction);
 		    break;
                   case 103:
 		    //Dda->stop_extruder();
-                    confirmCommand();
+                    confirmCommand(instruction);
+		    break;
+                   case 108:
+		    //Dda->stop_extruder();
+                    confirmCommand(instruction);
 		    break;
                   //custom code for temperature control
 		    case 104:
@@ -344,6 +352,7 @@ void GCodeInterpreter::processCommand(char instruction[], int size)
                         set_ExtruderTemp((int)gc.S);
 		        
 		    }
+                    confirmCommand(instruction);
 		    break;
 
 			//custom code for temperature reading
@@ -354,11 +363,15 @@ void GCodeInterpreter::processCommand(char instruction[], int size)
                     }
 
 			break;
+                   case 113:
+                   confirmCommand(instruction);
+                   break;
                   //set bed temperature
                   case 140:
                           if (gc.seen & GCODE_S)
 	            {
                         set_BedTemp((int)gc.S);
+                         confirmCommand(instruction);
 		        
 		    }
 			break;
@@ -380,7 +393,7 @@ void GCodeInterpreter::processCommand(char instruction[], int size)
 			break;
   
                   default:
-                          confirmCommand();
+                          confirmCommand(instruction);
                           break;
                 
               }  
@@ -404,9 +417,12 @@ void GCodeInterpreter::addToCommand(char c)
   
 }
 
-void GCodeInterpreter::confirmCommand()
+void GCodeInterpreter::confirmCommand(char* instruction)
 {
-   Serial.println("ok"); 
+   String tmp=String(instruction);
+   String confirmation =  String(tmp + " ok"); 
+  
+   Serial.println(confirmation);   
 }
 
 
