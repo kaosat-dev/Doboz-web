@@ -136,7 +136,7 @@ def printing(command):
             truc=",".join(str(pt) for pt in truc)
             truc='['+truc+']'
             progress=testBottle.reprapManager.currentTask.progress
-            data={"jobType":'print',"progress":progress,"duration":testBottle.reprapManager.currentTask.totalTime,"positions":str(truc),"lastCommand":testBottle.reprapManager.connector.lastCommand}
+            data={"jobType":'print',"progress":progress,"duration":testBottle.reprapManager.currentTask.totalTime,"positions":str(truc),"lastCommand":testBottle.reprapManager.connector.lastCommand,"layer":testBottle.reprapManager.currentTask.currentLayer}
             response=callback+"("+str(data)+")"
             testBottle.logger.info("response %s",str(response))  
 
@@ -146,7 +146,7 @@ def printing(command):
         #response=callback+"("+str(data)+")"
     elif command=="status":
         try:
-            data={"jobType":'print',"progress":testBottle.reprapManager.progress,"lastCommand":testBottle.reprapManager.lastLine or ""}
+            data={"jobType":'print',"progress":testBottle.reprapManager.progress,"lastCommand":testBottle.reprapManager.connector.lastCommand}
             response=callback+"("+str(data)+")"
             testBottle.logger.info("response %s",str(response))  
         except Exception as inst:

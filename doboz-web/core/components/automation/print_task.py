@@ -190,19 +190,20 @@ class PrintTask(Task):
             self.line=line
         except :
             pass
-        if line is not None:
-            text_suffixed=line+self.gcodeSuffix
-            self.connector.send_command(text_suffixed)   
-            """
-            Update the logfile with the current Line number
-            """
-#            self.logFile=open("log.txt","w")
-#            self.logFile.write("path="+str(self.filePath)+",")  
-#            self.logFile.write(" ")
-#            self.logFile.write("line="+str(self.currentLine))
-#            self.logFile.close()
+        if line is not None :
+            if line!= "":
+                text_suffixed=line+self.gcodeSuffix
+                self.connector.send_command(text_suffixed)   
+                """
+                Update the logfile with the current Line number
+                """
+    #            self.logFile=open("log.txt","w")
+    #            self.logFile.write("path="+str(self.filePath)+",")  
+    #            self.logFile.write(" ")
+    #            self.logFile.write("line="+str(self.currentLine))
+    #            self.logFile.close()
             
-            self.logger.critical("Sent command "+ line)
+                self.logger.critical("Sent command "+ line)
 #            self.events.OnLineParsed(self,line)
             self.currentLine+=1
             self.lastLine=line
