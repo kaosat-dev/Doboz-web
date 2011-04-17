@@ -14,7 +14,7 @@ class PrintTask(Task):
     """ A task for printing gcode files"""
     def __init__(self,filePath=None):
         Task.__init__(self,"print")
-        self.logger=logging.getLogger("Doboz.doboz_web.core.Automation.PrintTask")
+        self.logger=logging.getLogger("dobozweb.core.Automation.PrintTask")
         self.logger.setLevel(logging.ERROR)
         
         

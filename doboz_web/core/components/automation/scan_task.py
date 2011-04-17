@@ -18,7 +18,7 @@ class ScanTask(Task):
     """For all things related to the scanning   """    
     def __init__(self,scanWidth=1,scanLength=1,resolution=1,passes=1,filePath=None,saveScan=False):
         Task.__init__(self,"scan")
-        self.logger=logging.getLogger("Doboz.doboz_web.core.Automation.ScanTask")
+        self.logger=logging.getLogger("dobozweb.core.Automation.ScanTask")
         self.logger.setLevel(logging.ERROR)
        
         self.width=scanWidth

@@ -412,7 +412,7 @@
               <button  onclick="$('#manualControlDialog').dialog('open');">Manual</button>
             </div>
             <div id="statusInfo" class=" ui-button-text-only ui-widget ui-state-default ui-corner-all ">
-               <div class="ui-button-text"  style="display:inline-block;">Extr T&deg; n/a Bed T&deg; n/a  </div>
+               <div class="ui-button-text"  style="display:inline-block;">Last Gcode: n/a | Task Time: n/a | Extr T&deg; n/a | Bed T&deg; n/a  </div>
             </div>
           </div>
            
@@ -442,9 +442,44 @@
            
     </div>
     <div id="manualControlDialog" title="Manual Control">
+      <div style="width:100%;display:block;float:left">
+        <div style="width:50%;display:block;float:left">
+        <table id="controlsTable"  style="width:100%">
+          <tr class=" ui-widget-header " >
+            <td></td>
+            <td> <button  onclick="">-Y</button></td>
+            <td> </td>
+            <td>  <button  onclick="">+Z</button></td>
+          </tr>
+          <tr class=" ui-widget-header " >
+            <td><button  onclick="">-X</button></td>
+            <td><button  onclick="">Zero</button> </td>
+            <td><button  onclick="">+X</button></td>
+            <td></td>
+          </tr>
+          <tr class=" ui-widget-header " >
+            <td></td>
+            <td> <button  onclick="">+Y</button></td>
+            <td> </td>
+            <td>  <button  onclick="">-Z</button></td>
+          </tr>
+        </table>
+        </div>
+        <div style="width:50%;display:block;float:left">
+          <table id="controlsSettingsTable"  >
+          <tr class="" >
+            <td>Movement increment<input id="moveLength" type='text' value="" class=" ui-corner-left"/> </td>
+          </tr>
+          </table>
+        </div>
+      </div>
+      <br>
+      <div style="width:100%;display:block;float:left">
       Enter GCode etc <input id="manualCommand" type='text' value="" class=" ui-corner-left"/> 
       <button  onclick="reprapMgr.sendManualCommand($('#manualCommand').val())">Send</button>
+      </div>
     </div>
+    
     <div id="deleteJobDialog" title="Delete Job">
       <button  onclick="reprapMgr.sendManualCommand($('#manualCommand').val())">Send</button>
     </div>

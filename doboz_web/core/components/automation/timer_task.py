@@ -11,7 +11,7 @@ class TimerTask(Task,Thread):
     def __init__(self,delay=0):
         Thread.__init__(self)
         Task.__init__(self,"Timer")
-        self.logger=logging.getLogger("Doboz.doboz_web.core.Automation.TimerTask")
+        self.logger=logging.getLogger("dobozweb.core.Automation.TimerTask")
         self.logger.setLevel(logging.ERROR)
         
         self.delay=delay

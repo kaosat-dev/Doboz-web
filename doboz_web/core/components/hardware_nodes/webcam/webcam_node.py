@@ -14,7 +14,7 @@ class WebcamNode(HardwareNode):
     webcam Node class
     """
     def __init__(self):
-        self.logger=logging.getLogger("Doboz.doboz_web.core.WebcamNode")
+        self.logger=logging.getLogger("dobozweb.core.WebcamNode")
         self.logger.setLevel(logging.ERROR)
         HardwareNode.__init__(self)
         self.isRunning=False  

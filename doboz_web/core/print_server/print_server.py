@@ -17,18 +17,13 @@ from doboz_web.core.components.automation.timer_task import TimerTask
 
 
 testBottle = Bottle()
-testBottle.path=os.path.join(os.path.abspath("."),"core","print_server")
-printFilesPath=os.path.join(testBottle.path,"files","machine","printFiles")
-scanFilesPath=os.path.join(testBottle.path,"files","machine","scanFiles")
-if not os.path.exists(printFilesPath):
-    os.makedirs(printFilesPath)
-if not os.path.exists(scanFilesPath):
-    os.makedirs(scanFilesPath)
+testBottle.rootPath=os.path.join(os.path.abspath("."),"core","print_server")
+
     
-    
-testBottle.logger=logging.getLogger("Doboz.doboz_web.core.WebServer")
+testBottle.logger=logging.getLogger("dobozweb.core.WebServer")
 testBottle.reprapManager=None
 testBottle.uploadProgress=0
+
 #for profiling:
 #testBottle.heapWatch=hpy()
         
@@ -40,7 +35,7 @@ def do_upload():
 
     try:
         testBottle.uploadProgress=0
-        saved_file=open(os.path.join(testBottle.path,"files","machine","printFiles",datafile.filename),'w')
+        saved_file=open(os.path.join(testBottle.rootPath,"files","machine","printFiles",datafile.filename),'w')
         saved_file.write(datafile.value)
         saved_file.close()
         testBottle.uploadProgress=100
@@ -65,13 +60,13 @@ def printandscanFiles(command):
     
     def fullPrintFileInfo(file):
         
-            return {"fileName":str(file),"modDate": str(time.ctime(os.path.getmtime(os.path.join(testBottle.path,"files","machine","printFiles",file))))}
+            return {"fileName":str(file),"modDate": str(time.ctime(os.path.getmtime(os.path.join(testBottle.rootPath,"files","machine","printFiles",file))))}
         
     def fullScanFileInfo(file):
-            return {"fileName":str(file),"modDate": str(time.ctime(os.path.getmtime(os.path.join(testBottle.path,"files","machine","scanFiles",file))))}
+            return {"fileName":str(file),"modDate": str(time.ctime(os.path.getmtime(os.path.join(testBottle.rootPath,"files","machine","scanFiles",file))))}
         
     if command=="get_printFiles":
-        fileList=os.listdir(os.path.join(testBottle.path,"files","machine","printFiles"))
+        fileList=os.listdir(os.path.join(testBottle.rootPath,"files","machine","printFiles"))
         try:     
             finalFileList=map(fullPrintFileInfo, fileList)
             data={"files": finalFileList }
@@ -80,7 +75,7 @@ def printandscanFiles(command):
             testBottle.logger.critical("error in file list generation  %s",str(inst))
             
     elif command=="get_scanFiles":
-        fileList=os.listdir(os.path.join(testBottle.path,"files","machine","scanFiles"))
+        fileList=os.listdir(os.path.join(testBottle.rootPath,"files","machine","scanFiles"))
         try:     
             finalFileList=map(fullScanFileInfo, fileList)
             data={"files": finalFileList}
@@ -90,11 +85,11 @@ def printandscanFiles(command):
 
     elif command=="delete_scanFile":
         fileName=request.GET.get('fileName', '').strip()
-        filePath=os.path.join(testBottle.path,"files","machine","scanFiles",fileName)
+        filePath=os.path.join(testBottle.rootPath,"files","machine","scanFiles",fileName)
         os.remove(filePath)
     elif command=="delete_printFile":
         fileName=request.GET.get('fileName', '').strip()
-        filePath=os.path.join(testBottle.path,"files","machine","printFiles",fileName)
+        filePath=os.path.join(testBottle.rootPath,"files","machine","printFiles",fileName)
         os.remove(filePath)
     testBottle.logger.critical("response %s",str(response))
     return response
@@ -111,7 +106,7 @@ def printing(command):
         testBottle.logger.info("adding print task")
         fileName=request.GET.get('fileName', '').strip()
         testBottle.logger.info("filename %s",fileName)
-        fileToPrint=os.path.join(testBottle.path,"files","machine","printFiles",fileName)
+        fileToPrint=os.path.join(testBottle.rootPath,"files","machine","printFiles",fileName)
         testBottle.logger.info("filename %s",fileToPrint)
         try:     
             testBottle.reprapManager.add_task(PrintTask(filePath=fileToPrint)) 
@@ -223,8 +218,8 @@ def scanning(command):
         
 @testBottle.route('/uploads/:filename')
 def download(filename):
-    testBottle.logger.info("pouet %s, path: %s",filename,str(os.path.join(testBottle.path,"files","uploads")))
-    send_file(filename, root=os.path.join(testBottle.path,"files","machine","scanFiles"), download=filename)
+    testBottle.logger.info("pouet %s, path: %s",filename,str(os.path.join(testBottle.rootPath,"files","uploads")))
+    send_file(filename, root=os.path.join(testBottle.rootPath,"files","machine","scanFiles"), download=filename)
   
 
 @testBottle.route('/commands/:command' , method='GET')
@@ -288,18 +283,23 @@ def generalCommands(command):
 """"""""""""""""""""""""""""""""""""
 """ static files"""
 """"""""""""""""""""""""""""""""""""
+@testBottle.route('')
+@testBottle.route('/')
+@testBottle.route('/index.html')
+def index():
+    send_file("index.html", root=os.path.join(testBottle.rootPath,'files',"static"))
+
 @testBottle.route('/:filename')
 def static_file(filename):
-    print("static ","filename",filename)
-    send_file(filename, root=os.path.join(testBottle.path,'files',"static"))
+    send_file(filename, root=os.path.join(testBottle.rootPath,'files',"static"))
 
 @testBottle.route('/js/:path#.+#')
 def server_static(path):
-    send_file(path, root=os.path.join(testBottle.path,"files","static","js"))
+    send_file(path, root=os.path.join(testBottle.rootPath,"files","static","js"))
     
 @testBottle.route('/css/:path#.+#')
 def server_static(path):
-    send_file(path, root=os.path.join(testBottle.path,"files","static","css"))   
+    send_file(path, root=os.path.join(testBottle.rootPath,"files","static","css"))   
 
 
 """
@@ -311,7 +311,7 @@ def server_static(path):
     response.headers['Cache-Control'] = "no-store, no-cache, must-revalidate"
     response.headers['Pragma'] = "no-cache"
     response.headers['expires']=0
-    send_file(path, root=os.path.join(testBottle.path,"files","static","img"))    
+    send_file(path, root=os.path.join(testBottle.rootPath,"files","static","img"))    
  
 
 

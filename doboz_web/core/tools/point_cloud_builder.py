@@ -9,7 +9,7 @@ from doboz_web.core.tools.point_cloud import *
 
 class PointCloudBuilder(object):
     def __init__(self,resolution=1,width=1,length=1,passes=1,passMethod=0,nextPointMethod=0,passCombineMethod=0):
-        self.logger=logging.getLogger("Doboz.doboz_web.core.PointCloudBuilder")
+        self.logger=logging.getLogger("doboz_web.core.PointCloudBuilder")
         self.resolution=resolution
         self.width=width
         self.length=length

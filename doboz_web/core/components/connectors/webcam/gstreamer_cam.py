@@ -17,7 +17,7 @@ class GStreamerCam(Thread,HardwareConnector):
     Gstreamer based webcam connector
     """
     def __init__(self,driver=None):
-        self.logger=logging.getLogger("Doboz.doboz_web.core.GStreamerTest")
+        self.logger=logging.getLogger("dobozweb.core.GStreamerTest")
         self.logger.setLevel(logging.CRITICAL)
         Thread.__init__(self)
         HardwareConnector.__init__(self)

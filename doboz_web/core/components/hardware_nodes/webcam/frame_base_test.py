@@ -14,7 +14,7 @@ gobject.threads_init()
 class JustATest(Thread):
     def __init__(self):
         Thread.__init__(self)
-        self.logger=logging.getLogger("Doboz.doboz_web.core.GStreamerTest")
+        self.logger=logging.getLogger("doboz_web.core.GStreamerTest")
         self.logger.setLevel(logging.ERROR)
         formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
         ch = logging.StreamHandler(sys.stdout)
