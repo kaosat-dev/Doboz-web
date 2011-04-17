@@ -1,0 +1,13 @@
+syntax: glob
+bin/*
+dependencies/*
+develop-eggs/*
+parts/*
+eggs/*
+Doboz_web.egg-info/*
+.settings/*
+doboz_web/core/print_server/files/machine/*
+*.pyc
+*.pyo
+.project
+.installed.cfg

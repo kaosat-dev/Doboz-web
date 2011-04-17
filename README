@@ -4,6 +4,18 @@ It includes a Web client (using Javascript + Jquery + WebGl) and server (pure Py
 
 //////////////////////////////
 
+UPDATE: 04/17/2011
+-The project now comes with buidout scripts for easier deployment : no need to have the dependencies installed: here is how you can setup and run 
+Doboz-Web using buildout:
+-check out the code from github
+in command line :
+- navigate to the directory you just checked out the code into 
+- type python bootstrap.py (Optionally you can do pythonVERSIONNUM bootstrap.py : ie i use python2.6 bootstrap.py)
+- type bin/buildout : here you will see buildout getting all the project dependencies and setting up an isolated python environment
+DONE!
+To run the project , just type , at the same place: bin/dobozweb
+
+
 Depencies:
 * For now only tested with python 2.6
 * You will need to have pySerial installed
