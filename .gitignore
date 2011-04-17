@@ -1,0 +1,13 @@
+bin/*
+dependencies/*
+develop-eggs/*
+parts/*
+eggs/*
+Doboz_Web.egg-info/*
+.settings/*
+doboz_web/core/print_server/files/machine/*
+dummy_run.py
+*.pyc
+*.pyo
+.project
+.installed.cfg
