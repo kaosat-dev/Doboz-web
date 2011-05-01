@@ -87,16 +87,17 @@ class PrintTask(Task):
         Params:
         lineNumber: the line we want to go to
         """
-        line = self.source.readline()
-        lineIndex=0
-        
-        while line:
-            if lineIndex>=self.currentLine:
-                self.currentLine=lineIndex
-                print("going to line ",self.currentLine)
-                break
+        if lineNumber>0:
             line = self.source.readline()
-            lineIndex+=1
+            lineIndex=0
+            
+            while line:
+                if lineIndex>=self.currentLine:
+                    self.currentLine=lineIndex
+                    print("going to line ",self.currentLine)
+                    break
+                line = self.source.readline()
+                lineIndex+=1
       
     def _set_filePath(self): 
         """
@@ -128,7 +129,8 @@ class PrintTask(Task):
                 lineIndex+=1   
             
             self.source.close()       
-            self.totalLines=lineIndex - self.currentLine+1
+            self.totalLines=lineIndex #- self.currentLine+1
+            print("TOTALLINES",self.totalLines)
             if self.totalLayers>2:
                 self.totalLayers-=2
             #self.logger.critical("Total layers %g",self.totalLayers)
@@ -185,52 +187,68 @@ class PrintTask(Task):
         gets the next line in the gCode file, sends it via serial, updates the logFile
         and then increments the currentLine counter
         """
+        line=None
+        print("LINe",line,"linenb",self.currentLine,"progress",self.progress)
         try:
             line = self.source.readline()
             self.line=line
+            self.currentLine+=1
+            self.lastLine=line
+            
         except :
             pass
-        if line is not None :
-            if line!= "" and line !="\n" and line != "\r\n" and line != "\n\r":
+        
+        if line is not None: 
+            
+            if line!= "":# and line !="\n" and line != "\r\n" and line != "\n\r":
                 text_suffixed=line+self.gcodeSuffix
                 self.connector.send_command(text_suffixed)   
                 """
                 Update the logfile with the current Line number
                 """
-    #            self.logFile=open("log.txt","w")
-    #            self.logFile.write("path="+str(self.filePath)+",")  
-    #            self.logFile.write(" ")
-    #            self.logFile.write("line="+str(self.currentLine))
-    #            self.logFile.close()
-            
+        #            self.logFile=open("log.txt","w")
+        #            self.logFile.write("path="+str(self.filePath)+",")  
+        #            self.logFile.write(" ")
+        #            self.logFile.write("line="+str(self.currentLine))
+        #            self.logFile.close()
+                
                 self.logger.debug("Sent command "+ line)
-#            self.events.OnLineParsed(self,line)
-            self.currentLine+=1
-            self.lastLine=line
-            if (self.currentLine+1)==self.totalLines:
-                self.progress=100
-                self.status="F"
+    #            self.events.OnLineParsed(self,line)      
+                pos=self.gcodeParser.parse(line)
+    
+                if pos:
+                    try:
+                        #self.position=[pos.xcmd.value.to_eng_string(),pos.zcmd.value.to_eng_string(),pos.ycmd.value.to_eng_string()]
+                        x=float(pos.xcmd.value.to_eng_string())
+                        y=float(pos.ycmd.value.to_eng_string())
+                        z=float(pos.zcmd.value.to_eng_string())
+                        if z!=self.currentLayerValue:
+                            self.currentLayer+=1
+                            self.currentLayerValue=z
+                        self.pointCloud.add_point(Point(x/20,y/20,z/20))             
+                    except Exception as inst:
+                        self.logger.debug("failed to add point to movement map %s",str(inst))
+                
+                self.totalTime+=time.time()-self.startTime
+                self.startTime=time.time()
+                
+                if self.currentLine==self.totalLines:
+                    self.progress=100
+                    self.status="F"
+                    self.events.OnExited(self,"OnExited")
+                else:
+                    self.progress+=self.progressFraction
             else:
-                self.progress+=self.progressFraction
-
+                print("empty line")
+                if (self.currentLine)<self.totalLines:
+                    self.progress+=self.progressFraction
+                   
+                    self._do_action_step()
+                else:
+                    self.progress=100
+                    self.status="F"
+                    self.events.OnExited(self,"OnExited")
             
-            pos=self.gcodeParser.parse(line)
-
-            if pos:
-                try:
-                    #self.position=[pos.xcmd.value.to_eng_string(),pos.zcmd.value.to_eng_string(),pos.ycmd.value.to_eng_string()]
-                    x=float(pos.xcmd.value.to_eng_string())
-                    y=float(pos.ycmd.value.to_eng_string())
-                    z=float(pos.zcmd.value.to_eng_string())
-                    if z!=self.currentLayerValue:
-                        self.currentLayer+=1
-                        self.currentLayerValue=z
-                    self.pointCloud.add_point(Point(x/20,y/20,z/20))             
-                except Exception as inst:
-                    self.logger.debug("failed to add point to movement map %s",str(inst))
-            
-            self.totalTime+=time.time()-self.startTime
-            self.startTime=time.time()
             
     def _data_recieved(self,args,kargs):
         """

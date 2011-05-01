@@ -49,7 +49,7 @@
 // valid range = 0.020 to 4194.303
 #define	STEPS_PER_MM_X				3200.000
 #define	STEPS_PER_MM_Y				3200.000
-#define	STEPS_PER_MM_Z				5200.000
+#define	STEPS_PER_MM_Z				2600.000
 
 // http://blog.arcol.hu/?p=157 may help with this next one
 #define	STEPS_PER_MM_E				100.000
@@ -88,7 +88,7 @@ undefine if you don't want to use them
 #define	Y_MIN			-100.0
 #define	Y_MAX			100.0
 
-#define	Z_MIN			-1.0
+#define	Z_MIN			-5.0
 #define	Z_MAX			140.0
 
 
@@ -168,7 +168,7 @@ undefine if you don't want to use them
 #define	X_DIR_PIN							DIO18
 //#define	X_MIN_PIN							DIO7
 //#define	X_MAX_PIN							DIO6
-#define	X_ENABLE_PIN					DIO24
+//#define	X_ENABLE_PIN					DIO24
 //#define	X_INVERT_DIR
 //#define	X_INVERT_MIN
 //#define	X_INVERT_MAX
@@ -178,7 +178,7 @@ undefine if you don't want to use them
 #define	Y_DIR_PIN							DIO22
 //#define	Y_MIN_PIN							DIO5
 //#define	Y_MAX_PIN							DIO4
-#define	Y_ENABLE_PIN					DIO24
+//#define	Y_ENABLE_PIN					DIO24
 //#define	Y_INVERT_DIR
 //#define	Y_INVERT_MIN
 //#define	Y_INVERT_MAX
@@ -188,7 +188,7 @@ undefine if you don't want to use them
 #define	Z_DIR_PIN							DIO25
 //#define	Z_MIN_PIN							DIO3
 //#define	Z_MAX_PIN							DIO2
-#define	Z_ENABLE_PIN					DIO24
+//#define	Z_ENABLE_PIN					DIO24
 //#define	Z_INVERT_DIR
 //#define	Z_INVERT_MIN
 //#define	Z_INVERT_MAX
@@ -217,7 +217,7 @@ undefine if you don't want to use them
 
 	temperature is "achieved" for purposes of M109 and friends when actual temperature is within [hysteresis] of target for [residency] seconds
 */
-#define	TEMP_HYSTERESIS				5
+#define	TEMP_HYSTERESIS				12
 #define	TEMP_RESIDENCY_TIME		60
 
 // which temperature sensors are you using? (intercom is the gen3-style separate extruder board)
@@ -343,7 +343,7 @@ DEFINE_HEATER(fan,PA0)
 		WARNING: this WILL break most host-side talkers that expect particular responses from firmware such as reprap host and replicatorG
 		use with serial terminal or other suitable talker only.
 */
-// #define	DEBUG
+//#define DEBUG
 
 /*
 	BANG_BANG
@@ -363,7 +363,7 @@ DEFINE_HEATER(fan,PA0)
 		note that each move takes a fair chunk of ram (69 bytes as of this writing) so don't make the buffer too big - a bigger serial readbuffer may help more than increasing this unless your gcodes are more than 70 characters long on average.
 		however, a larger movebuffer will probably help with lots of short consecutive moves, as each move takes a bunch of math (hence time) to set up so a longer buffer allows more of the math to be done during preceding longer moves
 */
-#define	MOVEBUFFER_SIZE	2
+#define	MOVEBUFFER_SIZE	8
 
 /*
 	DC extruder
