@@ -191,7 +191,7 @@ class PrintTask(Task):
         except :
             pass
         if line is not None :
-            if line!= "":
+            if line!= "" and line !="\n" and line != "\r\n" and line != "\n\r":
                 text_suffixed=line+self.gcodeSuffix
                 self.connector.send_command(text_suffixed)   
                 """
@@ -203,7 +203,7 @@ class PrintTask(Task):
     #            self.logFile.write("line="+str(self.currentLine))
     #            self.logFile.close()
             
-                self.logger.critical("Sent command "+ line)
+                self.logger.debug("Sent command "+ line)
 #            self.events.OnLineParsed(self,line)
             self.currentLine+=1
             self.lastLine=line
@@ -227,7 +227,7 @@ class PrintTask(Task):
                         self.currentLayerValue=z
                     self.pointCloud.add_point(Point(x/20,y/20,z/20))             
                 except Exception as inst:
-                    self.logger.critical("failed to add point to movement map %s",str(inst))
+                    self.logger.debug("failed to add point to movement map %s",str(inst))
             
             self.totalTime+=time.time()-self.startTime
             self.startTime=time.time()
@@ -238,11 +238,10 @@ class PrintTask(Task):
         If the last command was confirmed, read next line frome gcode file, and 
         send it over serial.
         """
-        self.logger.critical("event recieved from reprap %s",str(kargs))
+        self.logger.debug("event recieved from reprap %s",str(kargs))
        
         if self.reconnectionCommand and self.status=="SP":
             if self.reconnectionCommand in kargs:
-                print ("reconnected command found")
                 self.reconnectionCommand=None
  
         if self.status!="NP" and self.status!="SP":#not paused

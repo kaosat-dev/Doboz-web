@@ -205,13 +205,15 @@ class QSerial(Thread,HardwareConnector):
                 if  len(self.commandQueue)>0:
                     command=self.commandQueue.popleft()
                     self.startedCommands=True
-                    self.logger.info("sending next command in queue '%s'", str(command))
+                    self.logger.debug("sending next command in queue '%s'", str(command))
                     self.send_command(command)
                 
                 try:
                     data=None
                     data=self.get_data()
-    
+                    if data:
+                        self.logger.debug("SERIAL GOT DATA %s", str(data))
+                    
                     newDataTreated=True
                     
                     if data is not None:
@@ -239,14 +241,14 @@ class QSerial(Thread,HardwareConnector):
                                     nDataBlock= self.buffer[:results.start()]
                                     self.lastCommand=nDataBlock
                                     self.events.OnDataRecieved(self,nDataBlock)
-                                    self.logger.debug("serial seperator reached : event sent containing : %s"%(self.buffer+str(data)))
+                                    self.logger.critical("serial data block <<:  %s",(str(nDataBlock)))
                                     #command buffer handling
                                     if len(self.commandQueue)>0:
                                         command=self.commandQueue.popleft()
                                         self.logger.info("sending next command in queue '%s'", str(command))
                                         self.send_command(command)
                                
-                                         
+                                    
                                     self.buffer=self.buffer[results.end():]
                                     results=None
                                     try:
@@ -287,10 +289,16 @@ class QSerial(Thread,HardwareConnector):
         Simple wrapper to send data over serial
         """     
         #to remove
-        data=data+"\n"
+       
+        data=data.strip()
+        data=data.replace(' ','')
+        data=data.replace("\t",'')
+        data=data+ "\n"
+        
+
         if self.isConnected: 
             try:
-                self.logger.debug("sending following data to arduino: '%s' ",str(data))
+                self.logger.critical("serial data block >>: %s ",str(data))
                 self.serial.write(data)
             except OSError:
                 self.logger.critical("arduino not connected or not found on specified port")

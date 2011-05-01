@@ -42,7 +42,7 @@ def configure_all():
     """"""""""""""""""""""""""""""""""""
     """Reprap config elements"""
     reprapNode = ReprapNode()
-    qs = QSerial(seperator="\r\n", isBuffering=True, Speed=19200)
+    qs = QSerial(seperator="\n", isBuffering=True, Speed=115200)#\n
     reprapNode.set_connector(qs)
     reprapNode.start()
     

@@ -92,23 +92,18 @@ class ReprapNode(HardwareNode):
         self.serial.send_data(text+self.gcodeSuffix)   
       
     def _on_data_recieved(self,args,kargs):
-        self.logger.critical("event recieved from reprap %s",str(kargs))
-        if  "M105" in kargs:
+        self.logger.debug("event recieved from reprap %s",str(kargs))
+        if  "T:" in kargs:
             try:
-                self.headTemp=int(kargs.split(' ')[1])
-            except:
-                pass
-        if  "M143" in kargs:
-            try:
-                self.bedTemp=int(kargs.split(' ')[1])
-            except:
-                pass
-        try:
-            pass
+                raw=kargs.split(' ')
+                self.headTemp=float(raw[0].split(':')[1])
+                self.bedTemp=float(raw[1].split(':')[1])
+            except Exception as inst:
+                self.logger.critical("Error in temperature readout %s"%str(inst))
+       
         
          #   self.logger.critical("Bed Temperature: %d Extruder Temperature %d",self.bedTemp,self.headTemp)
-        except:
-            pass
+
         
     def _on_connector_disconnected(self,args,kargs):
         """

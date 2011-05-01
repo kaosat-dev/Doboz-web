@@ -1,0 +1,1 @@
+path=/home/ckaos/data/Projects/Doboz/doboz_web/core/print_server/files/machine/printFiles/highprint_test_export_test.gcode, shutdown=ok

@@ -149,6 +149,7 @@ def printing(command):
     elif command=="manual":
         try:     
             gcode=request.GET.get('gcode', '').strip()
+            testBottle.logger.critical("Sending command %s"%(str(gcode)))
             testBottle.reprapManager.connector.send_command(gcode)
         except Exception as inst:
             testBottle.logger.critical("Failure to send manual command")
@@ -228,7 +229,6 @@ def generalCommands(command):
     response=callback+"()"
     if command == "machineStatus":
         testBottle.reprapManager.connector.send_command("M105")
-        testBottle.reprapManager.connector.send_command("M143")
         try:
             data={"headTemp":testBottle.reprapManager.headTemp,"bedTemp":testBottle.reprapManager.bedTemp}
             response=callback+"("+str(data)+")"
