@@ -284,18 +284,12 @@ class QSerial(Thread,HardwareConnector):
                     
         return data
 
-    def send_command(self,data):  
+    def send_command(self,data,*args,**kwargs):  
         """
         Simple wrapper to send data over serial
         """     
-        #to remove
-       
-        data=data.strip()
-        data=data.replace(' ','')
-        data=data.replace("\t",'')
-        data=data+ "\n"
-        
-
+        if self.driver:
+            data=self.driver.format_data(data,args,kwargs)
         if self.isConnected: 
             try:
                 self.logger.critical("serial data block >>: %s ",str(data))

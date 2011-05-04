@@ -10,12 +10,15 @@ class HardwareConnectorEvents(Events):
   
 class HardwareConnector(object):
     def __init__(self,driver=None):
-        self.driver=driver
         self.isConnected=False
         self.currentErrors=0
         self.maxErrors=5
+        self.driver=None
         self.events=HardwareConnectorEvents()
         
+    def set_driver(self,driver):
+        """Sets what driver to use : a driver formats the data sent to the connector !!"""
+        self.driver=driver
         
     def connect(self,*args,**kwargs):
         """

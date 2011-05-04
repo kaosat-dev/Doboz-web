@@ -52,7 +52,7 @@
 #define	STEPS_PER_MM_Z				2600.000
 
 // http://blog.arcol.hu/?p=157 may help with this next one
-#define	STEPS_PER_MM_E				100.000
+#define	STEPS_PER_MM_E				140.000
 
 
 /*

@@ -13,6 +13,8 @@ import socket
 
 
 from doboz_web.core.components.connectors.serial.queuable_serial import QSerial
+from doboz_web.core.components.drivers.reprap.Teacup.teacup_driver import TeacupDriver
+from doboz_web.core.components.drivers.reprap.FiveD.fived_driver import FiveDDriver
 from doboz_web.core.components.hardware_nodes.reprap.reprap_node import ReprapNode
 from doboz_web.core.components.hardware_nodes.webcam.webcam_node import WebcamNode
 from doboz_web.core.print_server.print_server import *
@@ -42,7 +44,8 @@ def configure_all():
     """"""""""""""""""""""""""""""""""""
     """Reprap config elements"""
     reprapNode = ReprapNode()
-    qs = QSerial(seperator="\n", isBuffering=True, Speed=115200)#\n
+    qs = QSerial(seperator="\n", isBuffering=True, Speed=115200)
+    qs.set_driver(TeacupDriver())
     reprapNode.set_connector(qs)
     reprapNode.start()
     

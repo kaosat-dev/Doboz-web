@@ -95,14 +95,28 @@ ReprapManager.prototype.loadSettings=function()
       }
     }
     
+    
+    //when the task confirmation answer has been recieved from the server
+    ReprapManager.prototype.taskConfirmationRecieved=function(confirmation)
+    {
+      
+    }
+    //initialize a new task
+     ReprapManager.prototype.initTask=function()
+     {
+       params="?fileName="+this.currentJob.file;
+       this.fetchData(this.mainUrl+this.currentJob.type+"commands/start"+params,function (response){self.genericSuccessHandler(response)});  
+       //get task confirmation from server
+     }
     //start the current job if it has not already been started, pause it otherwise
     ReprapManager.prototype.startPauseJob=function()  
     {
       
       
       var params="";
-      if(this.isJobStarted)
+      if(this.isJobStarted)//when pausing a task
       {
+        
         if(this.isJobPaused)
         {
           
@@ -123,7 +137,7 @@ ReprapManager.prototype.loadSettings=function()
         }
        
       }
-      else
+      else//when starting a task
       {
          
           if(this.jobs.length>0)
@@ -138,6 +152,8 @@ ReprapManager.prototype.loadSettings=function()
             if(this.currentJob.type=="print")
             {
                 params="?fileName="+this.currentJob.file;
+                
+               
             }
             else
             {   

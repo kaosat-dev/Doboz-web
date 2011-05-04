@@ -109,7 +109,8 @@ def printing(command):
         fileToPrint=os.path.join(testBottle.rootPath,"files","machine","printFiles",fileName)
         testBottle.logger.info("filename %s",fileToPrint)
         try:     
-            testBottle.reprapManager.add_task(PrintTask(filePath=fileToPrint)) 
+            if len(testBottle.reprapManager.tasks)==0:#cheap hack to disable multiple print for now 
+                testBottle.reprapManager.add_task(PrintTask(filePath=fileToPrint)) 
         except Exception as inst:
             testBottle.logger.critical("error in print start %s",str(inst))
                 

@@ -25,9 +25,8 @@ class HardwareNode(object):
         """For Uptime calculation"""
         self.startTime=time.time()
         
-    def set_driver(self,driver):
-        """Sets what driver to use : NOT IMPLEMENTED FOR NOW!!"""
-        self.driver=driver
+    
+  
     
     def add_task(self,task):
         """

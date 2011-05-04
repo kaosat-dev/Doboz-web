@@ -4,10 +4,11 @@ import datetime
 import sys
 import os
 
-from doboz_web.core.tools.point_cloud import Point,PointCloud
-from doboz_web.core.tools.point_cloud_builder import PointCloudBuilder
+
 from doboz_web.core.tools.event_sys import *
 from doboz_web.core.components.automation.task import Task, AutomationEvents
+from doboz_web.core.tools.point_cloud import Point,PointCloud
+from doboz_web.core.tools.point_cloud_builder import PointCloudBuilder
 from doboz_web.core.components.automation.gcode_parser import GCodeParser
 
 class PrintTask(Task):
@@ -34,7 +35,6 @@ class PrintTask(Task):
         
         self.recoveryMode=False
         self.doLayerAnalysis=False
-        self.gcodeSuffix="\n"
         
         """For all things related to the print positioning tracking """           
         self.gcodeParser=GCodeParser()
@@ -192,30 +192,21 @@ class PrintTask(Task):
         try:
             line = self.source.readline()
             self.line=line
-            self.currentLine+=1
             self.lastLine=line
             
         except :
             pass
         
         if line is not None: 
-            
             if line!= "":# and line !="\n" and line != "\r\n" and line != "\n\r":
-                text_suffixed=line+self.gcodeSuffix
-                self.connector.send_command(text_suffixed)   
+                self.connector.send_command(line)#self.connector.send_command(line,self.currentLine)
                 """
                 Update the logfile with the current Line number
                 """
-        #            self.logFile=open("log.txt","w")
-        #            self.logFile.write("path="+str(self.filePath)+",")  
-        #            self.logFile.write(" ")
-        #            self.logFile.write("line="+str(self.currentLine))
-        #            self.logFile.close()
-                
+
                 self.logger.debug("Sent command "+ line)
-    #            self.events.OnLineParsed(self,line)      
+                self.currentLine+=1
                 pos=self.gcodeParser.parse(line)
-    
                 if pos:
                     try:
                         #self.position=[pos.xcmd.value.to_eng_string(),pos.zcmd.value.to_eng_string(),pos.ycmd.value.to_eng_string()]
@@ -228,6 +219,7 @@ class PrintTask(Task):
                         self.pointCloud.add_point(Point(x/20,y/20,z/20))             
                     except Exception as inst:
                         self.logger.debug("failed to add point to movement map %s",str(inst))
+                        
                 
                 self.totalTime+=time.time()-self.startTime
                 self.startTime=time.time()
@@ -237,9 +229,11 @@ class PrintTask(Task):
                     self.status="F"
                     self.events.OnExited(self,"OnExited")
                 else:
+                    
                     self.progress+=self.progressFraction
             else:
                 print("empty line")
+                self.currentLine+=1
                 if (self.currentLine)<self.totalLines:
                     self.progress+=self.progressFraction
                    
