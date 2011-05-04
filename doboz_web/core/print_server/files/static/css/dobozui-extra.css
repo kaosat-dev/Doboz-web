@@ -135,7 +135,14 @@ body p a:hover
 
 }
 
+.teacupConfigTable
+{
+}
 
+.teacupConfigTable input
+{
+ width:60px;
+}
 
 /*---------------------*/
 

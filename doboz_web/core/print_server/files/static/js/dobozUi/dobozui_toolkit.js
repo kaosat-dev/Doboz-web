@@ -135,6 +135,8 @@ DobozUi.prototype.onDocumentReady=function()
     $("#deleteFileDialog").dialog({ autoOpen: false,width: 400 });
     $("#stopJobDialog").dialog({ autoOpen: false,width: 400 });
     
+    $("#TeacupFirmwareConfigDialog").dialog({ autoOpen: false,width: 600 });
+    
     
     $("#fileUploadDialog").hide();
     $("#manualControlDialog").hide();

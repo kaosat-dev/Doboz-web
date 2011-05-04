@@ -275,11 +275,15 @@
                   <div id="machineOptions" style="overflow:auto;height:87%;">
                      
                     <div class="tab-acordeon">
-                      
                       <h3><a href="#"> Status settings</a></h3>
                       <div>
                         <input id="statusUpdate" type='text' value="0" class="ui-corner-left" onKeyUp="dobozUi.onStatusUpdateFrequencyChanged()"/> status update frequency (s) <br>
                         <button  id="machineSettingsButton" onclick="reprapMgr.getMachineStatus()"> Get Status </button>
+                      </div>
+                      <h3><a href="#"> Firmware settings (NOT IMPLEMENTED)</a></h3>
+                      <div>
+                        Coming up: the ability to configure and upload a firmware (at least Teacup) via this GUI
+                        <button  onclick="">Start config tool</button>
                       </div>
                        <h3><a href="#"> Task settings (NOT IMPLEMENTED)</a></h3>
                        <div>
@@ -437,10 +441,54 @@
                 </form>
               </div>
               <div id="uploadProgressBar" style="width:100%;height:10px;" > </div>
-
-  
-           
     </div>
+    <div id="TeacupFirmwareConfigDialog" title="Teacup Firmware Configuration tool ">
+      <div style="width:100%;display:block;float:left">
+         <table id="teacupConfigTable" class="teacupConfigTable"  style="width:100%">
+          <tr class="  " >
+            <td>F_CPU<input id="F_CPU" type='text' value="20000000L" class=" ui-corner-left" /></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr class="  " >
+            <td>STEPS_PER_MM_X<input id="F_CPU" type='text' value="3200" class=" ui-corner-left" /></td>
+            <td>STEPS_PER_MM_Y<input id="F_CPU" type='text' value="3200" class=" ui-corner-left" /></td>
+            <td>STEPS_PER_MM_Z<input id="F_CPU" type='text' value="3200" class=" ui-corner-left" /></td>
+            <td>STEPS_PER_MM_E<input id="F_CPU" type='text' value="3200" class=" ui-corner-left" /></td>
+          </tr>
+          <tr class="  " >
+            <td>MAXIMUM_FEEDRATE_X<input id="F_CPU" type='text' value="3200" class=" ui-corner-left" /></td>
+            <td>MAXIMUM_FEEDRATE_Y<input id="F_CPU" type='text' value="3200" class=" ui-corner-left" /></td>
+            <td>MAXIMUM_FEEDRATE_Z<input id="F_CPU" type='text' value="3200" class=" ui-corner-left" /></td>
+            <td>MAXIMUM_FEEDRATE_E<input id="F_CPU" type='text' value="3200" class=" ui-corner-left" /></td>
+          </tr>
+          <tr class="  " >
+            <td>SEARCH_FEEDRATE_X<input id="F_CPU" type='text' value="3200" class=" ui-corner-left" /></td>
+            <td>SEARCH_FEEDRATE_Y<input id="F_CPU" type='text' value="3200" class=" ui-corner-left" /></td>
+            <td>SEARCH_FEEDRATE_Z<input id="F_CPU" type='text' value="3200" class=" ui-corner-left" /></td>
+            <td>SEARCH_FEEDRATE_E<input id="F_CPU" type='text' value="3200" class=" ui-corner-left" /></td>
+          </tr>
+           <tr class="  " >
+            <td>E_STARTSTOP_STEPS<input id="F_CPU" type='text' value="0" class=" ui-corner-left" /></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr class="  " >
+            <td>X_MIN<input id="F_CPU" type='text' value="-60.0" class=" ui-corner-left" />X_MAX<input id="F_CPU" type='text' value="60.0" class=" ui-corner-left" /></td>
+            <td>Y_MIN<input id="F_CPU" type='text' value="-60.0" class=" ui-corner-left" />Y_MAX<input id="F_CPU" type='text' value="60.0" class=" ui-corner-left" /></td>
+            <td>Z_MIN<input id="F_CPU" type='text' value="-60.0" class=" ui-corner-left" />Z_MIN<input id="F_CPU" type='text' value="60.0" class=" ui-corner-left" /></td>
+            <td></td>
+          </tr>
+        </table> 
+
+      </div>
+       <div style="width:50%;display:block;float:left">
+         <button   onclick="">Compile and upload</button>
+       </div>
+    </div>
+    
     <div id="manualControlDialog" title="Manual Control">
       <div style="width:100%;display:block;float:left">
         <div style="width:50%;display:block;float:left">
@@ -448,7 +496,7 @@
           <tr class="  " >
             <td></td>
             <td> <button  onclick="reprapMgr.sendMoveCommand('G0 Y-')">-Y</button></td>
-            <td> </td>
+            <td> <button  onclick="reprapMgr.sendMoveCommand('G0 E-')">-E</button></td>
             <td>  <button   onclick="reprapMgr.sendMoveCommand('G0 Z')">+Z</button></td>
           </tr>
           <tr class="  " >
@@ -460,9 +508,11 @@
           <tr class="  " >
             <td></td>
             <td> <button   onclick="reprapMgr.sendMoveCommand('G0 Y')">+Y</button></td>
-            <td> </td>
+            <td> <button  onclick="reprapMgr.sendMoveCommand('G0 E')">E</button></td>
             <td>  <button   onclick="reprapMgr.sendMoveCommand('G0 Z-')">-Z</button></td>
           </tr>
+          
+
         </table>
         </div>
         <div style="width:50%;display:block;float:left">

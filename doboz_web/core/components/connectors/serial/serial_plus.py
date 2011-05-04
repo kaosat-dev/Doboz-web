@@ -17,7 +17,7 @@ import itertools
 from doboz_web.core.components.connectors.hardware_connector import HardwareConnector,HardwareConnectorEvents
 
 
-class QSerial(Thread,HardwareConnector):
+class SerialPlus(Thread,HardwareConnector):
     """
     Class for sending out events each time data is sent through the observed serial port
     """
@@ -70,6 +70,11 @@ class QSerial(Thread,HardwareConnector):
         self.lastCommand=""
         
             
+    def upload(self):
+        avrpath="/home/ckaos/data/Projects/Doboz/doboz_web/core/tools/avr"
+        cmd=os.path.join(avrpath,"avrdude")
+        conf=os.path.join(avrpath,"avrdude.conf")
+    
     def connect(self):
         """Port connection/reconnection procedure"""    
         try:
@@ -87,7 +92,7 @@ class QSerial(Thread,HardwareConnector):
                 self.port=str(self.scan()[0])
                 #TODO: weird: port init fails if following line is removed
                 #print("Ports:",self.scan())
-                QSerial.blockedPorts.append(self.port)        
+                SerialPlus.blockedPorts.append(self.port)        
                 self.logger.critical("selecting port "+self.port)
                 self.serial=Serial(self.port,self.speed)
                 if self.arduinoId:
@@ -137,7 +142,7 @@ class QSerial(Thread,HardwareConnector):
         available = []
         
         for port in self.list_ports():  
-            if port not in QSerial.blockedPorts: 
+            if port not in SerialPlus.blockedPorts: 
                 try:
                     s = Serial(port) 
                     available.append(s.portstr)

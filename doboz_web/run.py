@@ -12,7 +12,7 @@ import os
 import socket
 
 
-from doboz_web.core.components.connectors.serial.queuable_serial import QSerial
+from doboz_web.core.components.connectors.serial.serial_plus import SerialPlus
 from doboz_web.core.components.drivers.reprap.Teacup.teacup_driver import TeacupDriver
 from doboz_web.core.components.drivers.reprap.FiveD.fived_driver import FiveDDriver
 from doboz_web.core.components.hardware_nodes.reprap.reprap_node import ReprapNode
@@ -46,8 +46,10 @@ def configure_all():
     reprapNode = ReprapNode()
     speed=  Config.getint("Reprap", "speed")
     reprapDriver=  Config.get("Reprap", "driver")
-    qs = QSerial(seperator="\n", isBuffering=True, Speed=speed)
+    print("Speed",speed,"driver",reprapDriver)
+    qs = SerialPlus(seperator="\n", isBuffering=True, Speed=speed)
     logger.info("Setting Reprap driver: %s",reprapDriver)
+  
     if reprapDriver == "teacup":   
         qs.set_driver(TeacupDriver())     
     elif reprapDriver =="fived":
