@@ -444,31 +444,31 @@
     <div id="manualControlDialog" title="Manual Control">
       <div style="width:100%;display:block;float:left">
         <div style="width:50%;display:block;float:left">
-        <table id="controlsTable"  style="width:100%">
-          <tr class=" ui-widget-header " >
+        <table id="controlsTable" class="controlsTable"  style="width:100%">
+          <tr class="  " >
             <td></td>
-            <td> <button  onclick="">-Y</button></td>
+            <td> <button  onclick="reprapMgr.sendMoveCommand('G0 Y-')">-Y</button></td>
             <td> </td>
-            <td>  <button  onclick="">+Z</button></td>
+            <td>  <button   onclick="reprapMgr.sendMoveCommand('G0 Z')">+Z</button></td>
           </tr>
-          <tr class=" ui-widget-header " >
-            <td><button  onclick="">-X</button></td>
-            <td><button  onclick="">Zero</button> </td>
-            <td><button  onclick="">+X</button></td>
+          <tr class="  " >
+            <td><button  onclick="reprapMgr.sendMoveCommand('G0 X-')">-X</button></td>
+            <td><button  onclick="reprapMgr.sendMoveCommand('G28')">Zero</button> </td>
+            <td><button  onclick="reprapMgr.sendMoveCommand('G0 X')">+X</button></td>
             <td></td>
           </tr>
-          <tr class=" ui-widget-header " >
+          <tr class="  " >
             <td></td>
-            <td> <button  onclick="">+Y</button></td>
+            <td> <button   onclick="reprapMgr.sendMoveCommand('G0 Y')">+Y</button></td>
             <td> </td>
-            <td>  <button  onclick="">-Z</button></td>
+            <td>  <button   onclick="reprapMgr.sendMoveCommand('G0 Z-')">-Z</button></td>
           </tr>
         </table>
         </div>
         <div style="width:50%;display:block;float:left">
           <table id="controlsSettingsTable"  >
           <tr class="" >
-            <td>Movement increment<input id="moveLength" type='text' value="" class=" ui-corner-left"/> </td>
+            <td>Movement increment<input id="moveIncrement" type='text' value="1" class=" ui-corner-left" onKeyUp="dobozUi.onManualIncrementChanged()"/> </td>
           </tr>
           </table>
         </div>

@@ -159,6 +159,13 @@
         viewer.switchDrawMode(drawMode);
         //viewer.saveSettings();
        });
+       
+        $(document).bind("Movement.incrementSet", function(e, moveIncrement)
+      {
+        
+        reprapMgr.moveIncrement=moveIncrement;
+        //viewer.saveSettings();
+       });
       
       
       function onSelectChange()
@@ -168,3 +175,5 @@
         
          document.getElementById('mainCss').href = selected.val();
       }
+      
+

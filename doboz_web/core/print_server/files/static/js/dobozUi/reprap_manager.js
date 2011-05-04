@@ -29,6 +29,11 @@ function ReprapManager(mainUrl)
     this.currentJob=null;
     this.readyForNextJob=true;
     this.jobDelay=5;//in seconds
+    this.moveIncrement=1;
+    
+    this.xPos=0.0;
+    this.yPos=0.0;
+    this.zPos=0.0;
     
    
 }
@@ -95,6 +100,18 @@ ReprapManager.prototype.loadSettings=function()
       }
     }
     
+    ReprapManager.prototype.sendMoveCommand=function(command)
+    {
+        var self = this; 
+        this.fetchData(this.mainUrl+"printcommands/manual"+"?gcode=G91", function (response){self.genericSuccessHandler(response)});  
+        var completeCommand=command;
+        if(command!="G28")
+        {
+          completeCommand+=+this.moveIncrement;
+        }
+        this.fetchData(this.mainUrl+"printcommands/manual"+"?gcode="+completeCommand,function (response){self.genericSuccessHandler(response)});  
+        
+    }
     
     //when the task confirmation answer has been recieved from the server
     ReprapManager.prototype.taskConfirmationRecieved=function(confirmation)

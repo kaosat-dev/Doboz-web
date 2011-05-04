@@ -94,7 +94,7 @@ class QSerial(Thread,HardwareConnector):
                     if not self.checkIdAndHandshake():
                         self.port=None
             except Exception as inst:
-                self.logger.critical("cricital error while (re-)starting serial connection %s",str(inst))
+                self.logger.critical("cricital error while (re-)starting serial connection : please check your cables,  and make sure no other process is using the port ")
                 self.currentErrors+=1
                 time.sleep(self.currentErrors*5)
         if not self.port :

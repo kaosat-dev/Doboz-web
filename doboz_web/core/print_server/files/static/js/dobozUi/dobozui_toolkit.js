@@ -123,10 +123,10 @@ DobozUi.prototype.onDocumentReady=function()
         });     
           
           //////////////////////////////////////////////////////
-     $( "#manualControlDialog button:first").button
+     /*$( "#manualControlDialog button:first").button
         ({
             text: true
-          });    
+          });    */
           
    
          
@@ -480,6 +480,15 @@ DobozUi.prototype.OnImageUpdateTimeout=function()
      self.camFliFlopid=0;
    }
 }
+
+
+DobozUi.prototype.onManualIncrementChanged=function()
+{
+  var increment=$("#moveIncrement").val();
+  //fire event
+  $(document).trigger('Movement.incrementSet',[increment]);
+}
+
 
 
 

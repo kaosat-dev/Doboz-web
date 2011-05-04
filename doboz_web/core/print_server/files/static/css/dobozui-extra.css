@@ -122,16 +122,20 @@ body p a:hover
     
 } 
 
-.infoTable tr[scope=row]
-{
-  
-}
-.infoTable td[scope=row], tr:hover td
+/*td[scope=row],*/
+.infoTable tr:hover 
 {
  cursor:hand;
  background-color: #444444;
  color:white;
 }
+
+.controlsTable
+{
+
+}
+
+
 
 /*---------------------*/
 
