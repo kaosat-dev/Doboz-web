@@ -44,8 +44,17 @@ def configure_all():
     """"""""""""""""""""""""""""""""""""
     """Reprap config elements"""
     reprapNode = ReprapNode()
-    qs = QSerial(seperator="\n", isBuffering=True, Speed=115200)
-    qs.set_driver(TeacupDriver())
+    speed=  Config.getint("Reprap", "speed")
+    reprapDriver=  Config.get("Reprap", "driver")
+    qs = QSerial(seperator="\n", isBuffering=True, Speed=speed)
+    logger.info("Setting Reprap driver: %s",reprapDriver)
+    if reprapDriver == "teacup":   
+        qs.set_driver(TeacupDriver())     
+    elif reprapDriver =="fived":
+        qs.set_driver(FiveDDriver())
+    else:
+        raise Exception("Please set a reprap driver in the config.Cfg configuration file")
+    
     reprapNode.set_connector(qs)
     reprapNode.start()
     
