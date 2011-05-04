@@ -15,11 +15,16 @@ in command line :
 DONE!
 To run the project , just type , at the same place: bin/dobozweb
 
+Configuration:
+* To change the serial speed and the adapted driver for your firmware, change the speed and driver lines in the config.cfg file in the "Reprap" section:
+the only tested driver so far is Teacup, fived might work (feedbakc appreciated, as it does not respond with my reprap's motherboard)
+* To change the webserver (wsgiref or tornado)  , just change the ServerType in the config.cfg file in the "WebServer" section
+* To enable/disable webcam use : Change "use:False" (False or True must start with uppercase , as per python syntax)  in the config.cfg file in the "Webcam" section
 
 Depencies:
 * For now only tested with python 2.6
-* You will need to have pySerial installed
-* You will also need pyParsing
+* You will need to have pySerial installed (normally deployed using the buildout method above)
+* You will also need pyParsing (normally deployed using the buildout method above)
 * for webcam support , pygst is required too
 * to generate docs, sphinx and all its dependencies are required
 * By default , the web server is now set to use wsgiref (no external dependency required) : to change that , just change the ServerType in the config.cfg file in the "WebServer" section
