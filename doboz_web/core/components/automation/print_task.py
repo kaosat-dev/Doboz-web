@@ -39,6 +39,8 @@ class PrintTask(Task):
         """For all things related to the print positioning tracking """           
         self.gcodeParser=GCodeParser()
         
+
+        
        
 #        self.logFile=open("log.txt","r")
 #        logContent=self.logFile.read()
@@ -64,7 +66,7 @@ class PrintTask(Task):
     def disconnect(self):   
         self.connector.events.OnDataRecieved-=self._data_recieved
         self.connector=None
-       # self.stop()
+
         
     def start(self):
         """ Starts the current print task"""

@@ -205,7 +205,6 @@ class SerialPlus(Thread,HardwareConnector):
 
                 nextCommand=self.driver.get_next_command()
                 if nextCommand:
-                    print("SERIAL NEXT COMMAND",nextCommand)
                     self.send_command(nextCommand)
                 
                 try:
