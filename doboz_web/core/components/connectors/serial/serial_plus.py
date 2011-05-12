@@ -186,12 +186,7 @@ class SerialPlus(Thread,HardwareConnector):
                 else:
                     return False
 
-    def add_command(self,command):
-        """
-        Enqueue a command
-        """
-        self.commandQueue.append(command)
-        self.logger.debug("new command appended: '%s'",str(command))
+    
         
     def run(self):
         """
@@ -206,12 +201,12 @@ class SerialPlus(Thread,HardwareConnector):
                 self.connect()
                 
                     
-            else:
-                if  len(self.commandQueue)>0:
-                    command=self.commandQueue.popleft()
-                    self.startedCommands=True
-                    self.logger.debug("sending next command in queue '%s'", str(command))
-                    self.send_command(command)
+            else:   
+
+                nextCommand=self.driver.get_next_command()
+                if nextCommand:
+                    print("SERIAL NEXT COMMAND",nextCommand)
+                    self.send_command(nextCommand)
                 
                 try:
                     data=None
@@ -296,16 +291,24 @@ class SerialPlus(Thread,HardwareConnector):
                     
         return data
 
-    def send_command(self,data,*args,**kwargs):  
+    def add_command(self,command,*args,**kwargs):
+        """
+        Ennqueue/add a command , via the driver:
+        """
+        if self.driver:
+            self.driver.handle_request(command,*args,**kwargs)
+        else:# without driver, no buffer , so just send the command
+            self.send_command(command)
+        self.logger.debug("new command appended: '%s'",str(command))
+        
+    def send_command(self,command,*args,**kwargs):  
         """
         Simple wrapper to send data over serial
         """    
-        if self.driver:
-            data=self.driver.handle_request(data,*args,**kwargs)
         if self.isConnected: 
             try:
-                self.logger.critical("serial data block >>: %s ",str(data))
-                self.serial.write(data)
+                self.logger.critical("serial data block >>: %s ",str(command))
+                self.serial.write(command)
             except OSError:
                 self.logger.critical("arduino not connected or not found on specified port")
 

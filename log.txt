@@ -1,1 +1,1 @@
-path=/home/ckaos/data/Projects/Doboz/doboz_web/core/print_server/files/machine/printFiles/simpletest.gcode
+path=/home/ckaos/data/Projects/Doboz/doboz_web/core/print_server/files/machine/printFiles/bowden-nut-coupling_export.gcode

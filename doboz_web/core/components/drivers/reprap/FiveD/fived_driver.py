@@ -6,13 +6,13 @@ class FiveDDriver(Driver):
         Driver.__init__(self)
         self.currentLine=1
         
-    def handle_machineInit(self,datablock):
-        if "start" in datablock  or "ok" in datablock:
+    def _handle_machineInit(self,datablock):
+        if "start" in datablock :
             self.remoteInitOk=True
             self.logger.critical("Machine Initialized")
         else:
             raise Exception("Machine NOT INITIALIZED")
-    def format_data(self,datablock,*args,**kwargs):
+    def _format_data(self,datablock,*args,**kwargs):
         """
         Cleanup gcode : remove comments and whitespaces
         """

@@ -199,7 +199,7 @@ class PrintTask(Task):
         
         if line is not None: 
             if line!= "":# and line !="\n" and line != "\r\n" and line != "\n\r":
-                self.connector.send_command(line)#self.connector.send_command(line,self.currentLine)
+                self.connector.add_command(line,answerRequired=True)
                 """
                 Update the logfile with the current Line number
                 """
