@@ -20,6 +20,8 @@ class HardwareConnector(object):
         """Sets what driver to use : a driver formats the data sent to the connector !!
         And may also contain additional settings for the connector"""
         self.driver=driver
+        self.seperator=driver.seperator
+        self.speed=driver.speed
         
         
     def connect(self,*args,**kwargs):

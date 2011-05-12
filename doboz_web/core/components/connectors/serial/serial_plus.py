@@ -24,7 +24,7 @@ class SerialPlus(Thread,HardwareConnector):
     blockedPorts=[]
     """A class level list of all , already in use serial ports: neeeded for multiplatform correct behaviour of serial ports """
     
-    def __init__(self,pseudoName="serial",port=None,isBuffering=False,seperator='\r\n',Speed=115200,bannedPorts=None,arduinoId=None,maxErrors=5,waitForAnswer=False,protocol=None):
+    def __init__(self,pseudoName="serial",port=None,isBuffering=True,seperator='\r\n',Speed=115200,bannedPorts=None,arduinoId=None,maxErrors=5,waitForAnswer=False,protocol=None):
         """ Inits the thread
         Arguments:
             port -- serial port to be used, if none, will scan for available ports and 
@@ -52,7 +52,7 @@ class SerialPlus(Thread,HardwareConnector):
         self.isBuffering=isBuffering
         self.buffer=""
         
-        self.commandQueue=deque()
+        
         
         self.startedCommands=False
         
@@ -249,11 +249,7 @@ class SerialPlus(Thread,HardwareConnector):
                                     else:
                                         self.events.OnDataRecieved(self,nDataBlock)
                                         self.logger.critical("serial data block <<:  %s",(str(nDataBlock)))
-                                    #command buffer handling : NOT WORKING PLEASE DISREGARD
-                                    if len(self.commandQueue)>0:
-                                        command=self.commandQueue.popleft()
-                                        self.logger.info("sending next command in queue '%s'", str(command))
-                                        self.send_command(command)
+                                   
                                
                                     
                                     self.buffer=self.buffer[results.end():]

@@ -2,8 +2,8 @@ from doboz_web.core.components.drivers.driver import Driver
 
 class FiveDDriver(Driver):
     """Driver class: intermediary element that formats commands according to a spec before they get sent to the connector"""
-    def __init__(self):
-        Driver.__init__(self)
+    def __init__(self,category="reprap",speed=19200,seperator="\n",bufferSize=8):
+        Driver.__init__(self,category=category,speed,seperator,bufferSize)
         self.currentLine=1
         
     def _handle_machineInit(self,datablock):

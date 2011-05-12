@@ -26,8 +26,6 @@ class HardwareNode(object):
         self.startTime=time.time()
         
     
-  
-    
     def add_task(self,task):
         """
         Adds the task to the tasklist, and if there are not tasks running, starts it
@@ -91,6 +89,12 @@ class HardwareNode(object):
         self.currentTask=None 
         del self.tasks[0]          
                 
+        
+    def add_component(self,component,*args,**kwargs):
+        pass
+    
+    def remove_component(self,component,*args,**kwargs):
+        pass
         
     def _on_connector_connected(self,args,kargs):
         raise NotImplementedError, "This methods needs to be implemented in your node subclass"  

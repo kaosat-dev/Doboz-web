@@ -28,10 +28,13 @@ class Command(object):
 
 
 class Driver(object):
-    """Driver class: intermediary element that formats outgoing and incoming commands according to a spec before they get sent to the connector"""
-    def __init__(self,speed=None,seperator="\n",bufferSize=8):
-        self.logger = logging.getLogger("dobozweb.core.components.driver")
+    """
+    Driver class: intermediary element that formats outgoing and incoming commands according to a spec before they get sent to the connector
+    """
+    def __init__(self,category=None,speed=19200,seperator="\n",bufferSize=8):
+        self.logger = logging.getLogger("dobozweb.core.components.driver")      
         self.logger.setLevel(logging.INFO)
+        self.category=category
         self.remoteInitOk=False
         self.bufferSize=bufferSize
         self.answerableCommandBuffer=[]
@@ -39,12 +42,23 @@ class Driver(object):
         self.commandSlots=8
         
     def _format_data(self,datablock,*args,**kwargs):
+        """
+        Formats an outgoing datablock according to some specs/protocol 
+        datablock: the outgoing data to the machine
+        """
         raise NotImplementedException("Please implement in sub class")
     
     def _handle_machineInit(self,datablock):
+        """
+        handles machine (hardware node etc) initialization
+        datablock: the incoming data from the machine
+        """
         raise NotImplementedException("Please implement in sub class")
         
     def handle_request(self,datablock,*args,**kwargs):
+        """
+        Manages command requests
+        """
         cmd=Command(**kwargs)
         cmd.request=datablock
         if cmd.answerRequired and len(self.commandBuffer)<self.bufferSize+4:
@@ -54,6 +68,7 @@ class Driver(object):
 
         
     def get_next_command(self):
+        """Returns next avalailable command in command queue """
         cmd=None
         if self.remoteInitOk and len(self.commandBuffer)>0 and self.commandSlots>0:  
             tmp=self.commandBuffer[0]
@@ -71,7 +86,9 @@ class Driver(object):
         
         
     def handle_answer(self,datablock):
-        #handles only commands that got an answer, formats them correctly and sets necesarry flags
+        """handles only commands that got an answer, formats them correctly and sets necesarry flags
+        params: datablock the raw response that needs to be treated
+        """
         cmd=None        
         if not self.remoteInitOk:#machine not yet initialized
             self._handle_machineInit(datablock)

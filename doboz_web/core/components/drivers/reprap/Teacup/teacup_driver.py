@@ -2,8 +2,8 @@ from doboz_web.core.components.drivers.driver import Driver
 
 class TeacupDriver(Driver):
     """Driver class: intermediary element that formats commands according to a spec before they get sent to the connector"""
-    def __init__(self):
-        Driver.__init__(self)
+    def __init__(self,category="reprap",speed=115200,seperator="\n",bufferSize=8):
+        Driver.__init__(self,category=category,speed,seperator,bufferSize)
         
     def _handle_machineInit(self,datablock):
         if "start" in datablock  :

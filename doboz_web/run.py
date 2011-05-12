@@ -44,16 +44,19 @@ def configure_all():
     """"""""""""""""""""""""""""""""""""
     """Reprap config elements"""
     reprapNode = ReprapNode()
-    speed=  Config.getint("Reprap", "speed")
+   
     reprapDriver=  Config.get("Reprap", "driver")
+    speed=  Config.getint("Reprap", "speed")
+    seperator=Config.get("Reprap", "seperator")
+    bufferSize=Config.get("Reprap", "bufferSize")
     print("Speed",speed,"driver",reprapDriver)
-    qs = SerialPlus(seperator="\n", isBuffering=True, Speed=speed)
-    logger.info("Setting Reprap driver: %s",reprapDriver)
+    qs = SerialPlus()
+    logger.info("Setting Reprap driver: %s, with speed=%d, seperator=%s, buffersize=%d",reprapDriver,speed,seperator,buffersize)
   
     if reprapDriver == "teacup":   
-        qs.set_driver(TeacupDriver())     
+        qs.set_driver(TeacupDriver(speed=speed,seperator=seperator,bufferSize=bufferSize))     
     elif reprapDriver =="fived":
-        qs.set_driver(FiveDDriver())
+        qs.set_driver(FiveDDriver(speed=speed,seperator=seperator,bufferSize=bufferSize))
     else:
         raise Exception("Please set a reprap driver in the config.Cfg configuration file")
     
