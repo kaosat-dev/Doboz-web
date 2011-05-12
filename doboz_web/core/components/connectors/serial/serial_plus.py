@@ -245,9 +245,16 @@ class SerialPlus(Thread,HardwareConnector):
                             while results is not None:
                                     nDataBlock= self.buffer[:results.start()]
                                     self.lastCommand=nDataBlock
-                                    self.events.OnDataRecieved(self,nDataBlock)
-                                    self.logger.critical("serial data block <<:  %s",(str(nDataBlock)))
-                                    #command buffer handling
+                                    if self.driver:
+                                        nDataBlock=self.driver.handle_answer(nDataBlock)
+                                        if nDataBlock:
+                                            if nDataBlock.answerComplete:
+                                                self.events.OnDataRecieved(self,nDataBlock)
+                                                self.logger.critical("serial data block <<:  %s",(str(nDataBlock)))
+                                    else:
+                                        self.events.OnDataRecieved(self,nDataBlock)
+                                        self.logger.critical("serial data block <<:  %s",(str(nDataBlock)))
+                                    #command buffer handling : NOT WORKING PLEASE DISREGARD
                                     if len(self.commandQueue)>0:
                                         command=self.commandQueue.popleft()
                                         self.logger.info("sending next command in queue '%s'", str(command))
@@ -292,9 +299,9 @@ class SerialPlus(Thread,HardwareConnector):
     def send_command(self,data,*args,**kwargs):  
         """
         Simple wrapper to send data over serial
-        """     
+        """    
         if self.driver:
-            data=self.driver.format_data(data,args,kwargs)
+            data=self.driver.handle_request(data,*args,**kwargs)
         if self.isConnected: 
             try:
                 self.logger.critical("serial data block >>: %s ",str(data))

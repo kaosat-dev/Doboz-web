@@ -299,9 +299,9 @@ void process_gcode_command() {
 			// M3/M101- extruder on
 			case 3:
 			case 101:
-				if (temp_achieved() == 0) {
+				/*if (temp_achieved() == 0) {
 					enqueue(NULL);
-				}
+				}*/
 				#ifdef DC_EXTRUDER
 					heater_set(DC_EXTRUDER, DC_EXTRUDER_PWM);
 				#elif E_STARTSTOP_STEPS > 0

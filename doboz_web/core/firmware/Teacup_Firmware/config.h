@@ -47,12 +47,12 @@
 // for belts, this is (steps per motor turn) / (number of gear teeth) / (belt module)
 // half-stepping doubles the number, quarter stepping requires * 4, etc.
 // valid range = 0.020 to 4194.303
-#define	STEPS_PER_MM_X				3200.000
-#define	STEPS_PER_MM_Y				3200.000
-#define	STEPS_PER_MM_Z				2600.000
+#define	STEPS_PER_MM_X				1600.000//3200
+#define	STEPS_PER_MM_Y				1600.000//3200
+#define	STEPS_PER_MM_Z				675.000//2700.000//2600.000
 
 // http://blog.arcol.hu/?p=157 may help with this next one
-#define	STEPS_PER_MM_E				140.000
+#define	STEPS_PER_MM_E				115.000//125
 
 
 /*
@@ -63,15 +63,15 @@
 */
 
 // used for G0 rapid moves and as a cap for all other feedrates
-#define	MAXIMUM_FEEDRATE_X		67
-#define	MAXIMUM_FEEDRATE_Y		67
-#define	MAXIMUM_FEEDRATE_Z		10
+#define	MAXIMUM_FEEDRATE_X		140
+#define	MAXIMUM_FEEDRATE_Y		140
+#define	MAXIMUM_FEEDRATE_Z		30
 #define	MAXIMUM_FEEDRATE_E		200
 
 // used when searching endstops and as default feedrate
-#define	SEARCH_FEEDRATE_X			160
-#define	SEARCH_FEEDRATE_Y			160
-#define	SEARCH_FEEDRATE_Z			35
+#define	SEARCH_FEEDRATE_X			140
+#define	SEARCH_FEEDRATE_Y			140
+#define	SEARCH_FEEDRATE_Z			30
 //#define	SEARCH_FEEDRATE_E			50
 
 // this is how many steps to suck back the filament by when we stop. set to zero to disable
@@ -107,19 +107,19 @@ undefine if you don't want to use them
 	acceleration, reprap style.
 		Each movement starts at the speed of the previous command and accelerates or decelerates linearly to reach target speed at the end of the movement.
 */
- #define ACCELERATION_REPRAP
+ //#define ACCELERATION_REPRAP
 
 
 /*
 	acceleration and deceleration ramping.
 		Each movement starts at (almost) no speed, linearly accelerates to target speed and decelerates just in time to smoothly stop at the target. alternative to ACCELERATION_REPRAP
 */
-//#define ACCELERATION_RAMPING
+#define ACCELERATION_RAMPING
 
 // how fast to accelerate when using ACCELERATION_RAMPING
 // smaller values give quicker acceleration
 // valid range = 1 to 8,000,000; 500,000 is a good starting point
-//#define ACCELERATION_STEEPNESS	250000
+#define ACCELERATION_STEEPNESS	31250
 
 
 /*
@@ -169,7 +169,7 @@ undefine if you don't want to use them
 //#define	X_MIN_PIN							DIO7
 //#define	X_MAX_PIN							DIO6
 //#define	X_ENABLE_PIN					DIO24
-//#define	X_INVERT_DIR
+#define	X_INVERT_DIR
 //#define	X_INVERT_MIN
 //#define	X_INVERT_MAX
 //#define	X_INVERT_ENABLE
@@ -179,7 +179,7 @@ undefine if you don't want to use them
 //#define	Y_MIN_PIN							DIO5
 //#define	Y_MAX_PIN							DIO4
 //#define	Y_ENABLE_PIN					DIO24
-//#define	Y_INVERT_DIR
+#define	Y_INVERT_DIR
 //#define	Y_INVERT_MIN
 //#define	Y_INVERT_MAX
 //#define	Y_INVERT_ENABLE
@@ -217,8 +217,8 @@ undefine if you don't want to use them
 
 	temperature is "achieved" for purposes of M109 and friends when actual temperature is within [hysteresis] of target for [residency] seconds
 */
-#define	TEMP_HYSTERESIS				12
-#define	TEMP_RESIDENCY_TIME		60
+#define	TEMP_HYSTERESIS				15
+#define	TEMP_RESIDENCY_TIME		2
 
 // which temperature sensors are you using? (intercom is the gen3-style separate extruder board)
 // #define	TEMP_MAX6675
@@ -243,8 +243,8 @@ undefine if you don't want to use them
 #endif
 
 //                 name       type          pin
-DEFINE_TEMP_SENSOR(extruder,TT_THERMISTOR,PA1,THERMISTOR_EXTRUDER)
-DEFINE_TEMP_SENSOR(bed,	TT_THERMISTOR,PA2,THERMISTOR_EXTRUDER)
+DEFINE_TEMP_SENSOR(extruder,TT_THERMISTOR,PA2,THERMISTOR_EXTRUDER)
+DEFINE_TEMP_SENSOR(bed,	TT_THERMISTOR,PA1,THERMISTOR_EXTRUDER)
 // "noheater" is a special name for a sensor which doesn't have a heater.
 // Use "M105 P#" to read it, where # is a zero-based index into this list.
 // DEFINE_TEMP_SENSOR(noheater,				TT_THERMISTOR,	1)

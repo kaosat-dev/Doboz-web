@@ -250,14 +250,15 @@ class PrintTask(Task):
         If the last command was confirmed, read next line frome gcode file, and 
         send it over serial.
         """
-        self.logger.debug("event recieved from reprap %s",str(kargs))
+        command=kargs
+        self.logger.debug("event recieved from reprap %s",str(command))
        
         if self.reconnectionCommand and self.status=="SP":
-            if self.reconnectionCommand in kargs:
+            if self.reconnectionCommand in command.answer:
                 self.reconnectionCommand=None
  
         if self.status!="NP" and self.status!="SP":#not paused
-            if "ok" in kargs or "start" in kargs: 
+            if "ok" in command.answer or "start" in command.answer and not command.special: 
                  self._do_action_step()  
 #                tmpLastLine=(self.lastLine.rstrip()).replace("\n","")
 #                tmpAnsw=" ".join(kargs.lstrip().split(' ')[:-1])

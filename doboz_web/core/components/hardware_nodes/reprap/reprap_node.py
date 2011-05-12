@@ -93,13 +93,17 @@ class ReprapNode(HardwareNode):
       
     def _on_data_recieved(self,args,kargs):
         self.logger.debug("event recieved from reprap %s",str(kargs))
-        if  "T:" in kargs:
-            try:
-                raw=kargs.split(' ')
-                self.headTemp=float(raw[0].split(':')[1])
-                self.bedTemp=float(raw[1].split(':')[1])
-            except Exception as inst:
-                self.logger.critical("Error in temperature readout %s"%str(inst))
+        try:
+            answer=kargs.answer
+            if  "T:" in answer:
+                try:
+                    raw=answer.split(' ')
+                    self.headTemp=float(raw[0].split(':')[1])
+                    self.bedTemp=float(raw[1].split(':')[1])
+                except Exception as inst:
+                    self.logger.critical("Error in temperature readout %s"%str(inst))
+        except:
+            pass
        
         
          #   self.logger.critical("Bed Temperature: %d Extruder Temperature %d",self.bedTemp,self.headTemp)

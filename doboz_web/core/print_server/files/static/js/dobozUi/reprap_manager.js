@@ -109,7 +109,7 @@ ReprapManager.prototype.loadSettings=function()
         {
           completeCommand+=+this.moveIncrement;
         }
-        this.fetchData(this.mainUrl+"printcommands/manual"+"?gcode="+completeCommand,function (response){self.genericSuccessHandler(response)});  
+        this.fetchData(this.mainUrl+"printcommands/manual"+"?gcode="+completeCommand+"F120",function (response){self.genericSuccessHandler(response)});  
         
     }
     
