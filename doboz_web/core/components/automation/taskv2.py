@@ -78,3 +78,4 @@ class Task(object):
         method in charge of verifying all of the tasks conditions
         for a task to start/continue running, all of its conditions must evaluate to True 
         """
+        [condtion.check() for condition in self.conditions]

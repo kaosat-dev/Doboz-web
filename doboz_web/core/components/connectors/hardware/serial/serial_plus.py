@@ -14,7 +14,7 @@ import sys
 import itertools
 
 
-from doboz_web.core.components.connectors.hardware_connector import HardwareConnector,HardwareConnectorEvents
+from doboz_web.core.components.connectors.hardware.hardware_connector import HardwareConnector,HardwareConnectorEvents
 
 
 class SerialPlus(Thread,HardwareConnector):
@@ -24,7 +24,7 @@ class SerialPlus(Thread,HardwareConnector):
     blockedPorts=[]
     """A class level list of all , already in use serial ports: neeeded for multiplatform correct behaviour of serial ports """
     
-    def __init__(self,pseudoName="serial",port=None,isBuffering=True,seperator='\r\n',Speed=115200,bannedPorts=None,arduinoId=None,maxErrors=5,waitForAnswer=False,protocol=None):
+    def __init__(self,pseudoName="serial",port=None,isBuffering=True,seperator='\r\n',Speed=115200,bannedPorts=None,maxErrors=5,waitForAnswer=False,protocol=None):
         """ Inits the thread
         Arguments:
             port -- serial port to be used, if none, will scan for available ports and 
@@ -44,17 +44,12 @@ class SerialPlus(Thread,HardwareConnector):
 
         self.waitForAnswer=waitForAnswer
         self.pseudoName=pseudoName
-        self.arduinoId=arduinoId
         self.port=port
         self.speed=Speed
         
         self.seperator=seperator
         self.isBuffering=isBuffering
         self.buffer=""
-        
-        
-        
-        self.startedCommands=False
         
         self.finished=Event()
         
@@ -63,13 +58,15 @@ class SerialPlus(Thread,HardwareConnector):
                 if not bPort in serial.blockedPorts:
                     serial.blockedPorts.append(bPort)
 
-        self.serial=None#Serial()
+        self.serial=None
         
 
-        self.regex = re.compile(self.seperator)
+        
         self.lastCommand=""
         
-            
+    def reset_seperator(self):
+        self.regex = re.compile(self.seperator)
+    
     def upload(self):
         avrpath="/home/ckaos/data/Projects/Doboz/doboz_web/core/tools/avr"
         cmd=os.path.join(avrpath,"avrdude")
@@ -93,13 +90,11 @@ class SerialPlus(Thread,HardwareConnector):
                 #TODO: weird: port init fails if following line is removed
                 #print("Ports:",self.scan())
                 SerialPlus.blockedPorts.append(self.port)        
-                self.logger.critical("selecting port "+self.port)
+                self.logger.critical("selecting port %s",str(self.port))
                 self.serial=Serial(self.port,self.speed)
-                if self.arduinoId:
-                    if not self.checkIdAndHandshake():
-                        self.port=None
+                
             except Exception as inst:
-                self.logger.critical("cricital error while (re-)starting serial connection : please check your cables,  and make sure no other process is using the port ")
+                self.logger.critical("cricital error while (re-)starting serial connection : please check your driver speed,  cables,  and make sure no other process is using the port ")
                 self.currentErrors+=1
                 time.sleep(self.currentErrors*5)
         if not self.port :
@@ -155,38 +150,6 @@ class SerialPlus(Thread,HardwareConnector):
         #for n in available:
         #    print " %s" % (n)
         return available
-    
-    def checkIdAndHandshake(self):
-        """
-        IF we need an arduino with a specific id
-        """
-        buffer=""
-        id=None       
-        while not id:
-            waiting=self.serial.inWaiting()
-            if waiting>0:
-                self.logger.debug("waiting for data")
-                data=self.serial.read(waiting)   
-                buffer+=data
-            results=None
-            try:
-                results=self.regex.search(buffer)
-            except:
-                pass
-            if results:
-                id=buffer[:results.start()].split(':')[1]
-                id=int(chr(int(id)))
-                if id==0: #if it is an unconfigured arduino
-                    self.serial.write(self.arduinoId)
-                if id==self.arduinoId:
-                    self.logger.info("id  ok")
-                    self.serial.write("ok") #confirm that this arduino was selected
-                    time.sleep(1)
-                    return True
-                else:
-                    return False
-
-    
         
     def run(self):
         """
@@ -196,17 +159,12 @@ class SerialPlus(Thread,HardwareConnector):
         seperator) is dispatched
         """
         while not self.finished.isSet():
-            #not self.startedCommands and
             if not self.isConnected:
                 self.connect()
-                
-                    
             else:   
-
                 nextCommand=self.driver.get_next_command()
                 if nextCommand:
                     self.send_command(nextCommand)
-                
                 try:
                     data=None
                     data=self.get_data()
@@ -233,12 +191,14 @@ class SerialPlus(Thread,HardwareConnector):
                         if newDataTreated is False:
                             results=None
                             try:
-                                    results=self.regex.search(self.buffer)
-                            except:
-                                pass
+                                results=self.regex.search(self.buffer)
+                            except Exception as inst:
+                                self.logger.critical("Error while parsing serial data :%s",str(inst))
+                        
                             while results is not None:
                                     nDataBlock= self.buffer[:results.start()]
                                     self.lastCommand=nDataBlock
+                                   
                                     if self.driver:
                                         nDataBlock=self.driver.handle_answer(nDataBlock)
                                         if nDataBlock:
@@ -290,6 +250,7 @@ class SerialPlus(Thread,HardwareConnector):
         """
         Ennqueue/add a command , via the driver:
         """
+       
         if self.driver:
             self.driver.handle_request(command,*args,**kwargs)
         else:# without driver, no buffer , so just send the command
@@ -305,7 +266,7 @@ class SerialPlus(Thread,HardwareConnector):
                 self.logger.critical("serial data block >>: %s ",str(command))
                 self.serial.write(command)
             except OSError:
-                self.logger.critical("arduino not connected or not found on specified port")
+                self.logger.critical("serial device not connected or not found on specified port")
 
     def disconnect(self):
         pass

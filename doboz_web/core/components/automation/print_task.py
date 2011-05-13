@@ -39,7 +39,10 @@ class PrintTask(Task):
         """For all things related to the print positioning tracking """           
         self.gcodeParser=GCodeParser()
         
-
+        """For the history of all previous commands this will need to be replaced with something more robust in the future"""
+        self.gcodeHistoryMaxSize=100
+        self.gcodeHistoryIndex=0
+        self.gcodeHistory=[]
         
        
 #        self.logFile=open("log.txt","r")
@@ -202,6 +205,13 @@ class PrintTask(Task):
         if line is not None: 
             if line!= "":# and line !="\n" and line != "\r\n" and line != "\n\r":
                 self.connector.add_command(line,answerRequired=True)
+                
+                try:
+                    self.gcodeHistory.insert(self.gcodeHistoryIndex, line)
+                    if len(self.gcodeHistory)>self.gcodeHistoryMaxSize:
+                        self.gcodeHistoryIndex=0
+                except:
+                    pass
                 """
                 Update the logfile with the current Line number
                 """

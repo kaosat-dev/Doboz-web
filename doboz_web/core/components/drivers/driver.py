@@ -35,11 +35,14 @@ class Driver(object):
         self.logger = logging.getLogger("dobozweb.core.components.driver")      
         self.logger.setLevel(logging.INFO)
         self.category=category
-        self.remoteInitOk=False
+        self.speed=speed
+        self.seperator=seperator    
         self.bufferSize=bufferSize
+        self.remoteInitOk=False
         self.answerableCommandBuffer=[]
         self.commandBuffer=[]
-        self.commandSlots=8
+        self.commandSlots=bufferSize
+        
         
     def _format_data(self,datablock,*args,**kwargs):
         """
@@ -61,7 +64,7 @@ class Driver(object):
         """
         cmd=Command(**kwargs)
         cmd.request=datablock
-        if cmd.answerRequired and len(self.commandBuffer)<self.bufferSize+4:
+        if cmd.answerRequired and len(self.commandBuffer)<self.bufferSize:
             self.commandBuffer.append(cmd)
             if self.commandSlots>1:
                 self.commandSlots-=1
@@ -70,7 +73,9 @@ class Driver(object):
     def get_next_command(self):
         """Returns next avalailable command in command queue """
         cmd=None
-        if self.remoteInitOk and len(self.commandBuffer)>0 and self.commandSlots>0:  
+        if not self.remoteInitOk:
+            pass#raise Exception("Machine connection not established correctly")
+        elif self.remoteInitOk and len(self.commandBuffer)>0 and self.commandSlots>0:  
             tmp=self.commandBuffer[0]
             if not tmp.requestSent:            
                 cmd=self._format_data(self.commandBuffer[0].request)
@@ -80,7 +85,7 @@ class Driver(object):
 #                pass
         else:
             if len(self.commandBuffer)>0:
-                self.logger.critical("Buffer Size Exceed Machine capacity %s CommandSlots%s COMMANDBUFFER",str(len(self.commandBuffer)),str(self.commandSlots),[str(el) for el in self.commandBuffer])
+                self.logger.critical("Buffer Size Exceed Machine capacity: %s elements in command buffer, CommandSlots %s, CommandBuffer %s",str(len(self.commandBuffer)),str(self.commandSlots),[str(el) for el in self.commandBuffer])
 
         return cmd
         

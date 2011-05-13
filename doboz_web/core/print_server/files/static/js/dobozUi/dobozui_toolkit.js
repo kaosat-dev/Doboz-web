@@ -129,7 +129,7 @@ DobozUi.prototype.onDocumentReady=function()
           });    */
           
    
-         
+    $("#commandHistoryDialog").dialog({ autoOpen: false,width: 440 ,modal: false });     
     $("#fileUploadDialog").dialog({ autoOpen: false,width: 440 ,modal: false });
     $("#manualControlDialog").dialog({ autoOpen: false,width: 400 });
     $("#deleteFileDialog").dialog({ autoOpen: false,width: 400 });

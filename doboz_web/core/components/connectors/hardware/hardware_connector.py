@@ -22,7 +22,7 @@ class HardwareConnector(object):
         self.driver=driver
         self.seperator=driver.seperator
         self.speed=driver.speed
-        
+        self.reset_seperator()
         
     def connect(self,*args,**kwargs):
         """

@@ -282,7 +282,8 @@ ReprapManager.prototype.loadSettings=function()
         //alert("response "+response.jobType+" "+response.progress);
         progress=response.progress;
         
-        lastCommand=response.lastCommand;
+        //lastCommand=response.lastCommand;
+        commandHistory=eval(response.commandHistory);
         jobType=response.jobType;
       
         if(progress>=0 )
@@ -300,7 +301,7 @@ ReprapManager.prototype.loadSettings=function()
             tmpPositions= eval(this.lastPositions);
             
             //fire event
-            $(document).trigger('Job.progressUpdated',[{"progress":progress,"lastCommand":lastCommand,"positions":tmpPositions,"positionSize":tmpPositions.length/3}]);
+            $(document).trigger('Job.progressUpdated',[{"progress":progress,"commandHistory":commandHistory,"positions":tmpPositions,"positionSize":tmpPositions.length/3}]);
 
            
           } 

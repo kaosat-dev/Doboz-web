@@ -12,11 +12,11 @@ import os
 import socket
 
 
-from doboz_web.core.components.connectors.serial.serial_plus import SerialPlus
+from doboz_web.core.components.connectors.hardware.serial.serial_plus import SerialPlus
 from doboz_web.core.components.drivers.reprap.Teacup.teacup_driver import TeacupDriver
 from doboz_web.core.components.drivers.reprap.FiveD.fived_driver import FiveDDriver
-from doboz_web.core.components.hardware_nodes.reprap.reprap_node import ReprapNode
-from doboz_web.core.components.hardware_nodes.webcam.webcam_node import WebcamNode
+from doboz_web.core.components.nodes.hardware.reprap.reprap_node import ReprapNode
+from doboz_web.core.components.nodes.hardware.webcam.webcam_node import WebcamNode
 from doboz_web.core.print_server.print_server import *
    
 
@@ -48,10 +48,10 @@ def configure_all():
     reprapDriver=  Config.get("Reprap", "driver")
     speed=  Config.getint("Reprap", "speed")
     seperator=Config.get("Reprap", "seperator")
-    bufferSize=Config.get("Reprap", "bufferSize")
-    print("Speed",speed,"driver",reprapDriver)
+    bufferSize=Config.getint("Reprap", "bufferSize")
+    
     qs = SerialPlus()
-    logger.info("Setting Reprap driver: %s, with speed=%d, seperator=%s, buffersize=%d",reprapDriver,speed,seperator,buffersize)
+    logger.critical("Setting Reprap driver: %s, with speed=%d, seperator=%s, buffersize=%d",reprapDriver,speed,seperator,bufferSize)
   
     if reprapDriver == "teacup":   
         qs.set_driver(TeacupDriver(speed=speed,seperator=seperator,bufferSize=bufferSize))     
