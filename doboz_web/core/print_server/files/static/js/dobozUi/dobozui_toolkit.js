@@ -129,7 +129,7 @@ DobozUi.prototype.onDocumentReady=function()
           });    */
           
    
-    $("#commandHistoryDialog").dialog({ autoOpen: false,width: 440 ,modal: false });     
+    $("#commandHistoryDialog").dialog({ autoOpen: false,width: 440 ,height:600,modal: false });     
     $("#fileUploadDialog").dialog({ autoOpen: false,width: 440 ,modal: false });
     $("#manualControlDialog").dialog({ autoOpen: false,width: 400 });
     $("#deleteFileDialog").dialog({ autoOpen: false,width: 400 });
@@ -406,7 +406,10 @@ DobozUi.prototype.onJobFinished=function(job)
 
 DobozUi.prototype.onStatusUpdated=function(status)
 {
-   $("#statusInfo").html("Extr T&deg;<FONT COLOR='red'> "+status.ExtruderTemp+"</FONT> Bed T&deg; <FONT COLOR='red'>"+status.BedTemp+"</FONT>");
+  $("#stastubar_task_extruder_temp").html("Extr T&deg;<FONT COLOR='red'> "+status.ExtruderTemp+"</FONT>")
+  $("#stastubar_task_bed_temp").html("Bed T&deg; <FONT COLOR='red'>"+status.BedTemp+"</FONT>")
+
+
 }
 
 

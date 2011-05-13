@@ -1,5 +1,17 @@
  /////////////////
-      
+function secondsToTime(secs)
+{
+    var hours = Math.floor(secs / (60 * 60));
+   
+    var divisor_for_minutes = secs % (60 * 60);
+    var minutes = Math.floor(divisor_for_minutes / 60);
+ 
+    var divisor_for_seconds = divisor_for_minutes % 60;
+    var seconds = Math.ceil(divisor_for_seconds);
+   
+    var timeO = {"h": hours,"m": minutes,"s": seconds};
+    return timeO;
+}      
        $(document).bind("Viewer.Configured", function(e, config)
       {
         dobozUi.onViewerConfigured(config);
@@ -35,7 +47,17 @@
         subscribers = dobozUi;
         subscribers.onJobProgressUpdated(progressReport);
         viewer.onJobProgressUpdated(progressReport);
-        $("#lastCommand").text("LastCommand "+lastCommand);
+        $("#commandHistory").html(progressReport.commandHistory);
+        $("#stastubar_latestCommand").html("Cmd: <FONT COLOR='red'>"+progressReport.lastCommand+"</FONT>")
+        
+        $("#layerDisplay").text("Layer: "+progressReport.currentLayer);
+        
+        timeObj=secondsToTime(progressReport.duration);
+        $("#timeDisplay").text("Duration: "+(timeObj.h+" h "+timeObj.m+' m '+timeObj.s+ " s"));
+         $("#stastubar_task_duration").html("Time: <FONT COLOR='red'>"+timeObj.h+"h "+timeObj.m+'m '+timeObj.s+ "s</FONT>")
+        
+        
+      
       });
       
       $(document).bind("Job.finished", function(e, job)

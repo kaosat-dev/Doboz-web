@@ -416,7 +416,12 @@
               <button  onclick="$('#manualControlDialog').dialog('open');">Manual</button>
             </div>
             <div id="statusInfo" class=" ui-button-text-only ui-widget ui-state-default ui-corner-all ">
-               <div class="ui-button-text"  style="display:inline-block;">Last Gcode: n/a | Task Time: n/a | Extr T&deg; n/a | Bed T&deg; n/a  </div>
+               <div class="ui-button-text"  style="display:inline-block;">
+                 <div id="stastubar_latestCommand" style="display:inline-block;">Cmd: n/a </div>
+                 <div id="stastubar_task_duration" style="display:inline-block;">Time: n/a </div>
+                 <div id="stastubar_task_extruder_temp" style="display:inline-block;">Extr T&deg; n/a </div>
+                 <div id="stastubar_task_bed_temp" style="display:inline-block;">Bed T&deg; n/a</div> 
+                 </div>
             </div>
           </div>
            
@@ -442,8 +447,16 @@
               </div>
               <div id="uploadProgressBar" style="width:100%;height:10px;" > </div>
     </div>
+    
+    
     <div id="commandHistoryDialog" title="Command History">
+      <div id="timeDisplay" class=" ui-button-text-only ui-widget ui-state-default ui-corner-all ">Duration: 0</div>
+      <div id="layerDisplay" class=" ui-button-text-only ui-widget ui-state-default ui-corner-all ">Layer: 0</div>
+      <div class=" ui-button-text-only ui-widget ui-state-default ui-corner-all ">Commands: </div>
+      <div id="commandHistory" class=" ui-button-text-only ui-widget ui-state-default ui-corner-all "></div>
     </div>
+    
+    
     <div id="TeacupFirmwareConfigDialog" title="Teacup Firmware Configuration tool ">
       <div style="width:100%;display:block;float:left">
          <table id="teacupConfigTable" class="teacupConfigTable"  style="width:100%">

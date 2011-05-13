@@ -23,7 +23,8 @@ class Command(object):
         self.answer=answer
         
     def __str__(self):
-        return str(self.request)+" "+str(self.answer)
+        #return str(self.request)+" "+str(self.answer)
+        return str(self.answer)
         #return "Special:"+ str(self.special)+", TwoStep:"+str(self.twoStep) +", Answer Required:"+str(self.answerRequired)+", Request:"+ str(self.request)+", Answer:"+ str(self.answer) 
 
 
@@ -115,7 +116,7 @@ class Driver(object):
             else:
                 cmd=Command(answer=datablock)
                 cmd.answerComplete=True
-            self.logger.critical("%s",str(len(self.commandBuffer)))
+            self.logger.debug("%d elements in commandBuffer",len(self.commandBuffer))
         return cmd
      
            
